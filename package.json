@@ -1,0 +1,25 @@
+{
+  "name": "vux",
+  "version": "1.0.0",
+  "description": "Serverless personal blog",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [
+    "Nextjs",
+    "Reactjs",
+    "Firebase",
+    "Personal",
+    "blog"
+  ],
+  "author": "Vu Vy <vyquocvu@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^9.2.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
+}
