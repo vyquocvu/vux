@@ -1,5 +1,5 @@
 {
-  "name": "with-typescript",
+  "name": "vux",
   "version": "1.0.0",
   "scripts": {
     "dev": "next",
@@ -8,10 +8,14 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "firebase-admin": "^8.9.2",
+    "fireorm": "^0.12.1",
     "isomorphic-unfetch": "3.0.0",
     "next": "latest",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",

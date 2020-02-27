@@ -1,4 +1,4 @@
-# TypeScript Next.js example
+# Vuxapp
 
 This is a really simple project that shows the usage of Next.js with TypeScript.
 
@@ -10,25 +10,6 @@ Deploy the example using [ZEIT Now](https://zeit.co/now):
 
 ## How to use it?
 
-### Using `create-next-app`
-
-Execute [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npm init next-app --example with-typescript with-typescript-app
-# or
-yarn create next-app --example with-typescript with-typescript-app
-```
-
-### Download manually
-
-Download the example:
-
-```bash
-curl https://codeload.github.com/zeit/next.js/tar.gz/canary | tar -xz --strip=2 next.js-canary/examples/with-typescript
-cd with-typescript
-```
-
 Install it and run:
 
 ```bash
@@ -38,6 +19,8 @@ npm run dev
 yarn
 yarn dev
 ```
+
+Config firestore, create `firebase app` and download cer `firebase.creds.json`
 
 Deploy it to the cloud with [ZEIT Now](https://zeit.co/import?filter=next.js&utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
 
