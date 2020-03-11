@@ -3,7 +3,7 @@ import * as React from 'react'
 import { User } from '../interfaces'
 
 type ListDetailProps = {
-  item: User
+  item: { name: String, id: String }
 }
 
 const ListDetail: React.FunctionComponent<ListDetailProps> = ({

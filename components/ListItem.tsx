@@ -1,10 +1,8 @@
 import * as React from 'react'
 import Link from 'next/link'
 
-import { User } from '../interfaces'
-
 type Props = {
-  data: User
+  data: { name: String, id: String }
 }
 
 const ListItem: React.FunctionComponent<Props> = ({ data }) => (
