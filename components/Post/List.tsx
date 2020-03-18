@@ -8,7 +8,7 @@ type Props = {
 const List: React.FunctionComponent<Props> = ({ items }) => (
   <>
     <div>
-      {items.map(item => <ListItem data={item} />)}
+      {items.map(item => <ListItem key={item.id} data={item} />)}
     </div>
     <style jsx>{`
     `}</style>

@@ -13,9 +13,10 @@ const MainContent: React.FunctionComponent<Props> = ({ children }) => {
       <style jsx>{`
         .main-content {
           width: 75%;
-          margin-left: 25%;
           padding: 50px;
           height: 100vh;
+          margin-left: 25%;
+          box-sizing: border-box;
         }
       `}</style>
     </div>
