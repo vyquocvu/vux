@@ -2,6 +2,8 @@ import * as React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 
+
+import 'react-quill/dist/quill.bubble.css';
 import '../styles/layout.css';
 
 export default class MyApp extends App {
