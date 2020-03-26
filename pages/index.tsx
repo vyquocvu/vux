@@ -1,8 +1,9 @@
 import * as React from 'react'
-import Sidebar from '../components/Sidebar'
-import MainContent from '../components/MainContent'
-import PostList from '../components/Post/List'
 import { NextPage } from 'next'
+import Sidebar from '~components/Sidebar'
+import MainContent from '~components/MainContent'
+import PostList from '~components/Post/List'
+import * as api from '../utils/api';
 
 const mock = [
   { id: '1', name: 'Coffee variety macchiato as organic',
@@ -30,4 +31,9 @@ const IndexPage: NextPage = () => {
   )
 }
 
+
+IndexPage.getInitialProps = async function () {
+  const listPost = await api.request('api/posts');
+  return { listPost }
+}
 export default IndexPage

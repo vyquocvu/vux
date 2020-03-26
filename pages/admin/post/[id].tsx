@@ -1,6 +1,6 @@
 
 import * as React from 'react'
-import PostEditor from '../../../components/Admin/PostEditor'
+import PostEditor from '~components/Admin/PostEditor'
 
 // import Link from 'next/link'
 
