@@ -1,26 +1,29 @@
-import * as React from 'react'
-import { NextPage } from 'next'
-import Sidebar from '~components/Sidebar'
-import MainContent from '~components/MainContent'
-import PostList from '~components/Post/List'
-import * as api from '../utils/api';
+import React from "react";
+import PropTypes from "prop-types";
+import withAuthUser from "../utils/pageWrappers/withAuthUser";
+import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo";
+
+import Sidebar from '../components/Sidebar'
+import MainContent from '../components/MainContent'
+import PostList from '../components/Post/List'
 
 const mock = [
   { id: '1', name: 'Coffee variety macchiato as organic',
     content: 'Saucer, crema carajillo, bar, mocha medium, latte cappuccino and espresso acerbic to go. Coffee, irish foam turkish coffee blue mountain seasonal. Turkish grinder medium, plunger pot, coffee viennese crema galão macchiato. Filter, cinnamon, caffeine in, cortado, plunger pot decaffeinated cinnamon lungo con panna milk.' },
-    { id: '1', name: 'Coffee variety macchiato as organic',
+    { id: '2', name: 'Coffee variety macchiato as organic',
     content: 'Saucer, crema carajillo, bar, mocha medium, latte cappuccino and espresso acerbic to go. Coffee, irish foam turkish coffee blue mountain seasonal. Turkish grinder medium, plunger pot, coffee viennese crema galão macchiato. Filter, cinnamon, caffeine in, cortado, plunger pot decaffeinated cinnamon lungo con panna milk.' },
-    { id: '1', name: 'Coffee variety macchiato as organic',
+    { id: '3', name: 'Coffee variety macchiato as organic',
     content: 'Saucer, crema carajillo, bar, mocha medium, latte cappuccino and espresso acerbic to go. Coffee, irish foam turkish coffee blue mountain seasonal. Turkish grinder medium, plunger pot, coffee viennese crema galão macchiato. Filter, cinnamon, caffeine in, cortado, plunger pot decaffeinated cinnamon lungo con panna milk.' },
-    { id: '1', name: 'Coffee variety macchiato as organic',
+    { id: '4', name: 'Coffee variety macchiato as organic',
     content: 'Saucer, crema carajillo, bar, mocha medium, latte cappuccino and espresso acerbic to go. Coffee, irish foam turkish coffee blue mountain seasonal. Turkish grinder medium, plunger pot, coffee viennese crema galão macchiato. Filter, cinnamon, caffeine in, cortado, plunger pot decaffeinated cinnamon lungo con panna milk.' },
-    { id: '1', name: 'Coffee variety macchiato as organic',
+    { id: '5', name: 'Coffee variety macchiato as organic',
     content: 'Saucer, crema carajillo, bar, mocha medium, latte cappuccino and espresso acerbic to go. Coffee, irish foam turkish coffee blue mountain seasonal. Turkish grinder medium, plunger pot, coffee viennese crema galão macchiato. Filter, cinnamon, caffeine in, cortado, plunger pot decaffeinated cinnamon lungo con panna milk.' },
-    { id: '1', name: 'Coffee variety macchiato as organic',
+    { id: '6', name: 'Coffee variety macchiato as organic',
     content: 'Saucer, crema carajillo, bar, mocha medium, latte cappuccino and espresso acerbic to go. Coffee, irish foam turkish coffee blue mountain seasonal. Turkish grinder medium, plunger pot, coffee viennese crema galão macchiato. Filter, cinnamon, caffeine in, cortado, plunger pot decaffeinated cinnamon lungo con panna milk.' }
   ]
 
-const IndexPage: NextPage = () => {
+
+const Index = (props: any) => {
   return (
     <>
       <Sidebar />
@@ -29,11 +32,21 @@ const IndexPage: NextPage = () => {
       </MainContent>
     </>
   )
-}
+};
 
+Index.propTypes = {
+  AuthUserInfo: PropTypes.shape({
+    AuthUser: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      emailVerified: PropTypes.bool.isRequired
+    }),
+    token: PropTypes.string
+  })
+};
 
-IndexPage.getInitialProps = async function () {
-  const listPost = await api.request('api/posts');
-  return { listPost }
-}
-export default IndexPage
+Index.defaultProps = {
+  AuthUserInfo: null
+};
+
+export default withAuthUser(withAuthUserInfo(Index));

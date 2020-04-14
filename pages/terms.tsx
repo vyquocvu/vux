@@ -2,14 +2,14 @@ import React from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 
-const About = () => {
+const Terms = () => {
   return (
     <>
       <Header />
-      <p>about page</p>
+      <p>terms of service</p>
       <Footer />
     </>
   );
 };
 
-export default About;
+export default Terms;

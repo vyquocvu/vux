@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "staging": "vuxnext",
+    "production": "vuxnext"
+  }
+}

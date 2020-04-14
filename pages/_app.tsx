@@ -4,7 +4,8 @@ import Head from 'next/head';
 
 
 import 'react-quill/dist/quill.bubble.css';
-import '../styles/layout.css';
+import "../styles/layout.css";
+import "../styles/main.css";
 
 export default class MyApp extends App {
   public render() {
