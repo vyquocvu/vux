@@ -52,7 +52,7 @@ const SideBar: React.FunctionComponent<Props> = () => (
               ))
             }
           <div className="divider"/>
-          <div className="social-link-group">
+          <div className="social-link-group flex">
             {
               mock.socials.map(media => (
                 <Link key={media.icon} href={media.url} >

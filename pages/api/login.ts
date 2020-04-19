@@ -2,6 +2,9 @@ import commonMiddleware from "../../utils/middleware/commonMiddleware";
 import { verifyIdToken } from "../../utils/auth/firebaseAdmin";
 import { NextApiRequest, NextApiResponse } from "next";
 
+require("dotenv").config();
+
+
 // req type: CookieSession?
 const handler = async (req: any, res: NextApiResponse) => {
   if (!req.body) {
@@ -24,10 +27,12 @@ const handler = async (req: any, res: NextApiResponse) => {
   // requests in a serverless context.
   try {
     const decodedToken = await verifyIdToken(token);
+    decodedToken.isAdmin = decodedToken.email === process.env.OWNER_EMAIL;
     req.session.decodedToken = decodedToken;
     req.session.token = token;
     return res.status(200).json({ status: true, decodedToken });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error });
   }
 };

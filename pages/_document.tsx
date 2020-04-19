@@ -1,7 +1,7 @@
 /* eslint react/no-danger: 0 */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { get } from 'lodash/object'
+import get from 'lodash/get'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 class CustomDocument extends Document {
