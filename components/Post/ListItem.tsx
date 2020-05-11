@@ -2,12 +2,13 @@ import * as React from 'react'
 import Link from 'next/link'
 
 type Props = {
-  data: { name: String, id: String, content: String }
+  data: { name: String, uid: String, content: String },
+  isAdmin: Boolean
 }
 
-const ListItem: React.FunctionComponent<Props> = ({ data }) => (
+const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
   <div className="data">
-    <h2 className="post-title"><Link href="/post/[id]" as={`/post/${data.id}`}><a> {data.name} </a></Link></h2>
+    <h2 className="post-title"><Link href="/post/[id]" as={`/post/${data.uid}`}><a> {data.name} </a></Link></h2>
     <div className="post-info-wrapper">
       <div className="post-info">March 2, 2016</div>
       <div className="post-info">|</div>
@@ -19,7 +20,19 @@ const ListItem: React.FunctionComponent<Props> = ({ data }) => (
       }
     </div>
     <div>
-      <Link href="/post/[id]" as={`/post/${data.id}`}><a className="readmore button-round"> Read more → </a></Link>
+      {
+        isAdmin ? (
+          <Link href="/admin/post/[id]" as={`/admin/post/${data.uid}`}>
+            <a className="readmore button-round">
+            Edit → </a>
+          </Link>)
+        : (
+          <Link href="/post/[id]" as={`/post/${data.uid}`}>
+            <a className="readmore button-round">
+            Read more → </a>
+          </Link>
+        )
+      }
     </div>
     <hr className="divider"/>
     <style jsx>{`

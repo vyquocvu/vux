@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'react-quill/dist/quill.bubble.css';
+
 body {
   @apply ml-4 mt-2;
 }

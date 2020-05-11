@@ -1,6 +1,6 @@
 import commonMiddleware from "../../utils/middleware/commonMiddleware";
 import { verifyIdToken } from "../../utils/auth/firebaseAdmin";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 
 require("dotenv").config();
 
@@ -32,7 +32,6 @@ const handler = async (req: any, res: NextApiResponse) => {
     req.session.token = token;
     return res.status(200).json({ status: true, decodedToken });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error });
   }
 };

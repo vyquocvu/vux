@@ -31,7 +31,6 @@ export default (ComposedComponent: any) => {
 
   WithAuthUserComp.getInitialProps = async (ctx: NextPageContext) => {
     const { req, res } = ctx;
-
     // Get the AuthUserInfo object.
     let AuthUserInfo;
     if (typeof window === "undefined") {
@@ -62,6 +61,7 @@ export default (ComposedComponent: any) => {
           AuthUserInfo = createAuthUserInfo();
         }
       } catch (e) {
+        console.log('E', e)
         // If there's some error, use the default (unauthed) user info.
         AuthUserInfo = createAuthUserInfo();
       }

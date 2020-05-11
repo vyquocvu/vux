@@ -1,19 +1,47 @@
 
-import * as React from 'react'
-import PostEditor from '~components/Admin/PostEditor'
+import React, { useEffect, useCallback, useState } from "react";
+import { useRouter } from 'next/router'
 
-// import Link from 'next/link'
+import PostEditor from '~components/Admin/PostEditor';
 
-export default function () {
-  // const [text, setText] = React.useState('');
-  if (typeof window === undefined) {
-    return <div />
+import initFirebase from "../../../utils/auth/initFirebase";
+
+import firebase from "firebase/app";
+import "firebase/firestore";
+
+const postMetaData = {
+  url: '',
+  tags: [],
+  title: '',
+  createdAt: '',
+  updatedAt: '',
+  thumbImage: '',
+  thumbText: '',
+  status: '',
+  content: {
+    title: '',
+    text: '',
   }
-  return (
-    <div>
-      <h1>About</h1>
-      <p>This is the about page</p>
-      <PostEditor />
-    </div>
-  )
+}
+
+initFirebase();
+
+export default function ({ }) {
+  const [post, setPost] = useState<any>({});
+  const router = useRouter();
+
+  const fetchingPost = useCallback(async id => {
+    const db = firebase.firestore();
+    try {
+      const postDoc = await db.collection("posts").doc(id).get();
+      if (postDoc.exists) setPost({...postDoc.data(), uid: postDoc.id });
+    } catch (error) {}
+  }, []);
+
+  useEffect(() => {
+    const { id } = router.query;
+    id ? fetchingPost(id) : '';
+  }, [router.query]);
+
+  return (typeof window === undefined) ? <div /> : <PostEditor post={post} />;
 }

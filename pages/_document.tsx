@@ -35,7 +35,10 @@ class CustomDocument extends Document {
 CustomDocument.getInitialProps = async ctx => {
   // Get the AuthUserInfo object. This is set if the server-rendered page
   // is wrapped in the `withAuthUser` higher-order component.
-  const AuthUserInfo = get(ctx, 'myCustomData.AuthUserInfo', null)
+  const AuthUserInfo = get(ctx, 'myCustomData.AuthUserInfo', null);
+  if (AuthUserInfo) {
+    AuthUserInfo.AuthUser.isAdmin = AuthUserInfo.AuthUser.email === process.env.OWNER_EMAIL;
+  }
 
   const initialProps = await Document.getInitialProps(ctx)
   return { ...initialProps, AuthUserInfo }
@@ -47,6 +50,7 @@ CustomDocument.propTypes = {
       id: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
       emailVerified: PropTypes.bool.isRequired,
+      isAdmin: PropTypes.bool,
     }),
     token: PropTypes.string,
   }).isRequired,

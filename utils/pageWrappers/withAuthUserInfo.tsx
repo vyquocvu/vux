@@ -43,13 +43,13 @@ export default (ComposedComponent: any) => {
       AuthUser: PropTypes.shape({
         id: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
-        emailVerified: PropTypes.bool.isRequired
+        emailVerified: PropTypes.bool.isRequired,
+        isAdmin: PropTypes.bool.isRequired,
       }),
       token: PropTypes.string
     })
   };
 
   WithAuthUserInfoComp.defaultProps = {};
-
   return WithAuthUserInfoComp;
 };

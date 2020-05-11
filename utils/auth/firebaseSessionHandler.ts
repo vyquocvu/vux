@@ -3,18 +3,18 @@
 
 import fetch from "isomorphic-unfetch";
 
-export const setSession = (user: firebase.User | null) => {
+export const setSession = async (user: firebase.User | null) => {
   // Log in.
   if (user) {
-    return user.getIdToken().then((token: any) => {
-      return fetch("/api/login", {
-        method: "POST",
-        // eslint-disable-next-line no-undef
-        headers: new Headers({ "Content-Type": "application/json" }),
-        credentials: "same-origin",
-        body: JSON.stringify({ token })
-      });
+    const token = await user.getIdToken();
+    const response = await fetch("/api/login", {
+      method: "POST",
+      // eslint-disable-next-line no-undef
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+      body: JSON.stringify({ token })
     });
+    return response;
   }
 
   // Log out.

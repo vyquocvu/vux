@@ -20,17 +20,14 @@ export const useAuthUserInfo = () => {
 export const useFirebaseAuth = () => {
   const [state, setState] = useState(() => {
     const user = firebase.auth().currentUser;
-    return {
-      initializing: !user,
-      user
-    };
+    return { initializing: !user, user, userSession: {} };
   });
 
-  function onChange(user: firebase.User | null) {
-    setState({ initializing: false, user });
-
+  async function onChange(user: firebase.User | null) {
     // Call server to update session.
-    setSession(user);
+    const res = await setSession(user);
+    const userSession = await res.json();
+    setState({ initializing: false, user, userSession: userSession });
   }
 
   useEffect(() => {

@@ -2,10 +2,9 @@ import * as React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 
-
-import 'react-quill/dist/quill.bubble.css';
-import "../styles/layout.css";
-import "../styles/main.css";
+import "../styles/layout.scss";
+import "../styles/main.scss";
+import "../styles/post-editor.scss";
 
 export default class MyApp extends App {
   public render() {

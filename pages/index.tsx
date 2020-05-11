@@ -1,11 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import PropTypes, { any } from "prop-types";
+import initFirebase from "../utils/auth/initFirebase";
+
 import withAuthUser from "../utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo";
 
-import Sidebar from '../components/Sidebar'
-import MainContent from '../components/MainContent'
-import PostList from '../components/Post/List'
+import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
+import PostList from '../components/Post/List';
+
+initFirebase();
 
 const mock = [
   { id: '1', name: 'Coffee variety macchiato as organic',
@@ -46,7 +52,18 @@ Index.propTypes = {
 };
 
 Index.defaultProps = {
-  AuthUserInfo: null
+  AuthUserInfo: null,
 };
+
+Index.getInitialProps = async () => {
+  try {
+    const db = firebase.firestore();
+    const postRepo = await db.collection("posts").get();
+    const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id }));
+    return { posts };
+  } catch (error) {
+    return {};
+  }
+}
 
 export default withAuthUser(withAuthUserInfo(Index));
