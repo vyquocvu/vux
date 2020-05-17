@@ -1,14 +1,11 @@
-const withSass = require('@zeit/next-sass')
-const path = require('path');
+const withSass = require('@zeit/next-sass');
+const withCss = require('@zeit/next-css');;
 require("dotenv").config();
 
-module.exports = withSass({
+module.exports = withCss(withSass({
   webpack: (config, { isServer }) => {
-    // Fixes npm packages that depend on `fs` module
     if (!isServer) {
-      config.node = {
-        fs: "empty"
-      };
+      config.node = { fs: "empty" };
     }
     return config;
   },
@@ -23,6 +20,5 @@ module.exports = withSass({
     FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
     FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY
-  },
-  cssModules: true,
-});
+  }
+}));

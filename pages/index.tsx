@@ -1,15 +1,16 @@
 import React from "react";
-import firebase from "firebase/app";
 import "firebase/firestore";
-import PropTypes, { any } from "prop-types";
-import initFirebase from "../utils/auth/initFirebase";
+import PropTypes from "prop-types";
+import firebase from "firebase/app";
+import usePagination from "firestore-pagination-hook";
 
+import initFirebase from "../utils/auth/initFirebase";
 import withAuthUser from "../utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo";
 
 import Sidebar from '../components/Sidebar';
-import MainContent from '../components/MainContent';
 import PostList from '../components/Post/List';
+import MainContent from '../components/MainContent';
 
 initFirebase();
 
@@ -30,6 +31,24 @@ const mock = [
 
 
 const Index = (props: any) => {
+  const db = firebase.firestore();
+  const {
+    loading,
+    loadingError,
+    loadingMore,
+    loadingMoreError,
+    hasMore,
+    items,
+    loadMore
+  } = usePagination(
+    db
+      .collection("posts")
+      .where("isisPublishedPb", "==", true)
+      .orderBy("createdAt", "asc"),
+    {
+      limit: 10
+    }
+  );
   return (
     <>
       <Sidebar />

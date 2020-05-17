@@ -6,11 +6,6 @@ import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 class CustomDocument extends Document {
   render() {
-    // Store initial props from request data that we need to use again on
-    // the client. See:
-    // https://github.com/zeit/next.js/issues/3043#issuecomment-334521241
-    // https://github.com/zeit/next.js/issues/2252#issuecomment-353992669
-    // Alternatively, you could use a store, like Redux.
     const { AuthUserInfo } = this.props
     return (
       <Html>
@@ -36,7 +31,7 @@ CustomDocument.getInitialProps = async ctx => {
   // Get the AuthUserInfo object. This is set if the server-rendered page
   // is wrapped in the `withAuthUser` higher-order component.
   const AuthUserInfo = get(ctx, 'myCustomData.AuthUserInfo', null);
-  if (AuthUserInfo) {
+  if (AuthUserInfo?.AuthUser?.email) {
     AuthUserInfo.AuthUser.isAdmin = AuthUserInfo.AuthUser.email === process.env.OWNER_EMAIL;
   }
 
@@ -53,7 +48,7 @@ CustomDocument.propTypes = {
       isAdmin: PropTypes.bool,
     }),
     token: PropTypes.string,
-  }).isRequired,
+  }),
 }
 
 export default CustomDocument

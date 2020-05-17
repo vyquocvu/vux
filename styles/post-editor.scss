@@ -1,44 +1,39 @@
 .post-edit-page {
   margin: 40px auto;
+  max-width: 970px;
+  display: flex;
+  flex-direction: column;
 }
+
 input[name="title"] {
-  margin: 12px;
+  margin: 0 auto;
   border: 1px solid #ddd;
   border-radius: 3px;
   display: block;
   width: 100%;
-  height: 38px;
   padding: 8px 12px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 1.42857143;
   color: #333333;
-  vertical-align: middle;
   background-color: #ffffff;
   border: 1px solid #cccccc;
 }
 
-.submit-save, .submit-push {
-  margin: 12px;
-}
 .submit-save {
+  padding: 4px 10px;
+  margin-right: 12px;
+  box-shadow: 1px 1px #ccc;
   background-color: #7fffd4;
+}
+
+.submit-push {
+  margin-right: 12px;
   padding: 4px 10px;
   box-shadow: 1px 1px #ccc;
+  background-color: #7fafd4;
 }
 
-.quill-area  {
-  font-size: 16px;
-  min-height: 110px;
-  display: block;
-  width: 100%;
-  height: 38px;
-  padding: 8px 12px;
+.quill-area {
   margin-bottom: 10px;
-  font-size: 14px;
-  line-height: 1.42857143;
-  color: #333333;
-  vertical-align: middle;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
 }

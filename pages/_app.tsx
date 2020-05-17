@@ -1,15 +1,16 @@
 import * as React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
+import { ToastProvider } from 'react-toast-notifications'
 
-import "../styles/layout.scss";
 import "../styles/main.scss";
+import "../styles/layout.scss";
 import "../styles/post-editor.scss";
+import "react-quill/dist/quill.snow.css";
 
 export default class MyApp extends App {
   public render() {
-    const { Component, pageProps } = this.props
-
+    const { Component, pageProps } = this.props;
     return (
       <>
         <Head>
@@ -17,7 +18,9 @@ export default class MyApp extends App {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>Xblog</title>
         </Head>
-        <Component {...pageProps} />
+        <ToastProvider>
+          <Component {...pageProps} />
+        </ToastProvider>
       </>
     )
   }

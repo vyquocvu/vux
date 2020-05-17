@@ -15,9 +15,7 @@ const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
       <a className="post-info when-link" href="/categories/travel">Travel</a>
     </div>
     <div>
-      {
-      data.content
-      }
+      { data.content }
     </div>
     <div>
       {
@@ -25,8 +23,8 @@ const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
           <Link href="/admin/post/[id]" as={`/admin/post/${data.uid}`}>
             <a className="readmore button-round">
             Edit → </a>
-          </Link>)
-        : (
+          </Link>
+        ) : (
           <Link href="/post/[id]" as={`/post/${data.uid}`}>
             <a className="readmore button-round">
             Read more → </a>
