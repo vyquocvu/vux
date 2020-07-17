@@ -1,5 +1,5 @@
 import firebase from "firebase/app";
-// import "firebase/auth";
+require('firebase/storage');
 require("dotenv").config();
 
 const config = {
@@ -17,4 +17,5 @@ export default () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(config);
   }
+  return firebase;
 };

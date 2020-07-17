@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from 'next/dynamic';
+import upload from '../../utils/upload';
 
-const ReactQuill = dynamic(
-  import('react-quill'), { ssr: false, loading: () => <p>Loading ...</p> }
-)
+const ReactQuill = dynamic(import('react-quill'),
+  { ssr: false, loading: () => <p>Loading ...</p> });
 
 const postMetaData = {
   url: '',
@@ -18,15 +18,47 @@ const postMetaData = {
   isPublished: false,
 };
 
-export default function (props: any) {
+
+const imageHandler = function (this: any) {
+  const input = document.createElement('input');
+  const quill = this.quill;
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.click();
+  input.onchange = async function (e) {
+    if (!input.files) return;
+    const file = input.files[0];
+
+    // Save current cursor state
+    const range = quill.getSelection(true);
+
+    // // Insert temporary loading placeholder image
+    quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/placeholder.gif`);
+
+    // // Move cursor to right side of image (easier to continue typing)
+    quill.setSelection(range.index + 1);
+
+    const url = await upload(file, 'images'); // API post, returns image location as string e.g. 'http://www.example.com/images/foo.png'
+    // // Remove placeholder image
+    if (!url) return false;
+    quill.deleteText(range.index, 1);
+
+    quill.insertEmbed(range.index, 'image', url);
+  }
+}
+
+
+const PostEditor = (props: any) => {
+  if (typeof window === 'undefined') return '';
   const [post, setPost] = useState<any>({
     ...postMetaData,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
+  const quillElement = useRef(null);
 
   useEffect(() => {
-    setPost({ ...props.post });
+    setPost({ ...post,...props.post });
   }, [props.post.uid]);
 
   const setContent = useCallback((newData: any, prePost) => {
@@ -41,19 +73,24 @@ export default function (props: any) {
 
   const onSave = function (mode: string) {
     const isPublished = mode === 'publish';
-    post.isPublished = isPublished;
+    post.isPublished = isPublished || post.isPublished;
     if (isPublished) post.publishContent = post.draffContent;
     props.onSubmit(post);
   }
 
   const modules = {
-    toolbar: [
-      [{'header': [1, 2, false]}],
-      ['bold', 'italic', 'underline','strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image'],
-      ['clean']
-    ],
+    toolbar: {
+      container: [
+        [{'header': [1, 2, false]}],
+        ['bold', 'italic', 'underline','strike', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
   };
 
   const formats = [
@@ -63,8 +100,30 @@ export default function (props: any) {
     'link', 'image'
   ];
 
-  if (!post.uid) return <p>Loading ...</p>;
 
+  const handleDelete = function (i: number) {
+    const tags = [...post.tags];
+    tags.splice(i, 1);
+    setPost({ ...post, tags });
+  }
+
+  const handleAddition = function (tag: string) {
+    const tags = [...post.tags, tag];
+    setPost({ ...post, tags });
+  }
+
+  const handleDrag = function (tag: string, currPos: number, newPos: number) {
+    const tags = [...post.tags];
+    const newTags = tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    setPost({ ...post, tags: newTags });
+  }
+
+  if (!post.uid) return <p />;
   return (
     <div className="post-edit-page">
       <input value={post.title || ''} name="title" onChange={onUpdate} placeholder="Title" />
@@ -74,6 +133,7 @@ export default function (props: any) {
           placeholder={'Tell your story…'}
           formats={formats}
           modules={modules}
+          ref={quillElement}
           onChange={(dataContent) => setContent(dataContent, post)}
           theme="snow"
         />
@@ -83,5 +143,7 @@ export default function (props: any) {
         <button className='submit-push' onClick={() => onSave('publish')}> Publish </button>
       </div>
     </div>
-    )
+  );
 }
+
+export default PostEditor;
