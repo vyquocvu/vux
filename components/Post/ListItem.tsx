@@ -1,18 +1,20 @@
 import * as React from 'react'
 import Link from 'next/link'
 
+import { secondToDateString } from '../../utils/common';
+
 type Props = {
-  data: { name: String, uid: String, content: String },
+  data: { name: String, uid: String, content: String, updatedAt: any, title: string },
   isAdmin: Boolean
 }
 
 const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
   <div className="data">
-    <h2 className="post-title"><Link href="/post/[id]" as={`/post/${data.uid}`}><a> {data.name} </a></Link></h2>
+    <h2 className="post-title"><Link href="/post/[id]" as={`/post/${data.uid}`}><a> {data.title} </a></Link></h2>
     <div className="post-info-wrapper">
-      <div className="post-info">March 2, 2016</div>
+    <div className="post-info">{secondToDateString(data.updatedAt.seconds)}</div>
       <div className="post-info">|</div>
-      <a className="post-info when-link" href="/categories/travel">Travel</a>
+      <a className="post-info when-link" href="/categories/travel"></a>
     </div>
     <div>
       { data.content }

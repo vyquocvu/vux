@@ -28,21 +28,12 @@ const imageHandler = function (this: any) {
   input.onchange = async function (e) {
     if (!input.files) return;
     const file = input.files[0];
-
-    // Save current cursor state
     const range = quill.getSelection(true);
-
-    // // Insert temporary loading placeholder image
     quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/placeholder.gif`);
-
-    // // Move cursor to right side of image (easier to continue typing)
     quill.setSelection(range.index + 1);
-
-    const url = await upload(file, 'images'); // API post, returns image location as string e.g. 'http://www.example.com/images/foo.png'
-    // // Remove placeholder image
+    const url = await upload(file, 'images');
     if (!url) return false;
     quill.deleteText(range.index, 1);
-
     quill.insertEmbed(range.index, 'image', url);
   }
 }
@@ -55,7 +46,6 @@ const PostEditor = (props: any) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   });
-  const quillElement = useRef(null);
 
   useEffect(() => {
     setPost({ ...post,...props.post });
@@ -115,27 +105,24 @@ const PostEditor = (props: any) => {
   const handleDrag = function (tag: string, currPos: number, newPos: number) {
     const tags = [...post.tags];
     const newTags = tags.slice();
-
     newTags.splice(currPos, 1);
     newTags.splice(newPos, 0, tag);
-
-    // re-render
     setPost({ ...post, tags: newTags });
   }
 
   if (!post.uid) return <p />;
+
   return (
     <div className="post-edit-page">
       <input value={post.title || ''} name="title" onChange={onUpdate} placeholder="Title" />
       <div className="quill-area">
         <ReactQuill
-          value={post.draffContent || ''}
-          placeholder={'Tell your story…'}
+          theme="snow"
           formats={formats}
           modules={modules}
-          ref={quillElement}
+          value={post.draffContent || ''}
+          placeholder={'Tell your story…'}
           onChange={(dataContent) => setContent(dataContent, post)}
-          theme="snow"
         />
       </div>
       <div className="actions">
