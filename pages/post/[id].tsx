@@ -1,42 +1,46 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import firebase from "firebase/app";
+import { NextPageContext } from 'next';
 
-import initFirebase from "../../utils/auth/initFirebase";
+import { getPostById } from "../../fetcher/post";
 import { secondToDateString } from '../../utils/common';
 
+import { Post } from '../../interfaces/Post';
 
-initFirebase();
-
-const PostDetail = (props) => {
+const PostPage = (props: { post: Post }) => {
   const { post } = props;
-  console.log(props);
+  if (!post.uid) return 'Không tìm thấy bài viết';
   return (
-    <>
-      <h1>{ post.title }</h1>
-      <p> {}</p>
-      <p>
-        <Link href="/">
-          <a>Go home</a>
-        </Link>
-      </p>
-    </>
+    <div className='post-page-view'>
+      <div>
+        <div className="header">
+          <a href="/"><span className="avatar"></span></a>
+        </div>
+      </div>
+      <div className="post-detail-container">
+        <h1 className="post-title" >{ post.title }</h1>
+        <p> {secondToDateString(post.updatedAt.seconds)}</p>
+        <div dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+        <p>
+          <Link href="/">
+            <a>Go home</a>
+          </Link>
+        </p>
+      </div>
+    </div>
   )
 }
 
-
 // Run on server side
-PostDetail.getInitialProps = async (ctx: any) => {
-  if (!ctx.query.id) return {}
+PostPage.getInitialProps = async ({ query }: NextPageContext) => {
   try {
-    const db = firebase.firestore();
-    const postDoc = await db.collection("posts").doc(ctx.query.id).get();
-    const post = postDoc.exists ? {...postDoc.data(), uid: postDoc.id } : {};
+    if (typeof query.id != 'string') return {};
+    const post = await getPostById(query.id);
     return { post };
   } catch (error) {
     return {};
   }
 }
 
-export default PostDetail;
+export default PostPage;

@@ -4,14 +4,9 @@ import { useToasts } from 'react-toast-notifications'
 import { useRouter } from 'next/router'
 
 import PostEditor from '~components/Admin/PostEditor';
-import initFirebase from "../../../utils/auth/initFirebase";
+import { getPostById, setPostById } from "../../../fetcher/post";
+import { Post } from "interfaces/Post";
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-
-initFirebase();
-const db = firebase.firestore();
-const PostCollection = db.collection("posts");
 
 const PostPage = ({}) => {
   const [post, setPost] = useState<any>({});
@@ -20,17 +15,15 @@ const PostPage = ({}) => {
 
   const fetchingPost = useCallback(async id => {
     try {
-      const postDoc = await PostCollection.doc(id).get();
-      if (postDoc.exists) setPost({ ...postDoc.data(), uid: postDoc.id });
-    } catch (error) {
-      console.log('Error', error);
-    };
+      const postDoc : Post = await getPostById(id) as any;
+      if (postDoc.uid) setPost({ ...postDoc });
+    } catch (error) {};
   }, []);
 
   const onSubmit = useCallback(async (postData: any) => {
     const id = postData.uid;
     try {
-      await PostCollection.doc(id).set(postData);
+      await setPostById(id, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
     } catch (error) {
       addToast('Save post Fail!', { appearance: 'error', autoDismiss: true });
@@ -40,6 +33,7 @@ const PostPage = ({}) => {
   useEffect(() => {
     router.query.id ? fetchingPost(router.query.id) : '';
   }, [router.query]);
+
   return (typeof window !== undefined) ? (
     <div>
       <PostEditor post={post} onSubmit={onSubmit} />

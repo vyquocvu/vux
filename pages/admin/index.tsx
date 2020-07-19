@@ -5,8 +5,8 @@ import Sidebar from '../../components/Sidebar';
 import MainContent from '../../components/MainContent';
 import PostList from '../../components/Post/List';
 
-import firebase from "firebase/app";
-import "firebase/firestore";
+import { getPosts } from '../../fetcher/post';
+
 
 import withAuthUser from "../../utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "../../utils/pageWrappers/withAuthUserInfo";
@@ -18,11 +18,12 @@ const PostsPage = (props: any) => {
 
   const fetchingPosts = useCallback(async () => {
     try {
-      const db = firebase.firestore();
-      const postRepo = await db.collection("posts").get();
-      const docs = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id }));
+      const docs = await getPosts();
+      console.log('getPosts', docs);
       setPosts(docs);
-    } catch (error) {}
+    } catch (error) {
+      console.log('error', error);
+    }
   }, []);
 
   useEffect(() => {
