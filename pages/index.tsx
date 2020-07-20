@@ -1,12 +1,24 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import Sidebar from '../components/Sidebar';
 import PostList from '../components/Post/List';
 import MainContent from '../components/MainContent';
 import { getPosts } from '../fetcher/post';
+import { Post } from "interfaces/Post";
 
-const Index = (props: any) => {
+type Props = {
+  AuthUserInfo: {
+    AuthUser: {
+      id: string,
+      email: string,
+      emailVerified: boolean,
+    },
+    token: string
+  },
+  posts: Post[]
+}
+
+const Index = (props: Props) => {
   const { posts } = props;
   return (
     <>
@@ -16,17 +28,6 @@ const Index = (props: any) => {
       </MainContent>
     </>
   )
-};
-
-Index.propTypes = {
-  AuthUserInfo: PropTypes.shape({
-    AuthUser: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      emailVerified: PropTypes.bool.isRequired
-    }),
-    token: PropTypes.string
-  })
 };
 
 Index.defaultProps = {

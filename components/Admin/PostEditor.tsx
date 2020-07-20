@@ -91,24 +91,24 @@ const PostEditor = (props: any) => {
   ];
 
 
-  const handleDelete = function (i: number) {
-    const tags = [...post.tags];
-    tags.splice(i, 1);
-    setPost({ ...post, tags });
-  }
+  // const handleDelete = function (i: number) {
+  //   const tags = [...post.tags];
+  //   tags.splice(i, 1);
+  //   setPost({ ...post, tags });
+  // }
 
-  const handleAddition = function (tag: string) {
-    const tags = [...post.tags, tag];
-    setPost({ ...post, tags });
-  }
+  // const handleAddition = function (tag: string) {
+  //   const tags = [...post.tags, tag];
+  //   setPost({ ...post, tags });
+  // }
 
-  const handleDrag = function (tag: string, currPos: number, newPos: number) {
-    const tags = [...post.tags];
-    const newTags = tags.slice();
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
-    setPost({ ...post, tags: newTags });
-  }
+  // const handleDrag = function (tag: string, currPos: number, newPos: number) {
+  //   const tags = [...post.tags];
+  //   const newTags = tags.slice();
+  //   newTags.splice(currPos, 1);
+  //   newTags.splice(newPos, 0, tag);
+  //   setPost({ ...post, tags: newTags });
+  // }
 
   if (!post.uid) return <p />;
 
