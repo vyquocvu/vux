@@ -11,6 +11,10 @@ Deploy the example using [ZEIT Now](https://zeit.co/now):
 ## How to use it?
 
 Install it and run:
+``
+mv config.sample.js config.js
+``
+update file content
 
 ```bash
 npm install

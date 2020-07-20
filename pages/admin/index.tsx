@@ -7,28 +7,26 @@ import PostList from '../../components/Post/List';
 
 import { getPosts } from '../../fetcher/post';
 
-
 import withAuthUser from "../../utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "../../utils/pageWrappers/withAuthUserInfo";
+import { Post } from "interfaces/Post";
 
 const PostsPage = (props: any) => {
   const { AuthUserInfo } = props;
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([] as any);
   const authUser = get(AuthUserInfo, "AuthUser");
 
   const fetchingPosts = useCallback(async () => {
     try {
-      const docs = await getPosts();
-      console.log('getPosts', docs);
+      const docs : [Post] = await getPosts() as any;
       setPosts(docs);
-    } catch (error) {
-      console.log('error', error);
-    }
+    } catch (error) {}
   }, []);
 
   useEffect(() => {
     (!authUser) ? Router.push("/login") : fetchingPosts();
   }, []);
+
   return (
     <>
       <Sidebar />

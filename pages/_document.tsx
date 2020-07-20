@@ -1,10 +1,21 @@
 /* eslint react/no-danger: 0 */
 import React from 'react'
-import PropTypes from 'prop-types'
 import get from 'lodash/get'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
-class CustomDocument extends Document {
+type Props = {
+  AuthUserInfo: {
+    AuthUser: {
+      id: string,
+      email: string,
+      emailVerified: string,
+      isAdmin: boolean,
+    },
+    token: string,
+  },
+}
+
+class CustomDocument extends Document<Props> {
   render() {
     const { AuthUserInfo } = this.props
     return (
@@ -37,18 +48,6 @@ CustomDocument.getInitialProps = async ctx => {
 
   const initialProps = await Document.getInitialProps(ctx)
   return { ...initialProps, AuthUserInfo }
-}
-
-CustomDocument.propTypes = {
-  AuthUserInfo: PropTypes.shape({
-    AuthUser: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      emailVerified: PropTypes.bool.isRequired,
-      isAdmin: PropTypes.bool,
-    }),
-    token: PropTypes.string,
-  }),
 }
 
 export default CustomDocument
