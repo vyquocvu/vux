@@ -1,7 +1,8 @@
 
 import React, { useEffect, useCallback, useState } from "react";
-import { useToasts } from 'react-toast-notifications'
-import { useRouter } from 'next/router'
+import get from 'lodash/get';
+import { useRouter } from 'next/router';
+import { useToasts } from 'react-toast-notifications';
 
 import { Post } from "interfaces/Post";
 import { getPostById, setPostById } from "fetcher/post";
@@ -11,10 +12,17 @@ import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
 const PostPage = (props :any) => {
-  console.log('props', props);
+  const { AuthUserInfo } = props;
+  const authUser = get(AuthUserInfo, "AuthUser");
   const [post, setPost] = useState<any>({});
   const router = useRouter();
   const { addToast } = useToasts();
+
+  useEffect(() => {
+    if (typeof window !== undefined && !authUser) {
+      router.push("/login");
+    }
+  }, []);
 
   const fetchingPost = useCallback(async id => {
     try {
@@ -44,5 +52,12 @@ const PostPage = (props :any) => {
   ) : null;
 }
 
+PostPage.getInitialProps = (ctx: any) => {
+  const token = get(ctx, 'myCustomData.AuthUserInfo.token');
+  if (!token && ctx.res) {
+    ctx.res.writeHead(302, { Location: '/login' }).end();
+  }
+  return {};
+}
+
 export default withAuthUser(withAuthUserInfo(PostPage));
-;
