@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import dynamic from 'next/dynamic';
-import upload from '../../utils/upload';
-import { cloneDeep } from "lodash";
+import upload from 'utils/upload';
+import { Post } from "interfaces/Post";
 
 const ReactQuill = dynamic(import('react-quill'),
   { ssr: false, loading: () => <p>Loading ...</p> });
@@ -40,9 +40,9 @@ const imageHandler = function (this: any) {
   }
 }
 
-
 const PostEditor = (props: any) => {
   if (typeof window === 'undefined') return null;
+  const [thumbText, setThumbText] = useState('');
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
@@ -53,12 +53,13 @@ const PostEditor = (props: any) => {
     setPost({ ...post,...props.post });
   }, [props.post.uid]);
 
-  const setContent = useCallback((prePost) => (newData: any) => {
+  const onChange = (prePost: any) => (newData: string, delta: any, source: any, editor: any) => {
+    setThumbText(editor.getText().replace(/(\r\n|\n|\r)+/gm, " "));
     setPost({
       ...prePost,
       draffContent: newData,
     });
-  }, []);
+  };
 
   const onUpdate = function (event: React.FormEvent) {
     const value: string = (event.target as any).value;
@@ -69,7 +70,10 @@ const PostEditor = (props: any) => {
   const onSave = function (mode: string) {
     const isPublished = mode === 'publish';
     post.isPublished = isPublished || post.isPublished;
-    if (isPublished) post.publishContent = post.draffContent;
+    if (isPublished) {
+      post.publishContent = post.draffContent;
+      post.thumbText = thumbText;
+    }
     props.onSubmit(post);
   }
 
@@ -126,7 +130,7 @@ const PostEditor = (props: any) => {
           modules={modules}
           value={post.draffContent || ''}
           placeholder={'Tell your story…'}
-          onChange={setContent(post)}
+          onChange={onChange(post)}
         />
       </div>
       <div className="actions">
