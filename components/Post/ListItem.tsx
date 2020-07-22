@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 
-import { secondToDateString } from '../../utils/common';
+import { secondToDateString } from 'utils/common';
 import { Post } from 'interfaces/Post';
 
 type Props = {
@@ -18,7 +18,7 @@ const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
       <a className="post-info when-link" href="/categories/travel"></a>
     </div>
     <div>
-      { data.publishContent }
+      { data.thumbText }
     </div>
     <div>
       {

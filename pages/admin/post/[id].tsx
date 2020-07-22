@@ -3,12 +3,15 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useToasts } from 'react-toast-notifications'
 import { useRouter } from 'next/router'
 
-import PostEditor from '~components/Admin/PostEditor';
-import { getPostById, setPostById } from "../../../fetcher/post";
 import { Post } from "interfaces/Post";
+import { getPostById, setPostById } from "fetcher/post";
 
+import PostEditor from 'components/Admin/PostEditor';
+import withAuthUser from "utils/pageWrappers/withAuthUser";
+import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
-const PostPage = ({}) => {
+const PostPage = (props :any) => {
+  console.log('props', props);
   const [post, setPost] = useState<any>({});
   const router = useRouter();
   const { addToast } = useToasts();
@@ -41,6 +44,5 @@ const PostPage = ({}) => {
   ) : null;
 }
 
-PostPage.getInitialProps = async () => ({});
-
-export default PostPage;
+export default withAuthUser(withAuthUserInfo(PostPage));
+;

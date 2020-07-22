@@ -1,10 +1,11 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from "react";
 import PropTypes from "prop-types";
-import { get, set } from "lodash";
-import { AuthUserInfoContext, useFirebaseAuth } from "../auth/hooks";
-import { createAuthUser, createAuthUserInfo } from "../auth/user";
+import get from "lodash/get";
+import set from "lodash/set";
 import { NextPageContext } from "next";
+import { createAuthUser, createAuthUserInfo } from "utils/auth/user";
+import { AuthUserInfoContext, useFirebaseAuth } from "utils/auth/hooks";
 
 // Gets the authenticated user from the Firebase JS SDK, when client-side,
 // or from the request object, when server-side. Add the AuthUserInfo to
