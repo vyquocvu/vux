@@ -3,10 +3,10 @@ import * as React from 'react';
 import Link from 'next/link';
 import { NextPageContext } from 'next';
 
-import { getPostById } from "../../fetcher/post";
-import { secondToDateString } from '../../utils/common';
+import { Post } from 'interfaces/Post';
+import { getPostById } from "fetcher/post";
+import { secondToDateString } from 'utils/common';
 
-import { Post } from '../../interfaces/Post';
 
 const PostPage = (props: { post: Post }) => {
   const { post } = props;

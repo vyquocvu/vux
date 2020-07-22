@@ -1,17 +1,21 @@
 import React, { useEffect, useCallback, useState } from "react";
 import Router from "next/router";
 import get from 'lodash/get';
-import Sidebar from '../../components/Sidebar';
-import MainContent from '../../components/MainContent';
-import PostList from '../../components/Post/List';
+import Sidebar from 'components/Sidebar';
+import PostList from 'components/Post/List';
+import MainContent from 'components/MainContent';
 
-import { getPosts } from '../../fetcher/post';
-
-import withAuthUser from "../../utils/pageWrappers/withAuthUser";
-import withAuthUserInfo from "../../utils/pageWrappers/withAuthUserInfo";
 import { Post } from "interfaces/Post";
+import { AuthInterface } from "interfaces/User";
+import { getPosts } from 'fetcher/post';
+import withAuthUser from "utils/pageWrappers/withAuthUser";
+import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
-const PostsPage = (props: any) => {
+type Props = {
+  AuthUserInfo: AuthInterface
+};
+
+const AdminPage = (props: Props) => {
   const { AuthUserInfo } = props;
   const [posts, setPosts] = useState([] as any);
   const authUser = get(AuthUserInfo, "AuthUser");
@@ -37,4 +41,4 @@ const PostsPage = (props: any) => {
   )
 }
 
-export default withAuthUser(withAuthUserInfo(PostsPage));
+export default withAuthUser(withAuthUserInfo(AdminPage));

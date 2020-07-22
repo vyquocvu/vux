@@ -1,6 +1,6 @@
-import commonMiddleware from "../../utils/middleware/commonMiddleware";
-import { verifyIdToken } from "../../utils/auth/firebaseAdmin";
 import { NextApiResponse } from "next";
+import { verifyIdToken } from "utils/auth/firebaseAdmin";
+import commonMiddleware from "utils/middleware/commonMiddleware";
 
 require("dotenv").config();
 

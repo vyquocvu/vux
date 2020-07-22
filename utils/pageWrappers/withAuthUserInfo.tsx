@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { get } from "lodash";
-import { AuthUserInfoContext } from "../auth/hooks";
+import { AuthUserInfoContext } from "utils/auth/hooks";
 import { NextPageContext } from "next";
 
 // Provides an AuthUserInfo prop to the composed component.

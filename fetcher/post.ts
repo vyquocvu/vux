@@ -1,7 +1,7 @@
 
 import firebase from "firebase/app";
-import { Post } from '../interfaces/Post';
-import initFirebase from "../utils/auth/initFirebase";
+import { Post } from 'interfaces/Post';
+import initFirebase from "utils/auth/initFirebase";
 import "firebase/firestore";
 
 initFirebase();
