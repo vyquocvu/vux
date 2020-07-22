@@ -45,3 +45,5 @@ serviceAccount*
 /functions/serviceAccount*
 /functions/serviceAccount-staging.json
 /functions/serviceAccount-production.json
+.vercel
+.firebaserc

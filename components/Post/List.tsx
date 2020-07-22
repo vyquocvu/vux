@@ -5,14 +5,14 @@ import { Post } from 'interfaces/Post'
 
 type Props = {
   items: Post[],
-  isAdmin: Boolean,
+  isAdmin?: Boolean,
 }
 
 
 
 const List: React.FunctionComponent<Props> = ({ items = [], isAdmin = false }) => {
   const renderItem = (item: Post) => {
-    if (item.uid) return '';
+    if (!item.uid) return '';
     return <ListItem key={item.uid} data={item} isAdmin={isAdmin} />
   }
   return (

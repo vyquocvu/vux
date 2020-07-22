@@ -23,7 +23,7 @@ export const setPostById = async (id: string, postData: Post) => {
     const post = await postCollection.doc(id).set({...postData });
     return post;
   } catch (error) {
-    return {};
+    throw error;
   }
 };
 

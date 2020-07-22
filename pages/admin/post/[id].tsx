@@ -20,15 +20,15 @@ const PostPage = ({}) => {
     } catch (error) {};
   }, []);
 
-  const onSubmit = useCallback(async (postData: any) => {
-    const id = postData.uid;
+  const onSubmit = async (postData: any) => {
+    const id = post.uid;
     try {
       await setPostById(id, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
     } catch (error) {
       addToast('Save post Fail!', { appearance: 'error', autoDismiss: true });
     }
-  }, []);
+  };
 
   useEffect(() => {
     router.query.id ? fetchingPost(router.query.id) : '';
@@ -38,7 +38,7 @@ const PostPage = ({}) => {
     <div>
       <PostEditor post={post} onSubmit={onSubmit} />
     </div>
-  ) : '';
+  ) : null;
 }
 
 PostPage.getInitialProps = async () => ({});

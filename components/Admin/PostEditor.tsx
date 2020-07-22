@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from 'next/dynamic';
 import upload from '../../utils/upload';
+import { cloneDeep } from "lodash";
 
 const ReactQuill = dynamic(import('react-quill'),
   { ssr: false, loading: () => <p>Loading ...</p> });
 
 const postMetaData = {
   url: '',
+  uid: '',
   tags: [],
   title: '',
   createdAt: '',
@@ -40,8 +42,8 @@ const imageHandler = function (this: any) {
 
 
 const PostEditor = (props: any) => {
-  if (typeof window === 'undefined') return '';
-  const [post, setPost] = useState<any>({
+  if (typeof window === 'undefined') return null;
+  const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -51,8 +53,11 @@ const PostEditor = (props: any) => {
     setPost({ ...post,...props.post });
   }, [props.post.uid]);
 
-  const setContent = useCallback((newData: any, prePost) => {
-    setPost({ ...prePost, draffContent: newData });
+  const setContent = useCallback((prePost) => (newData: any) => {
+    setPost({
+      ...prePost,
+      draffContent: newData,
+    });
   }, []);
 
   const onUpdate = function (event: React.FormEvent) {
@@ -90,7 +95,6 @@ const PostEditor = (props: any) => {
     'link', 'image'
   ];
 
-
   // const handleDelete = function (i: number) {
   //   const tags = [...post.tags];
   //   tags.splice(i, 1);
@@ -122,7 +126,7 @@ const PostEditor = (props: any) => {
           modules={modules}
           value={post.draffContent || ''}
           placeholder={'Tell your story…'}
-          onChange={(dataContent) => setContent(dataContent, post)}
+          onChange={setContent(post)}
         />
       </div>
       <div className="actions">
