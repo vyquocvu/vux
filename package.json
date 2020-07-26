@@ -1,5 +1,5 @@
 {
-  "name": "Vux Blog",
+  "name": "vux",
   "description": "Project is a blog build on Nextjs + Firebase and deploy on Vercel",
   "version": "1.0.0",
   "license": "MIT",
