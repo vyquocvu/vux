@@ -7,7 +7,7 @@ import MainContent from 'components/MainContent';
 
 import { Post } from "interfaces/Post";
 import { AuthInterface } from "interfaces/User";
-import { getPosts } from 'fetcher/post';
+import { getPostsByUserId } from 'fetcher/post';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
@@ -23,7 +23,7 @@ const AdminPage = (props: Props) => {
 
   const fetchingPosts = useCallback(async () => {
     try {
-      const docs : [Post] = await getPosts() as any;
+      const docs : [Post] = await getPostsByUserId(authUser.id) as any;
       setPosts(docs);
     } catch (error) {}
   }, []);

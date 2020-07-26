@@ -58,19 +58,6 @@ const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
         display: inline-block;
         text-transform: uppercase;
       }
-      .button-round {
-        color: #333;
-        margin: 10px 0;
-        font-size: 14px;
-        font-weight: 300;
-        padding: 5px 12px;
-        border-radius: 20px;
-        text-decoration: none;
-        display: inline-block;
-        background-color: #fff;
-        border: 1px solid #d3d3d3;
-        transition: border 200ms ease, color 200ms ease;
-      }
       hr {
         border-bottom: none;
       }

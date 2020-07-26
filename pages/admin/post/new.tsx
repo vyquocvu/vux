@@ -13,7 +13,11 @@ import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 const PostPage = (props :any) => {
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
-  const [post] = useState<any>({ uid: 'creating-post' });
+  const [post] = useState<any>({
+    uid: 'creating-post',
+    author: authUser.id
+  });
+
   const router = useRouter();
   const { addToast } = useToasts();
 

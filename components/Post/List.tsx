@@ -19,9 +19,10 @@ const List: React.FunctionComponent<Props> = ({ items = [], isAdmin = false }) =
   return (
     <div>
     {(items as any[]).map((item: Post) => renderItem(item))}
-    <Link href="/admin/post/new" >
-      <a> New Post </a>
-    </Link>
+    {isAdmin ? (
+      <Link href="/admin/post/new" >
+        <a className="button-round"> New Post </a>
+      </Link>) : null}
   </div>
   )
 }

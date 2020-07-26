@@ -37,6 +37,19 @@ export const getPosts = async () => {
   }
 };
 
+export const getPostsByUserId = async (id: string) => {
+  try {
+    const postRepo = await postCollection
+      .where('author', '==', id)
+      .orderBy('createdAt', 'desc').get();
+    const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id }));
+    return posts
+  } catch (error) {
+    console.log('error', error);
+    return []
+  }
+};
+
 
 export const addPost = async (postData: Post) => {
   try {
