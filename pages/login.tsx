@@ -1,10 +1,13 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
-import Link from "next/link";
-import Router from "next/router";
+import get from 'lodash/get';
+import { useRouter } from "next/router";
 import initFirebase from "utils/auth/initFirebase";
-import Footer from "components/footer";
+
+import { AuthInterface } from 'interfaces/User';
+import withAuthUser from "utils/pageWrappers/withAuthUser";
+import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
 initFirebase();
 
@@ -13,12 +16,21 @@ type Inputs = {
   password: string;
 };
 
-function Login() {
+type Props = {
+  AuthUserInfo: AuthInterface,
+}
+function Login(props: Props) {
   const initial: Inputs = {
     email: "",
     password: ""
   };
-  var firstInput: HTMLInputElement | null = null;
+  const router = useRouter();
+
+  if (typeof window !== undefined && props?.AuthUserInfo?.token) {
+    return router.push("/admin");
+  }
+
+  var firstInput: (HTMLInputElement | null) = null;
 
   const [inputs, setInputs] = useState(initial);
 
@@ -26,7 +38,7 @@ function Login() {
     e.preventDefault();
     try {
       await firebase.auth().signInWithEmailAndPassword(inputs.email, inputs.password);
-      Router.push("/admin");
+      router.push("/admin");
     } catch (error) {
       alert(error);
     }
@@ -42,7 +54,7 @@ function Login() {
 
   useEffect(() => {
     firstInput?.focus();
-  }, []); // [] = run once
+  }, []);
 
   return (
     <>
@@ -72,15 +84,16 @@ function Login() {
           <button type="submit">[ log in ]</button>
         </p>
       </form>
-      <p>
-        {"or "}
-        <Link href="/signup">
-          <a>[ create account ]</a>
-        </Link>
-      </p>
-      <Footer />
     </>
   );
 }
 
-export default Login;
+Login.getInitialProps = (ctx: any) => {
+  const token = get(ctx, 'myCustomData.AuthUserInfo.token');
+  if (token && ctx.res) {
+    ctx.res.writeHead(302, { Location: '/admin' }).end();
+  }
+  return {};
+}
+
+export default withAuthUser(withAuthUserInfo(Login));

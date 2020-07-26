@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import Link from "next/link";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import initFirebase from "utils/auth/initFirebase";
 import Footer from "components/footer";
 
@@ -20,6 +20,7 @@ function Signup() {
     password: "",
     displayName: ""
   };
+  const router = useRouter();
   var firstInput: HTMLInputElement | null = null;
 
   const [inputs, setInputs] = useState(initialValues);
@@ -34,7 +35,7 @@ function Signup() {
           displayName: inputs.displayName
         });
       }
-      Router.push("/");
+      router.push("/");
     } catch (error) {
       alert(error);
     }
