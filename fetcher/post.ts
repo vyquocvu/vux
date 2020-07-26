@@ -29,10 +29,21 @@ export const setPostById = async (id: string, postData: Post) => {
 
 export const getPosts = async () => {
   try {
-    const postRepo = await postCollection.get();
+    const postRepo = await postCollection.orderBy('createdAt', 'desc').get();
     const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id }));
     return posts
   } catch (error) {
     return []
+  }
+};
+
+
+export const addPost = async (postData: Post) => {
+  try {
+    const postDoc = await postCollection.add({...postData });
+    const post = await getPostById(postDoc.id);
+    return post;
+  } catch (error) {
+    throw error;
   }
 };

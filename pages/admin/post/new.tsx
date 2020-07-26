@@ -1,11 +1,10 @@
 
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
-import { Post } from "interfaces/Post";
-import { getPostById, setPostById } from "fetcher/post";
+import { addPost } from "fetcher/post";
 
 import PostEditor from 'components/Admin/PostEditor';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
@@ -14,7 +13,7 @@ import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 const PostPage = (props :any) => {
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
-  const [post, setPost] = useState<any>({});
+  const [post] = useState<any>({ uid: 'creating-post' });
   const router = useRouter();
   const { addToast } = useToasts();
 
@@ -24,30 +23,20 @@ const PostPage = (props :any) => {
     }
   }, []);
 
-  const fetchingPost = useCallback(async id => {
-    try {
-      const postDoc : Post = await getPostById(id) as any;
-      if (postDoc.uid) setPost({ ...postDoc });
-    } catch (error) {};
-  }, []);
-
   const onSubmit = async (postData: any) => {
-    const id = post.uid;
+    delete postData.uid;
     try {
-      await setPostById(id, postData);
-      addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
+      const newPost: any = await addPost(postData);
+      addToast('Create post successfully!', { appearance: 'success', autoDismiss: true });
+      router.push(`/admin/post/${newPost.uid}`);
     } catch (error) {
-      addToast('Save post Fail!', { appearance: 'error', autoDismiss: true });
+      addToast('Create post Fail!', { appearance: 'error', autoDismiss: true });
     }
   };
 
-  useEffect(() => {
-    router.query.id ? fetchingPost(router.query.id) : '';
-  }, [router.query]);
-
   return (typeof window !== undefined) ? (
     <div className="container">
-      <h2>Edit Post</h2>
+      <h2>Create new Post </h2>
       <PostEditor post={post} onSubmit={onSubmit} />
     </div>
   ) : null;
