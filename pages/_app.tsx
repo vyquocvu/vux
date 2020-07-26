@@ -2,7 +2,7 @@ import * as React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 import { ToastProvider } from 'react-toast-notifications'
-import config from "config";
+import config from '../config';
 
 
 import "styles/main.scss";
