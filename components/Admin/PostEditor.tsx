@@ -42,7 +42,6 @@ const imageHandler = function (this: any) {
 
 const PostEditor = (props: any) => {
   if (typeof window === 'undefined') return null;
-  const [thumbText, setThumbText] = useState('');
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
@@ -54,10 +53,10 @@ const PostEditor = (props: any) => {
   }, [props.post.uid]);
 
   const onChange = (prePost: any) => (newData: string, delta: any, source: any, editor: any) => {
-    setThumbText(editor.getText().replace(/(\r\n|\n|\r)+/gm, " "));
     setPost({
       ...prePost,
       draffContent: newData,
+      thumbText: editor.getText().replace(/(\r\n|\n|\r)+/gm, " ").substring(0, 100)
     });
   };
 
@@ -72,7 +71,6 @@ const PostEditor = (props: any) => {
     post.isPublished = isPublished || post.isPublished;
     if (isPublished) {
       post.publishContent = post.draffContent;
-      post.thumbText = thumbText;
     }
     props.onSubmit(post);
   }
@@ -117,9 +115,7 @@ const PostEditor = (props: any) => {
   //   newTags.splice(newPos, 0, tag);
   //   setPost({ ...post, tags: newTags });
   // }
-
-  if (!post.uid) return <p />;
-
+  if (!post.uid) return null;
   return (
     <div className="post-edit-page">
       <input value={post.title || ''} name="title" onChange={onUpdate} placeholder="Title" />

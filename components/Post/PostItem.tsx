@@ -9,7 +9,7 @@ type Props = {
   isAdmin: Boolean
 }
 
-const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
+const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
   <div className="data">
     <h2 className="post-title"><Link href="/post/[id]" as={`/post/${data.uid}`}><a> {data.title} </a></Link></h2>
     <div className="post-info-wrapper">
@@ -18,7 +18,7 @@ const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
       <a className="post-info when-link" href="/categories/travel"></a>
     </div>
     <div>
-      { data.thumbText }
+      { data.thumbText + '...'}
     </div>
     <div>
       {
@@ -38,23 +38,24 @@ const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
     <hr className="divider"/>
     <style jsx>{`
       .post-title a{
-        display: block;
-        transition: opacity 200ms ease;
         color: #333;
+        display: block;
+        font-size: 24px;
         text-decoration: none;
+        transition: opacity 200ms ease;
       }
       .post-info-wrapper {
+        font-size: 10px;
         margin-top: 10px;
         margin-bottom: 10px;
-        font-size: 10px;
       }
       .post-info {
-        display: inline-block;
-        margin-right: 8px;
         color: #969696;
         font-size: 12px;
+        margin-right: 8px;
         line-height: 125%;
         letter-spacing: 1px;
+        display: inline-block;
         text-transform: uppercase;
       }
       .button-round {
@@ -77,4 +78,4 @@ const ListItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
   </div>
 )
 
-export default ListItem
+export default PostItem
