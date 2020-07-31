@@ -10,7 +10,7 @@ type Props = {
 }
 
 const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
-  <div className="data">
+  <div className="list-post-item">
     <h2 className="post-title"><Link href="/post/[id]" as={`/post/${data.uid}`}><a> {data.title} </a></Link></h2>
     <div className="post-info-wrapper">
     <div className="post-info">{secondToDateString(data.updatedAt.seconds)}</div>
@@ -35,7 +35,6 @@ const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
         )
       }
     </div>
-    <hr className="divider"/>
     <style jsx>{`
       .post-title a{
         color: #333;

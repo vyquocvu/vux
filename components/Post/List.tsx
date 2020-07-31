@@ -1,7 +1,7 @@
-import * as React from 'react'
+import * as React from 'react';
 import Link from 'next/link';
-import PostItem from './PostItem'
-import { Post } from 'interfaces/Post'
+import PostItem from './PostItem';
+import { Post } from 'interfaces/Post';
 
 
 type Props = {

@@ -10,6 +10,7 @@ const config = {
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
+
 export default () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(config);
