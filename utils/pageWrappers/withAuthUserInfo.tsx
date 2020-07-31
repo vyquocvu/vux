@@ -5,9 +5,13 @@ import { get } from "lodash";
 import { AuthUserInfoContext } from "utils/auth/hooks";
 import { NextPageContext } from "next";
 
+import { AuthInterface } from 'interfaces/User';
 // Provides an AuthUserInfo prop to the composed component.
+type Props = {
+  AuthUserInfo: AuthInterface,
+}
 export default (ComposedComponent: any) => {
-  const WithAuthUserInfoComp = (props: any) => {
+  const WithAuthUserInfoComp = (props: Props) => {
     const { AuthUserInfo: AuthUserInfoFromSession, ...otherProps } = props;
     return (
       <AuthUserInfoContext.Consumer>
@@ -38,18 +42,5 @@ export default (ComposedComponent: any) => {
 
   WithAuthUserInfoComp.displayName = `WithAuthUserInfo(${ComposedComponent.displayName})`;
 
-  WithAuthUserInfoComp.propTypes = {
-    AuthUserInfo: PropTypes.shape({
-      AuthUser: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        email: PropTypes.string.isRequired,
-        emailVerified: PropTypes.bool.isRequired,
-        isAdmin: PropTypes.bool.isRequired,
-      }),
-      token: PropTypes.string
-    })
-  };
-
-  WithAuthUserInfoComp.defaultProps = {};
   return WithAuthUserInfoComp;
 };

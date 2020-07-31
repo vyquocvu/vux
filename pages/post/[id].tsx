@@ -13,20 +13,17 @@ const PostPage = (props: { post: Post }) => {
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
     <div className='post-page-view'>
-      <div>
-        <div className="header">
-          <a href="/"><span className="avatar"></span></a>
-        </div>
+      <div className="header">
+        <Link href="/">
+          <a className="back-icon-link w-inline-block" >
+            <img width="25" src="/icons/left_arrow.svg" />
+          </a>
+        </Link>
       </div>
       <div className="post-detail-container">
         <h1 className="post-title" >{ post.title }</h1>
         <p> {secondToDateString(post.updatedAt.seconds)}</p>
         <div dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
-        <p>
-          <Link href="/">
-            <a>Go home</a>
-          </Link>
-        </p>
       </div>
     </div>
   )

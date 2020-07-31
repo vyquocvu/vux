@@ -6,12 +6,17 @@ import set from "lodash/set";
 import { NextPageContext } from "next";
 import { createAuthUser, createAuthUserInfo } from "utils/auth/user";
 import { AuthUserInfoContext, useFirebaseAuth } from "utils/auth/hooks";
+import { AuthInterface } from 'interfaces/User';
 
 // Gets the authenticated user from the Firebase JS SDK, when client-side,
 // or from the request object, when server-side. Add the AuthUserInfo to
 // context.
+
+type Props = {
+  AuthUserInfo: AuthInterface,
+}
 export default (ComposedComponent: any) => {
-  const WithAuthUserComp = (props: any) => {
+  const WithAuthUserComp = (props: Props) => {
     const { AuthUserInfo, ...otherProps } = props;
 
     // We'll use the authed user from client-side auth (Firebase JS SDK)
@@ -85,19 +90,6 @@ export default (ComposedComponent: any) => {
   };
 
   WithAuthUserComp.displayName = `WithAuthUser(${ComposedComponent.displayName})`;
-
-  WithAuthUserComp.propTypes = {
-    AuthUserInfo: PropTypes.shape({
-      AuthUser: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        email: PropTypes.string.isRequired,
-        emailVerified: PropTypes.bool.isRequired
-      }),
-      token: PropTypes.string
-    }).isRequired
-  };
-
-  WithAuthUserComp.defaultProps = {};
 
   return WithAuthUserComp;
 };
