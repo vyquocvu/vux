@@ -1,6 +1,7 @@
-import * as React from 'react'
-import Link from 'next/link'
+import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+
 import config from 'config';
 
 function checkCurrentPath(pathname: string) {
@@ -8,7 +9,7 @@ function checkCurrentPath(pathname: string) {
   return router.pathname == pathname;
 }
 
-const SideBar: React.FunctionComponent = () => (
+const SideBar = () => (
   <div className="sidebar-column">
     <div className="navigation-bar w-nav" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
       <div className="w-container">
@@ -48,4 +49,6 @@ const SideBar: React.FunctionComponent = () => (
   </div>
 )
 
-export default SideBar
+SideBar.getInitialProps = () => ({});
+
+export default SideBar;
