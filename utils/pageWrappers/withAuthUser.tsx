@@ -1,6 +1,5 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from "react";
-import PropTypes from "prop-types";
 import get from "lodash/get";
 import set from "lodash/set";
 import { NextPageContext } from "next";
@@ -25,9 +24,8 @@ export default (ComposedComponent: any) => {
     // client-side auth functionality.
     const { user: firebaseUser } = useFirebaseAuth();
     const AuthUserFromClient = createAuthUser(firebaseUser);
-    const { AuthUser: AuthUserFromSession, token } = AuthUserInfo;
-    const AuthUser = AuthUserFromClient || AuthUserFromSession || null;
-
+    const { AuthUser: AuthUserFromSession, token = '' } = AuthUserInfo;
+    const AuthUser = AuthUserFromClient || AuthUserFromSession;
     return (
       <AuthUserInfoContext.Provider value={{ AuthUser, token }}>
         <ComposedComponent {...otherProps} />
@@ -47,7 +45,7 @@ export default (ComposedComponent: any) => {
       addSession(req, res);
       AuthUserInfo = createAuthUserInfo({
         firebaseUser: get(req, "session.decodedToken", null),
-        token: get(req, "session.token", null)
+        token: get(req, "session.token", '')
       });
     } else {
       // If client-side, get AuthUserInfo from stored data. We store it
