@@ -3,6 +3,7 @@ export interface AuthInterface {
     id: string,
     email: string,
     emailVerified: boolean,
+    displayName: string
   },
   token: string
 }

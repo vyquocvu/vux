@@ -37,7 +37,7 @@ export const createAuthUser = (firebaseUser: firebase.User | null) => {
  *   `createAuthUser` above).
  * @return {String} AuthUser.token - The user's encoded Firebase token.
  */
-export const createAuthUserInfo = ({ firebaseUser = null, token = null } = {}) => {
+export const createAuthUserInfo = ({ firebaseUser = null, token = '' } = {}) => {
   return {
     AuthUser: createAuthUser(firebaseUser),
     token
