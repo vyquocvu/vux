@@ -7,16 +7,18 @@ import { useToasts } from 'react-toast-notifications';
 import { Post } from "interfaces/Post";
 import { getPostById, setPostById } from "fetcher/post";
 
+import Loading from 'components/shared/Loading';
 import PostEditor from 'components/Admin/PostEditor';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
 const PostPage = (props :any) => {
+  const router = useRouter();
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
-  const [post, setPost] = useState<any>({});
-  const router = useRouter();
+  const [isLoaded, setIsLoaded] = useState(false);
   const { addToast } = useToasts();
+  const [post, setPost] = useState<any>({});
 
   useEffect(() => {
     if (typeof window !== undefined && !authUser) {
@@ -26,16 +28,24 @@ const PostPage = (props :any) => {
 
   const fetchingPost = useCallback(async id => {
     try {
-      const postDoc : Post = await getPostById(id) as any;
+      const postDoc : Post = await getPostById(id, true) as Post;
       if (postDoc.uid) setPost({ ...postDoc });
+      setIsLoaded(true);
     } catch (error) {};
   }, []);
 
-  const onSubmit = async (postData: any) => {
+  const onSubmit = async (postData: any, isPublished = false) => {
     const id = post.uid;
+    setIsLoaded(false);
+    if (isPublished) post.publishContent = post.draffContent;
     try {
       await setPostById(id, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
+      if (isPublished) {
+        setTimeout(() => router.push('/admin'), 1000);
+      } else {
+        setIsLoaded(true);
+      }
     } catch (error) {
       addToast('Save post Fail!', { appearance: 'error', autoDismiss: true });
     }
@@ -45,12 +55,25 @@ const PostPage = (props :any) => {
     router.query.id ? fetchingPost(router.query.id) : '';
   }, [router.query]);
 
-  return (typeof window !== undefined) ? (
-    <div className="container">
-      <h2>Edit Post</h2>
-      <PostEditor post={post} onSubmit={onSubmit} />
+  if (typeof window === undefined) return null;
+
+  return (
+    <div>
+      <a onClick={router.back} className="back-icon-link w-inline-block" >
+        <img width="25" src="/icons/left_arrow.svg" />
+      </a>
+      <div className="container">
+        {
+          !isLoaded ? <Loading /> : (
+            <>
+              <h2 className="post-edit-title"> Edit Post</h2>
+              <PostEditor post={post} onSubmit={onSubmit} />
+            </>
+          )
+        }
+      </div>
     </div>
-  ) : null;
+  );
 }
 
 PostPage.getInitialProps = (ctx: any) => {

@@ -7,8 +7,9 @@ import config from 'config';
 
 import "styles/main.scss";
 import "styles/layout.scss";
-import "styles/post-editor.scss";
 import "styles/post-page.scss";
+import "styles/post-editor.scss";
+import "styles/shared/loading.scss";
 import "react-quill/dist/quill.snow.css";
 
 export default class MyApp extends App {

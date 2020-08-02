@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import { useRouter } from 'next/router';
 import Sidebar from 'components/Sidebar';
 import PostList from 'components/Post/List';
+import Loading from 'components/shared/Loading';
 import MainContent from 'components/MainContent';
 
 import { Post } from "interfaces/Post";
@@ -18,6 +19,8 @@ type Props = {
 const AdminPage = (props: Props) => {
   const { AuthUserInfo } = props;
   const [posts, setPosts] = useState([] as any);
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const router = useRouter();
   const authUser = get(AuthUserInfo, "AuthUser");
 
@@ -25,6 +28,7 @@ const AdminPage = (props: Props) => {
     try {
       const docs : [Post] = await getPostsByUserId(authUser.id) as any;
       setPosts(docs);
+      setIsLoaded(true);
     } catch (error) {}
   }, []);
 
@@ -40,7 +44,9 @@ const AdminPage = (props: Props) => {
     <>
       <Sidebar />
       <MainContent>
-        <PostList items={posts} isAdmin />
+        {
+          !isLoaded ? <Loading /> : <PostList items={posts} isAdmin />
+        }
       </MainContent>
     </>
   )

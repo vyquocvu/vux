@@ -8,10 +8,16 @@ initFirebase();
 
 const db = firebase.firestore();
 const postCollection = db.collection("posts");
-export const getPostById = async (id: string) => {
+export const getPostById = async (id: string, isEdit = false) => {
   try {
     const postDoc = await postCollection.doc(id).get();
-    const post = postDoc.exists ? {...postDoc.data(), uid: postDoc.id } : {};
+    const post: any = postDoc.exists ? {
+      ...postDoc.data(),
+      uid: postDoc.id,
+    } : {};
+    if (!isEdit) {
+      delete post.draffContent;
+    }
     return post;
   } catch (error) {
     return {};
@@ -30,7 +36,7 @@ export const setPostById = async (id: string, postData: Post) => {
 export const getPosts = async () => {
   try {
     const postRepo = await postCollection.orderBy('createdAt', 'desc').get();
-    const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id }));
+    const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id, draffContent: undefined }));
     return posts
   } catch (error) {
     return []

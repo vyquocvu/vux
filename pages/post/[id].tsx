@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import Link from 'next/link';
+import { useRouter } from "next/router";
 import { NextPageContext } from 'next';
 
 import { Post } from 'interfaces/Post';
@@ -10,15 +10,15 @@ import { secondToDateString } from 'utils/common';
 
 const PostPage = (props: { post: Post }) => {
   const { post } = props;
+  const router = useRouter();
+
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
     <div className='post-page-view'>
       <div className="header">
-        <Link href="/">
-          <a className="back-icon-link w-inline-block" >
-            <img width="25" src="/icons/left_arrow.svg" />
-          </a>
-        </Link>
+        <a onClick={router.back} className="back-icon-link w-inline-block" >
+          <img width="25" src="/icons/left_arrow.svg" />
+        </a>
       </div>
       <div className="post-detail-container">
         <h1 className="post-title" >{ post.title }</h1>
