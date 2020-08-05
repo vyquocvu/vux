@@ -16,12 +16,12 @@ type Props = {
 const Index = (props: Props) => {
   const { posts } = props;
   return (
-    <>
+    <div className="list-post">
       <Sidebar />
       <MainContent>
         <PostList items={posts} />
       </MainContent>
-    </>
+    </ div>
   )
 };
 

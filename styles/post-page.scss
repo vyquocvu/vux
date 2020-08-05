@@ -1,14 +1,16 @@
 .post-page-view {
   .header {
     width: 100%;
+    padding: 30px;
     height: 100px;
   }
   .post-detail-container {
-    max-width: 780px;
+    max-width: calc(100vw - 600px);
     margin: 0 auto;
     .post-title {
       font-size: 22px;
       font-weight: bold;
+      margin-left: -4px;
       position: relative;
       padding-bottom: 5px;
 

@@ -67,9 +67,8 @@ const PostEditor = (props: any) => {
   }
 
   const onSave = function (mode: string) {
-    const isPublished = mode === 'publish';
-    post.isPublished = isPublished || post.isPublished;
-    props.onSubmit(post, isPublished);
+    post.isPublished = mode === 'publish' || post.isPublished;
+    props.onSubmit(post);
   }
 
   const modules = {

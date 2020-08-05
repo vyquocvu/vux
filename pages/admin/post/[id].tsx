@@ -34,14 +34,14 @@ const PostPage = (props :any) => {
     } catch (error) {};
   }, []);
 
-  const onSubmit = async (postData: any, isPublished = false) => {
-    const id = post.uid;
+  const onSubmit = async (postData: any) => {
+    const id = postData.uid;
     setIsLoaded(false);
-    if (isPublished) post.publishContent = post.draffContent;
+    if (postData.isPublished) postData.publishContent = postData.draffContent;
     try {
       await setPostById(id, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
-      if (isPublished) {
+      if (postData.isPublished) {
         setTimeout(() => router.push('/admin'), 1000);
       } else {
         setIsLoaded(true);

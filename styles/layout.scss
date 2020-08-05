@@ -1,7 +1,13 @@
 body {
-  font-family: 'Open Sans', sans-serif;
   margin: 0 auto;
+  font-family: 'Open Sans', sans-serif;
 }
+
+
+#__next {
+  min-height: 100vh;
+}
+
 .sidebar-column {
   top: 0px;
   left: 0px;
@@ -13,6 +19,7 @@ body {
   padding: 50px 24px;
   box-sizing: border-box;
   background-color: #fafbfc;
+  border-right: 1px solid #e1e4e8;
   font-family: 'Open Sans', sans-serif;
 
   .navigation-menu {
@@ -119,13 +126,12 @@ body {
 }
 
 .back-icon-link {
-  display: block;
   width: 100px;
+  display: block;
   img {
     width: 40px;
     height: 40px;
     padding: 4px;
-    margin: 31px;
     cursor: pointer;
     border: solid 1px;
     border-radius: 50px;
@@ -138,6 +144,10 @@ body {
   border-bottom: solid 1px #929292;
 }
 
-#__next {
-  min-height: 100vh;
+.main-content {
+  width: 75%;
+  padding: 32px;
+  height: 100vh;
+  margin-left: 25%;
+  box-sizing: border-box;
 }

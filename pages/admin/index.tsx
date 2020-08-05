@@ -41,22 +41,18 @@ const AdminPage = (props: Props) => {
   }, []);
 
   return (
-    <>
+    <div className="list-post">
       <Sidebar />
       <MainContent>
-        {
-          !isLoaded ? <Loading /> : <PostList items={posts} isAdmin />
-        }
+        { !isLoaded ? <Loading /> : <PostList items={posts} isAdmin /> }
       </MainContent>
-    </>
-  )
+    </div>
+  );
 }
 
 AdminPage.getInitialProps = (ctx: any) => {
   const token = get(ctx, 'myCustomData.AuthUserInfo.token');
-  if (!token && ctx.res) {
-    ctx.res.writeHead(302, { Location: '/login' }).end();
-  }
+  if (!token && ctx.res) ctx.res.writeHead(302, { Location: '/login' }).end();
   return {};
 }
 
