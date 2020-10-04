@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { ToastProvider } from 'react-toast-notifications'
 import config from 'config';
 
+import NextNProgress from 'components/Nprogress';
+
 
 import "styles/main.scss";
 import "styles/layout.scss";
@@ -24,6 +26,7 @@ export default class MyApp extends App {
           <title>{config.title}</title>
         </Head>
         <ToastProvider>
+          <NextNProgress />
           <Component {...pageProps} />
         </ToastProvider>
       </>
