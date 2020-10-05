@@ -1,35 +1,43 @@
 .post-edit-page {
-  margin: 40px auto;
-  max-width: 970px;
   display: flex;
+  max-width: 970px;
+  margin: 40px auto;
   flex-direction: column;
 }
 
-input[name="title"] {
+.post-edit-title {
+  display: flex;
   margin: 0 auto;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  display: block;
+  max-width: 970px;
+}
+
+input[name="title"] {
   width: 100%;
-  padding: 8px 12px;
-  margin-bottom: 10px;
+  margin: 0 auto;
+  display: block;
   font-size: 20px;
-  line-height: 1.42857143;
   color: #333333;
+  padding: 8px 12px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  line-height: 1.42857143;
+  border: 1px solid #ddd;
   background-color: #ffffff;
   border: 1px solid #cccccc;
 }
 
 .submit-save {
+  color: #ffffff;
   padding: 4px 10px;
   margin-right: 12px;
   box-shadow: 1px 1px #ccc;
-  background-color: #7fffd4;
+  background-color: #02d68f;
 }
 
 .submit-push {
-  margin-right: 12px;
+  color: #ffffff;
   padding: 4px 10px;
+  margin-right: 12px;
   box-shadow: 1px 1px #ccc;
   background-color: #7fafd4;
 }

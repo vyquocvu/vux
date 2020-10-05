@@ -1,30 +1,51 @@
 
 import React, { useEffect, useCallback, useState } from "react";
-import { useToasts } from 'react-toast-notifications'
-import { useRouter } from 'next/router'
+import get from 'lodash/get';
+import { useRouter } from 'next/router';
+import { useToasts } from 'react-toast-notifications';
 
-import PostEditor from '~components/Admin/PostEditor';
-import { getPostById, setPostById } from "../../../fetcher/post";
 import { Post } from "interfaces/Post";
+import { getPostById, setPostById } from "fetcher/post";
 
+import Loading from 'components/shared/Loading';
+import PostEditor from 'components/Admin/PostEditor';
+import withAuthUser from "utils/pageWrappers/withAuthUser";
+import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
-const PostPage = ({}) => {
-  const [post, setPost] = useState<any>({});
+const PostPage = (props :any) => {
   const router = useRouter();
+  const { AuthUserInfo } = props;
+  const authUser = get(AuthUserInfo, "AuthUser");
+  const [isLoaded, setIsLoaded] = useState(false);
   const { addToast } = useToasts();
+  const [post, setPost] = useState<any>({});
+
+  useEffect(() => {
+    if (typeof window !== undefined && !authUser) {
+      router.push("/login");
+    }
+  }, []);
 
   const fetchingPost = useCallback(async id => {
     try {
-      const postDoc : Post = await getPostById(id) as any;
+      const postDoc : Post = await getPostById(id, true) as Post;
       if (postDoc.uid) setPost({ ...postDoc });
+      setIsLoaded(true);
     } catch (error) {};
   }, []);
 
   const onSubmit = async (postData: any) => {
-    const id = post.uid;
+    const id = postData.uid;
+    setIsLoaded(false);
+    if (postData.isPublished) postData.publishContent = postData.draffContent;
     try {
       await setPostById(id, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
+      if (postData.isPublished) {
+        setTimeout(() => router.push('/admin'), 1000);
+      } else {
+        setIsLoaded(true);
+      }
     } catch (error) {
       addToast('Save post Fail!', { appearance: 'error', autoDismiss: true });
     }
@@ -34,13 +55,33 @@ const PostPage = ({}) => {
     router.query.id ? fetchingPost(router.query.id) : '';
   }, [router.query]);
 
-  return (typeof window !== undefined) ? (
+  if (typeof window === undefined) return null;
+
+  return (
     <div>
-      <PostEditor post={post} onSubmit={onSubmit} />
+      <a onClick={router.back} className="back-icon-link w-inline-block" >
+        <img width="25" src="/icons/left_arrow.svg" />
+      </a>
+      <div className="container">
+        {
+          !isLoaded ? <Loading /> : (
+            <>
+              <h2 className="post-edit-title"> Edit Post</h2>
+              <PostEditor post={post} onSubmit={onSubmit} />
+            </>
+          )
+        }
+      </div>
     </div>
-  ) : null;
+  );
 }
 
-PostPage.getInitialProps = async () => ({});
+PostPage.getInitialProps = (ctx: any) => {
+  const token = get(ctx, 'myCustomData.AuthUserInfo.token');
+  if (!token && ctx.res) {
+    ctx.res.writeHead(302, { Location: '/login' }).end();
+  }
+  return {};
+}
 
-export default PostPage;
+export default withAuthUser(withAuthUserInfo(PostPage));

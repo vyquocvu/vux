@@ -1,32 +1,29 @@
 
 import * as React from 'react';
-import Link from 'next/link';
+import { useRouter } from "next/router";
 import { NextPageContext } from 'next';
 
-import { getPostById } from "../../fetcher/post";
-import { secondToDateString } from '../../utils/common';
+import { Post } from 'interfaces/Post';
+import { getPostById } from "fetcher/post";
+import { timeFromNow } from 'utils/common';
 
-import { Post } from '../../interfaces/Post';
 
 const PostPage = (props: { post: Post }) => {
   const { post } = props;
+  const router = useRouter();
+
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
     <div className='post-page-view'>
-      <div>
-        <div className="header">
-          <a href="/"><span className="avatar"></span></a>
-        </div>
+      <div className="header">
+        <a onClick={router.back} className="back-icon-link w-inline-block" >
+          <img width="25" src="/icons/left_arrow.svg" />
+        </a>
       </div>
       <div className="post-detail-container">
         <h1 className="post-title" >{ post.title }</h1>
-        <p> {secondToDateString(post.updatedAt.seconds)}</p>
+        <p> {timeFromNow(post.updatedAt.seconds)}</p>
         <div dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
-        <p>
-          <Link href="/">
-            <a>Go home</a>
-          </Link>
-        </p>
       </div>
     </div>
   )

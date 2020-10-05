@@ -1,16 +1,21 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from "react";
-import PropTypes from "prop-types";
-import { get, set } from "lodash";
-import { AuthUserInfoContext, useFirebaseAuth } from "../auth/hooks";
-import { createAuthUser, createAuthUserInfo } from "../auth/user";
+import get from "lodash/get";
+import set from "lodash/set";
 import { NextPageContext } from "next";
+import { createAuthUser, createAuthUserInfo } from "utils/auth/user";
+import { AuthUserInfoContext, useFirebaseAuth } from "utils/auth/hooks";
+import { AuthInterface } from 'interfaces/User';
 
 // Gets the authenticated user from the Firebase JS SDK, when client-side,
 // or from the request object, when server-side. Add the AuthUserInfo to
 // context.
+
+type Props = {
+  AuthUserInfo: AuthInterface,
+}
 export default (ComposedComponent: any) => {
-  const WithAuthUserComp = (props: any) => {
+  const WithAuthUserComp = (props: Props) => {
     const { AuthUserInfo, ...otherProps } = props;
 
     // We'll use the authed user from client-side auth (Firebase JS SDK)
@@ -19,9 +24,8 @@ export default (ComposedComponent: any) => {
     // client-side auth functionality.
     const { user: firebaseUser } = useFirebaseAuth();
     const AuthUserFromClient = createAuthUser(firebaseUser);
-    const { AuthUser: AuthUserFromSession, token } = AuthUserInfo;
-    const AuthUser = AuthUserFromClient || AuthUserFromSession || null;
-
+    const { AuthUser: AuthUserFromSession, token = '' } = AuthUserInfo;
+    const AuthUser = AuthUserFromClient || AuthUserFromSession;
     return (
       <AuthUserInfoContext.Provider value={{ AuthUser, token }}>
         <ComposedComponent {...otherProps} />
@@ -41,7 +45,7 @@ export default (ComposedComponent: any) => {
       addSession(req, res);
       AuthUserInfo = createAuthUserInfo({
         firebaseUser: get(req, "session.decodedToken", null),
-        token: get(req, "session.token", null)
+        token: get(req, "session.token", '')
       });
     } else {
       // If client-side, get AuthUserInfo from stored data. We store it
@@ -84,19 +88,6 @@ export default (ComposedComponent: any) => {
   };
 
   WithAuthUserComp.displayName = `WithAuthUser(${ComposedComponent.displayName})`;
-
-  WithAuthUserComp.propTypes = {
-    AuthUserInfo: PropTypes.shape({
-      AuthUser: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        email: PropTypes.string.isRequired,
-        emailVerified: PropTypes.bool.isRequired
-      }),
-      token: PropTypes.string
-    }).isRequired
-  };
-
-  WithAuthUserComp.defaultProps = {};
 
   return WithAuthUserComp;
 };

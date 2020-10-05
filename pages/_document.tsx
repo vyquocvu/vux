@@ -3,18 +3,11 @@ import React from 'react'
 import get from 'lodash/get'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
-type Props = {
-  AuthUserInfo: {
-    AuthUser: {
-      id: string,
-      email: string,
-      emailVerified: string,
-      isAdmin: boolean,
-    },
-    token: string,
-  },
-}
+import { AuthInterface } from 'interfaces/User';
 
+type Props = {
+  AuthUserInfo: AuthInterface,
+}
 class CustomDocument extends Document<Props> {
   render() {
     const { AuthUserInfo } = this.props

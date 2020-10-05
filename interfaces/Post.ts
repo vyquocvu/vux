@@ -5,6 +5,7 @@ export interface Post {
   tags: [string];
   label?: string;
   createdAt: any;
+  author: string;
   updatedAt: any;
   thumbText: string;
   thumbImage: string;

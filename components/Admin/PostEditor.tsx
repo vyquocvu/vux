@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import dynamic from 'next/dynamic';
-import upload from '../../utils/upload';
-import { cloneDeep } from "lodash";
+import upload from 'utils/upload';
+import { Post } from "interfaces/Post";
 
 const ReactQuill = dynamic(import('react-quill'),
   { ssr: false, loading: () => <p>Loading ...</p> });
@@ -40,7 +40,6 @@ const imageHandler = function (this: any) {
   }
 }
 
-
 const PostEditor = (props: any) => {
   if (typeof window === 'undefined') return null;
   const [post, setPost] = useState({
@@ -53,12 +52,13 @@ const PostEditor = (props: any) => {
     setPost({ ...post,...props.post });
   }, [props.post.uid]);
 
-  const setContent = useCallback((prePost) => (newData: any) => {
+  const onChange = (prePost: any) => (newData: string, delta: any, source: any, editor: any) => {
     setPost({
       ...prePost,
       draffContent: newData,
+      thumbText: editor.getText().replace(/(\r\n|\n|\r)+/gm, " ").substring(0, 100)
     });
-  }, []);
+  };
 
   const onUpdate = function (event: React.FormEvent) {
     const value: string = (event.target as any).value;
@@ -67,9 +67,7 @@ const PostEditor = (props: any) => {
   }
 
   const onSave = function (mode: string) {
-    const isPublished = mode === 'publish';
-    post.isPublished = isPublished || post.isPublished;
-    if (isPublished) post.publishContent = post.draffContent;
+    post.isPublished = mode === 'publish' || post.isPublished;
     props.onSubmit(post);
   }
 
@@ -113,9 +111,7 @@ const PostEditor = (props: any) => {
   //   newTags.splice(newPos, 0, tag);
   //   setPost({ ...post, tags: newTags });
   // }
-
-  if (!post.uid) return <p />;
-
+  if (!post.uid) return null;
   return (
     <div className="post-edit-page">
       <input value={post.title || ''} name="title" onChange={onUpdate} placeholder="Title" />
@@ -126,7 +122,7 @@ const PostEditor = (props: any) => {
           modules={modules}
           value={post.draffContent || ''}
           placeholder={'Tell your story…'}
-          onChange={setContent(post)}
+          onChange={onChange(post)}
         />
       </div>
       <div className="actions">

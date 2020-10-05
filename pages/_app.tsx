@@ -2,13 +2,17 @@ import * as React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 import { ToastProvider } from 'react-toast-notifications'
-import config from "../config";
+import config from 'config';
+
+import NextNProgress from 'components/Nprogress';
 
 
-import "../styles/main.scss";
-import "../styles/layout.scss";
-import "../styles/post-editor.scss";
-import "../styles/post-page.scss";
+import "styles/main.scss";
+import "styles/layout.scss";
+import "styles/post-page.scss";
+import "styles/list-post.scss";
+import "styles/post-editor.scss";
+import "styles/shared/loading.scss";
 import "react-quill/dist/quill.snow.css";
 
 export default class MyApp extends App {
@@ -22,6 +26,7 @@ export default class MyApp extends App {
           <title>{config.title}</title>
         </Head>
         <ToastProvider>
+          <NextNProgress />
           <Component {...pageProps} />
         </ToastProvider>
       </>
