@@ -4,7 +4,7 @@ type Props = {
   children: React.ReactNode
 }
 
-const MainContent: React.FunctionComponent<Props> = ({ children }) => {
+const MainContent: React.FC<Props> = ({ children }) => {
 
   return (
     <div className="main-content">

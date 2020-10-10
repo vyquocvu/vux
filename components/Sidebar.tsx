@@ -19,7 +19,7 @@ const SideBar = () => (
         </a>
         <nav className="navigation-menu w-nav-menu" role="navigation">
           <p className="main-subheading w-hidden-medium w-hidden-small w-hidden-tiny">
-            {config.content}
+            <span dangerouslySetInnerHTML={{ __html: config.content }} />
           </p>
           <div className="divider w-hidden-medium w-hidden-small w-hidden-tiny"></div>
             {

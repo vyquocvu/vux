@@ -8,6 +8,7 @@ import NextNProgress from 'components/Nprogress';
 
 
 import "styles/main.scss";
+import "styles/about.scss";
 import "styles/layout.scss";
 import "styles/post-page.scss";
 import "styles/list-post.scss";

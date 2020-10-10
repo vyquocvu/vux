@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 const About = () => {
   const [status, setStatus] = useState('');
-  const router = useRouter();
 
   const submitForm = (ev: any) => {
     ev.preventDefault();
@@ -28,9 +26,11 @@ const About = () => {
     <>
     <div className='post-page-view'>
       <div className="header">
-        <a href="/" className="back-icon-link w-inline-block" >
-          <img width="25" src="/icons/left_arrow.svg" />
-        </a>
+        <Link href="/">
+          <a className="back-icon-link w-inline-block" >
+            <img width="25" src="/icons/left_arrow.svg" />
+          </a>
+        </Link>
       </div>
       <div className="container">
       {

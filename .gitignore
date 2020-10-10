@@ -28,8 +28,6 @@ yarn-error.log*
 .env.build
 .env
 
-config.js
-
 # functions
 
 ## Compiled JavaScript files
