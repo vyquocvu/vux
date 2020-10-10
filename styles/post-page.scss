@@ -5,8 +5,9 @@
     height: 100px;
   }
   .post-detail-container {
-    max-width: calc(100vw - 600px);
     margin: 0 auto;
+    min-width: 320px;
+    max-width: calc(100vw - 600px);
     .post-title {
       font-size: 22px;
       font-weight: bold;

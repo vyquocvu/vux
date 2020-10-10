@@ -58,10 +58,12 @@ const PostPage = (props :any) => {
   if (typeof window === undefined) return null;
 
   return (
-    <div>
-      <a onClick={router.back} className="back-icon-link w-inline-block" >
-        <img width="25" src="/icons/left_arrow.svg" />
-      </a>
+    <div className="post-page-view">
+      <div className="header">
+        <a onClick={router.back} className="back-icon-link w-inline-block" >
+          <img width="25" src="/icons/left_arrow.svg" />
+        </a>
+      </div>
       <div className="container">
         {
           !isLoaded ? <Loading /> : (
