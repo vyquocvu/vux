@@ -28,7 +28,7 @@ const About = () => {
       <div className="header">
         <Link href="/">
           <a className="back-icon-link w-inline-block" >
-            <img width="25" src="/icons/left_arrow.svg" />
+            <img width="25" src="/icons/left_arrow.svg" alt="alt" />
           </a>
         </Link>
       </div>

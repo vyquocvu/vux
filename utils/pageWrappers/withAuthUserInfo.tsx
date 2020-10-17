@@ -1,6 +1,5 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from "react";
-import PropTypes from "prop-types";
 import { get } from "lodash";
 import { AuthUserInfoContext } from "utils/auth/hooks";
 import { NextPageContext } from "next";

@@ -1,9 +1,9 @@
 export default {
-  "name": "Vũ's Notes",
-  "title": "Blog của Vũ | Vy Quốc Vũ",
+  "name": "Vuvy's Notes",
+  "title": "Note của Vũ | Vy Quốc Vũ",
   "author": "Vu Vy",
   "content": "My name is Vũ Vy, call me Ryan.</br> Ryan alway love JS bfw ♥.",
-  "avatar": "https://github.com/vyquocvu.png",
+  "avatar": "/avatar.webp",
   "pages": [
     { "path": "/", "label": "Home" },
     { "path": "/about", "label": "About" },

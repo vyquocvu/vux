@@ -1,34 +1,48 @@
 import React from 'react';
+import dynamic from "next/dynamic";
 
-import Sidebar from 'components/Sidebar';
-import PostList from 'components/Post/List';
-import MainContent from 'components/MainContent';
+import Head from "next/head";
+const Sidebar = dynamic(() => import('components/Sidebar'));
+const PostList = dynamic(() => import('components/Post/List'));
+const MainContent = dynamic(() => import('components/MainContent'));
 
-import { Post } from 'interfaces/Post';
+import { Post, PostLite } from 'interfaces/Post';
 import { getPosts } from 'fetcher/post';
 import { AuthInterface } from 'interfaces/User'
 
 type Props = {
   AuthUserInfo: AuthInterface,
-  posts: Post[]
+  posts: PostLite[] | Post[]
 }
 
 const Index = (props: Props) => {
   const { posts } = props;
   return (
-    <div className="list-post">
-      <Sidebar />
-      <MainContent>
-        <PostList items={posts} />
-      </MainContent>
-    </ div>
+    <>
+      <Head>
+        <meta name="description" content="Để ghi lại những gì đáng nhớ"/>
+      </Head>
+      <div className="list-post">
+        <Sidebar />
+        <MainContent>
+          <PostList items={posts} />
+        </MainContent>
+      </ div>
+    </>
   )
 };
 
 Index.getInitialProps = async () => {
   try {
-    const posts = await getPosts();
-    return { posts };
+    let posts = await getPosts();
+    const litePosts: any[] = posts.map((post: any) => {
+      return {
+        uid: post.uid,
+        thumbText: post.thumbText,
+        updatedAt: post.updatedAt,
+      }
+    });
+    return { posts: litePosts };
   } catch (error) {
     return {};
   }
