@@ -1,5 +1,7 @@
 const withSass = require('@zeit/next-sass');
-const withCss = require('@zeit/next-css');;
+const withCss = require('@zeit/next-css');
+const tailwindCss = require("tailwindcss");
+// const withPurgeCss = require("next-purgecss");
 require("dotenv").config();
 
 module.exports = withCss(withSass({
@@ -7,7 +9,27 @@ module.exports = withCss(withSass({
     if (!isServer) {
       config.node = { fs: "empty" };
     }
-    return config;
+
+    const rules = [{
+      test: /\.scss$/,
+      use: [
+          {
+            loader: "postcss-loader",
+            options: {
+            ident: "postcss",
+            plugins: [tailwindCss("./tailwind.config.js")]
+          }
+        },
+        { loader: "sass-loader" }
+      ]}
+    ];
+    return {
+      ...config,
+      module: {
+        ...config.module,
+        rules: [...config.module.rules, ...rules]
+      }
+    };
   },
   env: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,

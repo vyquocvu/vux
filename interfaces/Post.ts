@@ -13,3 +13,9 @@ export interface Post {
   isPublished: boolean;
   publishContent: string;
 }
+
+export interface PostLite {
+  uid: string;
+  thumbText: string;
+  updatedAt: any;
+}

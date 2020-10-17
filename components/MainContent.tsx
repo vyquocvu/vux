@@ -7,7 +7,7 @@ type Props = {
 const MainContent: React.FC<Props> = ({ children }) => {
 
   return (
-    <div className="main-content">
+    <div className="main-content sm:ml-0 md:ml-64">
       {children}
     </div>
   )

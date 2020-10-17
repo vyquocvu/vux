@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Link from 'next/link';
 import PostItem from './PostItem';
-import { Post } from 'interfaces/Post';
+import { Post, PostLite } from 'interfaces/Post';
 
 
 type Props = {
-  items: Post[],
+  items: Post[] | PostLite[],
   isAdmin?: Boolean,
 }
 

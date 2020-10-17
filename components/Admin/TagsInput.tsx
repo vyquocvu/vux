@@ -12,7 +12,7 @@ const KeyCodes = {
 
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
-export default function (props: any) {
+export default function TagsInput(props: any) {
   const { handleDelete, handleAddition , handleDrag } = props;
   return (
     <div className="tags-input">
