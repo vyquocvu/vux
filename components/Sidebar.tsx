@@ -13,9 +13,11 @@ const SideBar = () => (
   <div className="sidebar-column fixed h-screen bg-gray-200 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-8 md:pt-8">
     <div className="navigation-bar w-nav" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
       <div className="w-container">
-        <a className="logo-link w-nav-brand" href="/">
-          <img src="/avatar.webp" className="avatar rounded-full" alt="avatar" />
-          <h1 className="logo-text text-3xl">{config.name}</h1>
+        <a href="/">
+          <div className="pr-8">
+            <img src={config.avatar} className="avatar rounded-full" alt="avatar" />
+          </div>
+          <h1 className="mt-4 text-3xl text-gray-700 font-semibold font-semibold">{config.name}</h1>
         </a>
         <nav className="navigation-menu" role="navigation">
           <p className="main-subheading w-hidden-medium w-hidden-small w-hidden-tiny">
@@ -25,7 +27,7 @@ const SideBar = () => (
             {
               config.pages.map(page => (
                 <Link key={page.path} href={page.path} >
-                  <a className={ "nav-link w-nav-link" + checkCurrentPath(page.path) } >{page.label}</a>
+                  <a className={ "nav-link block " + checkCurrentPath(page.path) } >{page.label}</a>
                 </Link>
               ))
             }

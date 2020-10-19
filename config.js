@@ -3,7 +3,7 @@ export default {
   "title": "Note của Vũ | Vy Quốc Vũ",
   "author": "Vu Vy",
   "content": "My name is Vũ Vy, call me Ryan.</br> Ryan alway love JS bfw ♥.",
-  "avatar": "/avatar.webp",
+  "avatar": "/avatar.jpeg",
   "pages": [
     { "path": "/", "label": "Home" },
     { "path": "/about", "label": "About" },

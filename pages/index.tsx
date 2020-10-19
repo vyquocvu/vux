@@ -1,4 +1,5 @@
 import React from 'react';
+import useSWR from 'swr'
 import dynamic from "next/dynamic";
 
 import Head from "next/head";
@@ -6,13 +7,13 @@ const Sidebar = dynamic(() => import('components/Sidebar'));
 const PostList = dynamic(() => import('components/Post/List'));
 const MainContent = dynamic(() => import('components/MainContent'));
 
-import { Post, PostLite } from 'interfaces/Post';
+import { Post } from 'interfaces/Post';
 import { getPosts } from 'fetcher/post';
 import { AuthInterface } from 'interfaces/User'
 
 type Props = {
   AuthUserInfo: AuthInterface,
-  posts: PostLite[] | Post[]
+  posts: Post[]
 }
 
 const Index = (props: Props) => {
@@ -34,15 +35,8 @@ const Index = (props: Props) => {
 
 Index.getInitialProps = async () => {
   try {
-    let posts = await getPosts();
-    const litePosts: any[] = posts.map((post: any) => {
-      return {
-        uid: post.uid,
-        thumbText: post.thumbText,
-        updatedAt: post.updatedAt,
-      }
-    });
-    return { posts: litePosts };
+    const posts = await getPosts();
+    return { posts };
   } catch (error) {
     return {};
   }

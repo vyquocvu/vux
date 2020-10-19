@@ -36,25 +36,12 @@ body {
     margin-left: auto;
     margin-right: auto;
   }
-  .logo-link {
-    float: none;
-    display: block;
-    text-decoration: none;
-  }
-  .logo-text {
-    margin-top: 20px;
-    color: #333333;
-    font-weight: 600;
-    line-height: 2.2em;
-    margin-bottom: 0px;
-    font-family: 'Anonymous Pro', 'Open Sans', monospace, sans-serif;
-  }
 
   .nav-link {
     display: block;
     font-size: 12px;
     padding: 6px 0px;
-    color: #969696;
+    color: #333333;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-decoration: none;
@@ -62,10 +49,7 @@ body {
     transition: color 200ms ease;
     -webkit-transition: color 200ms ease;
   }
-  .w-nav-link {
-    font-size: 12px;
-    font-weight: 600;
-  }
+
   .divider {
     width: 50%;
     height: 1px;
