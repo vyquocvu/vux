@@ -33,10 +33,21 @@ export const setPostById = async (id: string, postData: Post) => {
   }
 };
 
-export const getPosts = async () => {
+export const getPosts = async (isServer = false) => {
   try {
     const postRepo = await postCollection.orderBy('createdAt', 'desc').get();
-    const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id, draffContent: undefined }));
+    const posts = postRepo.docs.map((sp) => {
+      const data = sp.data();
+      if (isServer) {
+        return {
+          uid: sp.id,
+          thumbText: data.thumbText,
+          updatedAt: data.updatedAt,
+        }
+      } else {
+        return { ...data, uid: sp.id }
+      }
+    });
     return posts
   } catch (error) {
     return []
