@@ -1,5 +1,4 @@
 import React from 'react';
-import useSWR from 'swr'
 import dynamic from "next/dynamic";
 
 import Head from "next/head";
