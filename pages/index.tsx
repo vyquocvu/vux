@@ -7,8 +7,8 @@ const PostList = dynamic(() => import('components/Post/List'));
 const MainContent = dynamic(() => import('components/MainContent'));
 
 import { Post } from 'interfaces/Post';
-import { getPosts } from 'fetcher/post';
 import { AuthInterface } from 'interfaces/User'
+import { getPublishedPosts } from 'fetcher/post';
 
 type Props = {
   AuthUserInfo: AuthInterface,
@@ -34,7 +34,7 @@ const Index = (props: Props) => {
 
 Index.getInitialProps = async () => {
   try {
-    const posts = await getPosts();
+    const posts = await getPublishedPosts();
     return { posts };
   } catch (error) {
     return {};

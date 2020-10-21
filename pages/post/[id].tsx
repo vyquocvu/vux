@@ -16,7 +16,7 @@ const PostPage = (props: { post: Post }) => {
   return (
     <div className='post-page-view'>
       <div className="header">
-        <a onClick={router.back} className="back-icon-link w-inline-block" >
+        <a onClick={router.back} className="" >
           <img width="25" src="/icons/left_arrow.svg" alt="left" />
         </a>
       </div>

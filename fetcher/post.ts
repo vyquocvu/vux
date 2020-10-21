@@ -33,9 +33,10 @@ export const setPostById = async (id: string, postData: Post) => {
   }
 };
 
-export const getPosts = async (isServer = false) => {
+export const getPublishedPosts = async (isServer = false) => {
   try {
-    const postRepo = await postCollection.orderBy('createdAt', 'desc').get();
+    const postRepo = await postCollection
+    .where('isPublished', '==', true).get();
     const posts = postRepo.docs.map((sp) => {
       const data = sp.data();
       if (isServer) {
@@ -50,6 +51,7 @@ export const getPosts = async (isServer = false) => {
     });
     return posts
   } catch (error) {
+    console.log(error);
     return []
   }
 };
