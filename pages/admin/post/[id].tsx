@@ -1,6 +1,7 @@
 
 import React, { useEffect, useCallback, useState } from "react";
 import get from 'lodash/get';
+import Link from "next/link";
 import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
@@ -35,12 +36,14 @@ const PostPage = (props :any) => {
   }, []);
 
   const onSubmit = async (postData: any) => {
-    const id = postData.uid;
-    setIsLoaded(false);
-    if (postData.isPublished) postData.publishContent = postData.draffContent;
     try {
-      await setPostById(id, postData);
+      setIsLoaded(false);
+      if (postData.isPublished) {
+        postData.publishContent = postData.draffContent;
+      }
+      await setPostById(postData.uid, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
+      setPost({ ...post, ...postData });
       if (postData.isPublished) {
         setTimeout(() => router.push('/admin'), 1000);
       } else {
@@ -60,9 +63,11 @@ const PostPage = (props :any) => {
   return (
     <div className="post-page-view">
       <div className="header">
-        <a onClick={router.back} className="back-icon-link w-inline-block" >
-          <img width="25" src="/icons/left_arrow.svg" alt="left" />
-        </a>
+        <Link href="/admin" >
+          <a className="back-icon-link w-inline-block" >
+            <img width="25" src="/icons/left_arrow.svg" alt="left" />
+          </a>
+        </Link>
       </div>
       <div className="container">
         {
