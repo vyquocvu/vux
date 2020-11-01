@@ -39,7 +39,7 @@ const PostPage = (props :any) => {
   };
 
   return (typeof window !== undefined) ? (
-    <div className="container">
+    <div className="m-auto py-6 px-4">
       <h2>Create new Post </h2>
       <PostEditor post={post} onSubmit={onSubmit} />
     </div>

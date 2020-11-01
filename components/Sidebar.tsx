@@ -1,52 +1,44 @@
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import config from 'config';
 
-function checkCurrentPath(pathname: string) {
-  const router = useRouter();
-  return router.pathname == pathname;
-}
-
 const SideBar = () => (
-  <div className="sidebar-column fixed h-screen bg-gray-200 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-8 md:pt-8">
-    <div className="navigation-bar w-nav" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
-      <div className="w-container">
+  <div className="fixed h-screen bg-gray-200 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-6 md:pt-8">
+    <div className="relative" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
+      <div className="">
         <a href="/">
           <div className="pr-8">
-            <img src={config.avatar} className="avatar rounded-full" alt="avatar" />
+            <Image width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
           </div>
           <h1 className="mt-4 text-3xl text-gray-700 font-semibold font-semibold">{config.name}</h1>
         </a>
-        <nav className="navigation-menu" role="navigation">
-          <p className="main-subheading w-hidden-medium w-hidden-small w-hidden-tiny">
+        <nav className="" role="navigation">
+          <p className="block text-sm my-5 leading-6">
             <span dangerouslySetInnerHTML={{ __html: config.content }} />
           </p>
-          <div className="divider w-hidden-medium w-hidden-small w-hidden-tiny"></div>
+          <div className="w-1/2 my-5 border-b border-gray-700"></div>
             {
               config.pages.map(page => (
                 <Link key={page.path} href={page.path} >
-                  <a className={ "nav-link block " + checkCurrentPath(page.path) } >{page.label}</a>
+                  <a className={ "text-sm py-1 text-gray-800 tracking-wide font-semibold block uppercase"} >{page.label}</a>
                 </Link>
               ))
             }
-          <div className="divider"/>
-          <div className="social-link-group flex">
+          <div className="w-1/2 my-5 border-b border-gray-700"/>
+          <div className="flex">
             {
               config.socials.map(media => (
-                <a key={media.icon} href={media.url} className="social-icon-link w-inline-block" >
-                  <img width="25" src={media.icon} alt="media" />
+                <a key={media.icon} href={media.url} className="w-10 opacity-75" >
+                  <Image height={24} width={25} src={media.icon} alt="media" />
                 </a>
               ))
             }
           </div>
         </nav>
-        <div className="menu-button w-nav-button">
-          <div className="w-icon-nav-menu"/>
-        </div>
       </div>
-      <div className="w-nav-overlay" data-wf-ignore=""/>
     </div>
   </div>
 )

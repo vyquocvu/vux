@@ -2,6 +2,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import get from 'lodash/get';
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
@@ -62,14 +63,14 @@ const PostPage = (props :any) => {
 
   return (
     <div className="post-page-view">
-      <div className="header">
+      <div className="w-full p-6 h-24">
         <Link href="/admin" >
-          <a className="back-icon-link w-inline-block" >
-            <img width="25" src="/icons/left_arrow.svg" alt="left" />
+          <a className="border-solid border border-black rounded-full inline-block cursor-pointer" >
+            <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
           </a>
         </Link>
       </div>
-      <div className="container">
+      <div className="m-auto py-6 px-4">
         {
           !isLoaded ? <Loading /> : (
             <>
