@@ -1,5 +1,6 @@
 
 import * as React from 'react';
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { NextPageContext } from 'next';
 
@@ -15,16 +16,26 @@ const PostPage = (props: { post: Post }) => {
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
     <div className='post-page-view'>
-      <div className="header">
-        <a onClick={router.back} className="" >
-          <img width="25" src="/icons/left_arrow.svg" alt="left" />
+      <div className="w-full p-6 h-24">
+        <a onClick={router.back} className="border-solid border border-black rounded-full inline-block cursor-pointer" >
+          <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
         </a>
       </div>
-      <div className="post-detail-container">
-        <h1 className="post-title" >{ post.title }</h1>
+      <div className="max-w-2xl max-w-xs px-6 m-auto">
+        <h1 className="post-title text-2xl font-bold -ml-1 pb-1"
+          >{ post.title }</h1>
         <p> {timeFromNow(post.updatedAt.seconds)}</p>
         <div dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
       </div>
+      <style jsx >{`
+        .post-title::before {
+          content: "#";
+          color: #CCC;
+          margin-right: 8px;
+          margin-left: -20px;
+          font-weight: normal;
+        }
+    `}</style>
     </div>
   )
 }

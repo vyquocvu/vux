@@ -14,7 +14,7 @@ import { AuthInterface } from 'interfaces/User';
 type Props = {
   AuthUserInfo: AuthInterface,
 }
-export default (ComposedComponent: any) => {
+const withAuthUser = (ComposedComponent: any) => {
   const WithAuthUserComp = (props: Props) => {
     const { AuthUserInfo, ...otherProps } = props;
 
@@ -91,3 +91,5 @@ export default (ComposedComponent: any) => {
 
   return WithAuthUserComp;
 };
+
+export default withAuthUser;

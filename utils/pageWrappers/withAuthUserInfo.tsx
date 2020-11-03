@@ -9,7 +9,7 @@ import { AuthInterface } from 'interfaces/User';
 type Props = {
   AuthUserInfo: AuthInterface,
 }
-export default (ComposedComponent: any) => {
+const withAuthUserInfo = (ComposedComponent: any) => {
   const WithAuthUserInfoComp = (props: Props) => {
     const { AuthUserInfo: AuthUserInfoFromSession, ...otherProps } = props;
     return (
@@ -43,3 +43,5 @@ export default (ComposedComponent: any) => {
 
   return WithAuthUserInfoComp;
 };
+
+export default withAuthUserInfo;

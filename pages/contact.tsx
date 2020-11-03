@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const About = () => {
   const [status, setStatus] = useState('');
@@ -24,39 +25,39 @@ const About = () => {
   }
   return (
     <>
-    <div className='post-page-view'>
-      <div className="header">
-        <Link href="/">
-          <a className="back-icon-link w-inline-block" >
-            <img width="25" src="/icons/left_arrow.svg" alt="alt" />
-          </a>
-        </Link>
+      <div className='post-page-view'>
+        <div className="w-full p-6 h-24">
+          <Link href="/">
+            <a className="border-solid border border-black rounded-full inline-block" >
+              <Image height={40} width={40} src="/icons/left_arrow.svg" alt="alt" />
+            </a>
+          </Link>
+        </div>
+        <div className="m-auto py-6 px-4 w-128">
+        {
+          status === "SUCCESS" ? (
+            <h3>
+              <span>Submition has been successful!</span>
+            </h3>
+            ) : (
+            <form
+              onSubmit={submitForm}
+              action="https://formspree.io/f/xvovgjzr"
+              method="POST"
+            >
+              <h3> Leave me a message </h3>
+              <label htmlFor="name">Your Name: </label>
+              <input type="text" id="name" name="name" placeholder="Your name.." />
+              <label htmlFor="email" >Email:</label>
+              <input type="email" id="email" name="email" />
+              <label htmlFor="message">Message: </label>
+              <textarea id="message" name="message" placeholder="Write something.." style={{height: '100px'}}></textarea>
+              {status === "SUCCESS" ? <p>Thanks!</p> : <button type="submit" >Submit</button>}
+              {status === "ERROR" && <p>Ooops! There was an error.</p>}
+            </form>
+          )
+        }
       </div>
-      <div className="container">
-      {
-        status === "SUCCESS" ? (
-          <h3>
-            <span>Submition has been successful!</span>
-          </h3>
-          ) : (
-          <form
-            onSubmit={submitForm}
-            action="https://formspree.io/f/xvovgjzr"
-            method="POST"
-          >
-            <h3> Leave me a message </h3>
-            <label htmlFor="name">Your Name: </label>
-            <input type="text" id="name" name="name" placeholder="Your name.." />
-            <label htmlFor="email" >Email:</label>
-            <input type="email" id="email" name="email" />
-            <label htmlFor="message">Message: </label>
-            <textarea id="message" name="message" placeholder="Write something.." style={{height: '100px'}}></textarea>
-            {status === "SUCCESS" ? <p>Thanks!</p> : <button type="submit" >Submit</button>}
-            {status === "ERROR" && <p>Ooops! There was an error.</p>}
-          </form>
-        )
-      }
-    </div>
     </div>
     <style jsx >{`
       /* Style inputs with type="text", select elements and textareas */
@@ -86,13 +87,6 @@ const About = () => {
         background-color: #45a049;
       }
 
-      /* Add a background color and some padding around the form */
-      .container {
-        width: 40%;
-        padding: 20px;
-        min-width: 400px;
-        border-radius: 5px;
-      }
     `}</style>
     </>
   );

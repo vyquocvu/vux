@@ -18,18 +18,14 @@ const NextNProgress = dynamic(
 
 
 import "styles/main.scss";
-import "styles/layout.scss";
-import "styles/post-page.scss";
-import "styles/list-post.scss";
-import "styles/post-editor.scss";
 import "styles/shared/loading.scss";
 import "react-quill/dist/quill.snow.css";
 
-export default class MyApp extends App {
+class MyApp extends App {
   public render() {
     const { Component, pageProps } = this.props;
     return (
-      <>
+      <div className="h-screen">
         <Head>
           <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet" />
           <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
@@ -40,7 +36,8 @@ export default class MyApp extends App {
           <NextNProgress />
           <Component {...pageProps} />
         </ToastProvider>
-      </>
+      </div>
     )
   }
 }
+export default MyApp;

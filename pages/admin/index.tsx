@@ -41,7 +41,7 @@ const AdminPage = (props: Props) => {
   }, []);
 
   return (
-    <div className="list-post">
+    <div className="">
       <Sidebar />
       <MainContent>
         { !isLoaded ? <Loading /> : <PostList items={posts} isAdmin /> }

@@ -22,7 +22,7 @@ const Index = (props: Props) => {
       <Head>
         <meta name="description" content="Để ghi lại những gì đáng nhớ"/>
       </Head>
-      <div className="list-post">
+      <div className="">
         <Sidebar />
         <MainContent>
           <PostList items={posts} />
