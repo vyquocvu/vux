@@ -131,8 +131,8 @@ const PostEditor = (props: any) => {
         />
       </div>
       <div className="actions">
-        <button className='bg-green-500	 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
-        <button className='bg-blue-500	 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('publish')}> Publish </button>
+        <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
+        <button className='bg-blue-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('publish')}> Publish </button>
       </div>
     </div>
   );
