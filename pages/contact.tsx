@@ -26,14 +26,14 @@ const About = () => {
   return (
     <>
       <div className='post-page-view'>
-        <div className="header w-full">
+        <div className="w-full p-6 h-24">
           <Link href="/">
             <a className="border-solid border border-black rounded-full inline-block" >
               <Image height={40} width={40} src="/icons/left_arrow.svg" alt="alt" />
             </a>
           </Link>
         </div>
-        <div className="m-auto py-6 px-4">
+        <div className="m-auto py-6 px-4 w-128">
         {
           status === "SUCCESS" ? (
             <h3>
@@ -87,13 +87,6 @@ const About = () => {
         background-color: #45a049;
       }
 
-      /* Add a background color and some padding around the form */
-      .container {
-        width: 40%;
-        padding: 20px;
-        min-width: 400px;
-        border-radius: 5px;
-      }
     `}</style>
     </>
   );

@@ -12,8 +12,9 @@ type Props = {
 
 const PostLink = (isAdmin: boolean, id: string) => (
     <Link href={`${isAdmin ? '/admin' : ''}/post/[id]`} as={`${isAdmin ? '/admin' : ''}/post/${id}`}>
-    <a className="text-gray-900 text-sm text-sm my-2 px-3 py-2 rounded-full inline-block border border-gray-500">
-    {isAdmin ? 'Edit' : 'Read more'} → </a>
+      <a className="text-gray-900 text-sm text-sm my-2 px-3 py-2 rounded-full inline-block border border-gray-500">
+        {isAdmin ? 'Edit' : 'Read more'} →
+      </a>
     </Link>
 );
 

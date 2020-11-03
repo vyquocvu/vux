@@ -21,11 +21,21 @@ const PostPage = (props: { post: Post }) => {
           <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
         </a>
       </div>
-      <div className="post-detail-container">
-        <h1 className="post-title" >{ post.title }</h1>
+      <div className="max-w-2xl max-w-xs px-6 m-auto">
+        <h1 className="post-title text-2xl font-bold -ml-1 pb-1"
+          >{ post.title }</h1>
         <p> {timeFromNow(post.updatedAt.seconds)}</p>
         <div dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
       </div>
+      <style jsx >{`
+        .post-title::before {
+          content: "#";
+          color: #CCC;
+          margin-right: 8px;
+          margin-left: -20px;
+          font-weight: normal;
+        }
+    `}</style>
     </div>
   )
 }

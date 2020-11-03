@@ -113,9 +113,14 @@ const PostEditor = (props: any) => {
   // }
   if (!post.uid) return null;
   return (
-    <div className="post-edit-page">
-      <input value={post.title || ''} name="title" onChange={onUpdate} placeholder="Title" />
-      <div className="quill-area">
+    <div className="flex w-9/12 my-10 mx-auto flex-col">
+      <input
+        value={post.title || ''}
+        name="title" onChange={onUpdate}
+        placeholder="Title"
+        className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400"
+      />
+      <div className="mb-3">
         <ReactQuill
           theme="snow"
           formats={formats}
@@ -126,8 +131,8 @@ const PostEditor = (props: any) => {
         />
       </div>
       <div className="actions">
-        <button className='submit-save' onClick={() => onSave('draft')}> Save Draft </button>
-        <button className='submit-push' onClick={() => onSave('publish')}> Publish </button>
+        <button className='bg-green-500	 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
+        <button className='bg-blue-500	 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('publish')}> Publish </button>
       </div>
     </div>
   );

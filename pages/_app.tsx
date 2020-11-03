@@ -18,13 +18,10 @@ const NextNProgress = dynamic(
 
 
 import "styles/main.scss";
-import "styles/layout.scss";
-import "styles/post-page.scss";
-import "styles/post-editor.scss";
 import "styles/shared/loading.scss";
 import "react-quill/dist/quill.snow.css";
 
-export default class MyApp extends App {
+class MyApp extends App {
   public render() {
     const { Component, pageProps } = this.props;
     return (
@@ -43,3 +40,4 @@ export default class MyApp extends App {
     )
   }
 }
+export default MyApp;
