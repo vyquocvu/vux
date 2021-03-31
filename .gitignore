@@ -45,3 +45,4 @@ serviceAccount*
 /functions/serviceAccount-production.json
 .vercel
 .firebaserc
+.vscode
