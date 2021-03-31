@@ -11,13 +11,10 @@ const postCollection = db.collection("posts");
 export const getPostById = async (id: string, isEdit = false) => {
   try {
     const postDoc = await postCollection.doc(id).get();
-    const post: any = postDoc.exists ? {
-      ...postDoc.data(),
-      uid: postDoc.id,
-    } : {};
-    if (!isEdit) {
-      delete post.draffContent;
-    }
+    const post: any = postDoc.exists ?
+      { ...postDoc.data(), uid: postDoc.id } : {};
+    if (!isEdit) delete post.draffContent;
+
     return post;
   } catch (error) {
     return {};
@@ -36,17 +33,14 @@ export const setPostById = async (id: string, postData: Post) => {
 export const getPublishedPosts = async (isServer = false) => {
   try {
     const postRepo = await postCollection
-    .where('isPublished', '==', true).get();
-    const posts = postRepo.docs.map((sp) => {
+      .where('isPublished', '==', true).get();
+    const posts = postRepo.docs.map((sp: any) => {
       const data = sp.data();
-      if (isServer) {
-        return {
-          uid: sp.id,
-          thumbText: data.thumbText,
-          updatedAt: data.updatedAt,
-        }
-      } else {
-        return { ...data, uid: sp.id }
+      if (!isServer) return { ...data, uid: sp.id };
+      return {
+        uid: sp.id,
+        thumbText: data.thumbText,
+        updatedAt: data.updatedAt,
       }
     });
     return posts
@@ -61,7 +55,7 @@ export const getPostsByUserId = async (id: string) => {
     const postRepo = await postCollection
       .where('author', '==', id)
       .orderBy('createdAt', 'desc').get();
-    const posts = postRepo.docs.map((sp) => ({...sp.data(), uid: sp.id }));
+    const posts = postRepo.docs.map((sp: any) => ({...sp.data(), uid: sp.id }));
     return posts
   } catch (error) {
     console.log('error', error);
