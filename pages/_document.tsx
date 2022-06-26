@@ -1,6 +1,5 @@
-/* eslint react/no-danger: 0 */
-import React from 'react'
-import get from 'lodash/get'
+import React from 'react';
+import get from 'lodash/get';
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 import { AuthInterface } from 'interfaces/User';
@@ -21,6 +20,10 @@ class CustomDocument extends Document<Props> {
               __html: JSON.stringify(AuthUserInfo, null, 2),
             }}
           />
+          <meta name="google-site-verification" content="_vqnisYcxdK3w-UCYbVTaIP9lL_k29CFbUm7z8nSmmI" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet" />
         </Head>
         <body>
           <Main />
