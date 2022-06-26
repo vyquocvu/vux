@@ -65,7 +65,7 @@ const PostPage = (props :any) => {
     <div className="post-page-view">
       <div className="w-full p-6 h-24">
         <Link href="/admin" >
-          <a className="border-solid border border-black rounded-full inline-block cursor-pointer" >
+          <a className="border-solid border border-black rounded-full inline-block cursor-pointer w-10 h-10" >
             <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
           </a>
         </Link>

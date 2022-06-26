@@ -5,12 +5,6 @@ import dynamic from 'next/dynamic';
 import config from 'config';
 
 import { ToastProvider } from 'react-toast-notifications';
-// const ToastProvider = dynamic(
-//   import('react-toast-notifications')
-//     .then(({ ToastProvider }) => ToastProvider) as any,
-//   { ssr: false }
-// );
-
 const NextNProgress = dynamic(
   () => import('components/Nprogress'),
   { ssr: false }
@@ -27,10 +21,8 @@ class MyApp extends App {
     return (
       <div className="h-screen">
         <Head>
-          <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet" />
-          <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>{config.title}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{config.title}</title>
         </Head>
         <ToastProvider>
           <NextNProgress />

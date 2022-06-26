@@ -1,8 +1,7 @@
 const withSass = require('@zeit/next-sass');
 const withCss = require('@zeit/next-css');
 const tailwindCss = require("tailwindcss");
-// const withPurgeCss = require("next-purgecss");
-require("dotenv").config();
+require("dotenv").config('.env');
 
 module.exports = withCss(withSass({
   webpack: (config, { isServer }) => {
@@ -28,7 +27,7 @@ module.exports = withCss(withSass({
       module: {
         ...config.module,
         rules: [...config.module.rules, ...rules]
-      }
+      },
     };
   },
   env: {
@@ -38,5 +37,8 @@ module.exports = withCss(withSass({
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY
-  }
+  },
+  images: {
+    domains: ['avatars.githubusercontent.com'],
+  },
 }));
