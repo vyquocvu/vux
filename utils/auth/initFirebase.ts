@@ -1,6 +1,5 @@
 import firebase from "firebase/app";
 require('firebase/storage');
-require("dotenv").config();
 
 const config = {
   apiKey: process.env.FIREBASE_API_KEY,

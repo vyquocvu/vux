@@ -6,6 +6,7 @@ const Sidebar = dynamic(() => import('components/Sidebar'));
 const PostList = dynamic(() => import('components/Post/List'));
 const MainContent = dynamic(() => import('components/MainContent'));
 
+import config from 'config';
 import { Post } from 'interfaces/Post';
 import { AuthInterface } from 'interfaces/User'
 import { getPublishedPosts } from 'fetcher/post';
@@ -20,7 +21,13 @@ const Index = (props: Props) => {
   return (
     <>
       <Head>
-        <meta name="description" content="Để ghi lại những gì đáng nhớ"/>
+        <meta name="author" content={config.author} />
+        <meta name="keywords" content={config.keywords} />
+        <meta name="description" content={config.description}/>
+
+        <meta name="og:title" content={config.title}/>
+        <meta name="og:image" content={config.avatar}/>
+        <meta name="og:description" content={config.description}/>
       </Head>
       <div className="">
         <Sidebar />

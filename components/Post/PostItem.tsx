@@ -21,7 +21,7 @@ const PostLink = (isAdmin: boolean, id: string) => (
 const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => (
   <div className="pt-3 px-2 border-b border-b-solid">
     <h2 className="inline-block">
-      <Link href="/post/[id]" as={`/post/${data.uid}`}>
+      <Link href="/post/[id]" as={`/post/${data.title.replace(/ /g, '-')}.${data.uid}`}>
         <a className="text-gray-900 block text-2xl -ml-1 transition-opacity duration-200 ease-in-out"> {data.title} </a>
       </Link>
     </h2>
