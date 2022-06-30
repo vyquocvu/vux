@@ -9,8 +9,6 @@ type Props = {
   isAdmin?: boolean,
 }
 
-
-
 const List: React.FunctionComponent<Props> = ({ items = [], isAdmin = false }) => {
   const renderItem = (item: Post) => {
     if (!item.uid) return '';

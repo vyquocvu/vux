@@ -2,9 +2,6 @@ import { NextApiResponse } from "next";
 import { verifyIdToken } from "utils/auth/firebaseAdmin";
 import commonMiddleware from "utils/middleware/commonMiddleware";
 
-require("dotenv").config();
-
-
 // req type: CookieSession?
 const handler = async (req: any, res: NextApiResponse) => {
   if (!req.body) {
