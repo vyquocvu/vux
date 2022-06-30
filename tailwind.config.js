@@ -1,3 +1,5 @@
+/** @type {import('tailwindcss').Config} */
+
 module.exports = {
   theme: {
     screens: {
@@ -35,4 +37,5 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}'
   ],
+  plugins: [],
 }
