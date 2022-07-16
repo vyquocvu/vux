@@ -43,9 +43,8 @@ export const getPublishedPosts = async (isServer = false) => {
         updatedAt: data.updatedAt,
       }
     });
-    return posts
+    return posts;
   } catch (error) {
-    console.log(error);
     return []
   }
 };

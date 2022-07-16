@@ -10,4 +10,16 @@ module.exports = {
   images: {
     domains: ['avatars.githubusercontent.com'],
   },
+  experimental: {
+    images: {
+      unoptimized: true,
+    },
+  },
+  exportPathMap: () => ({
+    "/": { page: "/" },
+    "/about": { page: "/about" },
+    "/contact": { page: "/contact" },
+    "/login": { page: "/login" },
+    "/signup": { page: "/signup" },
+  }),
 };

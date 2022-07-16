@@ -19,7 +19,7 @@ const List: React.FunctionComponent<Props> = ({ items = [], isAdmin = false }) =
     {(items as any[]).map((item: Post) => renderItem(item))}
     {isAdmin ? (
       <Link href="/admin/post/new" >
-        <a className="text-gray-900 text-sm text-sm my-2 px-3 py-2 rounded-full inline-block border border-gray-500"> New Post </a>
+        <a className="text-gray-900 text-sm my-2 px-3 py-2 rounded-full inline-block border border-gray-500"> New Post </a>
       </Link>) : null}
   </div>
   )

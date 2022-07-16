@@ -1,13 +1,15 @@
 
 import * as React from 'react';
+import Link from 'next/link';
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { NextPageContext } from 'next';
 
-import { Post } from 'interfaces/Post';
-import { getPostById } from "fetcher/post";
-import { timeFromNow } from 'utils/common';
 import Sidebar from 'components/Sidebar';
+import { Post } from 'interfaces/Post';
+import { timeFromNow } from 'utils/common';
+import { getPostById } from "fetcher/post";
+
 
 
 const PostPage = (props: { post: Post }) => {
@@ -21,15 +23,17 @@ const PostPage = (props: { post: Post }) => {
         <Sidebar />
       </div>
       <div className="mx-4">
-        <div className="w-full py-6 h-24">
-          <a onClick={router.back} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
-            <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
-          </a>
+        <div className="w-full py-6 h-24 ">
+          <Link href="/" >
+            <a className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+              <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
+            </a>
+          </Link>
         </div>
         <h1 className="post-title text-2xl font-bold ml-4 pb-1"
           >{ post.title }</h1>
         <p> {timeFromNow(post.updatedAt.seconds)}</p>
-        <div dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+        <div className="pb-5" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
       </div>
       <style >{`
         .post-title::before {
