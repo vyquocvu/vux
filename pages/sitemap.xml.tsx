@@ -1,6 +1,7 @@
-import fs from "fs";
 import { NextPageContext } from "next";
 import { getPublishedPosts } from "fetcher/post";
+
+import { friendlyStr } from "utils/common";
 
 const Sitemap = () => {};
 
@@ -13,25 +14,8 @@ export const getServerSideProps = async ({ res }: NextPageContext ) => {
   }[process.env.NODE_ENV];
 
   const posts = await getPublishedPosts();
-  const dynamicRoutes = posts.map(post => `${baseUrl}/post/${post?.title?.replace(/ /g, '-').toLocaleLowerCase()}.${post?.uid}`)
-
-  const staticPages = fs
-    .readdirSync("pages")
-    .filter((staticPage) => {
-      return ![
-        "_app.tsx",
-        "_document.tsx",
-        "_error.tsx",
-        "sitemap.xml.tsx",
-        "post",
-        "admin",
-        "api"
-      ].includes(staticPage);
-    })
-    .map((staticPagePath) => {
-      return `${baseUrl}/${staticPagePath.replace(".tsx", "").replace("index", "")}`;
-    });
-
+  const dynamicRoutes = posts.map(post => `${baseUrl}/post/${friendlyStr(post.title)}.${post?.uid}`)
+  const staticPages = ['/', '/contact', '/about', '/sitemap'].map((path) => `${baseUrl}${path}`);
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

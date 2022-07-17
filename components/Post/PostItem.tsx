@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 
-import { timeFromNow } from 'utils/common';
+import { timeFromNow, friendlyStr } from 'utils/common';
 import { Post } from 'interfaces/Post';
 
 type Props = {
@@ -19,7 +19,7 @@ const PostLink = (isAdmin: boolean, id: string) => (
 );
 
 const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => {
-  const slug = `${data.title.replace(/ /g, '-').toLocaleLowerCase()}.${data.uid}`;
+  const slug = `${friendlyStr(data.title)}.${data.uid}`;
   return (
     <div className="pt-3 px-2 border-b border-b-solid">
       <h2 className="inline-block">
