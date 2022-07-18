@@ -2,6 +2,9 @@
 
 This is a really simple project that shows the usage of Next.js with TypeScript.
 
+
+![Screenshot](/public//git/screenshot.png)
+
 ## Deploy your own
 
 Deploy the example using [ZEIT Now](https://zeit.co/now):
@@ -15,7 +18,7 @@ This example shows how to integrate the TypeScript type system into Next.js. Sin
 npm install --save-dev typescript
 ```
 
-To enable TypeScript's features, we install the type declaratons for React and Node.
+To enable TypeScript's features, we install the type declarations for React and Node.
 
 ```
 npm install --save-dev @types/react @types/react-dom @types/node
