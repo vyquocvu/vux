@@ -12,7 +12,7 @@ module.exports = {
   },
   experimental: {
     images: {
-      unoptimized: true,
+      // unoptimized: true,
     },
   },
   exportPathMap: () => ({
