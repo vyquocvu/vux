@@ -7,12 +7,14 @@ const SideBar = () => (
   <div className="fixed h-screen bg-gray-200 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-6 md:pt-8">
     <div className="relative" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
       <div className="">
-        <a href="/">
-          <div className="pr-8">
-            <Image width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
-          </div>
-          <h1 className="mt-4 text-3xl text-gray-700 font-semibold font-semibold">{config.name}</h1>
-        </a>
+        <Link href="/" passHref>
+          <a>
+            <div className="pr-8">
+              <Image width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
+            </div>
+            <h1 className="mt-4 text-3xl text-gray-700 font-semibold">{config.name}</h1>
+          </a>
+        </Link>
         <nav className="" role="navigation">
           <p className="block text-sm my-5 leading-6">
             <span dangerouslySetInnerHTML={{ __html: config.content }} />

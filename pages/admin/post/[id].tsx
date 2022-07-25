@@ -26,7 +26,7 @@ const PostPage = (props :any) => {
     if (typeof window !== undefined && !authUser) {
       router.push("/login");
     }
-  }, []);
+  }, [authUser, router]);
 
   const fetchingPost = useCallback(async id => {
     try {
@@ -57,7 +57,7 @@ const PostPage = (props :any) => {
 
   useEffect(() => {
     router.query.id ? fetchingPost(router.query.id) : '';
-  }, [router.query]);
+  }, [fetchingPost, router.query]);
 
   if (typeof window === undefined) return null;
 

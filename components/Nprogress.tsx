@@ -30,10 +30,11 @@ const NextNProgress = (props: Props) => {
     Router.events.on('routeChangeStart', routeChangeStart);
     Router.events.on('routeChangeComplete', routeChangeEnd);
     Router.events.on('routeChangeError', routeChangeEnd);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <style jsx global>{`
+    <style>{`
       #nprogress {
         pointer-events: none;
       }

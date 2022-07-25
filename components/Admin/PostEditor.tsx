@@ -41,7 +41,6 @@ const imageHandler = function (this: any) {
 }
 
 const PostEditor = (props: any) => {
-  if (typeof window === 'undefined') return null;
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
@@ -50,7 +49,10 @@ const PostEditor = (props: any) => {
 
   useEffect(() => {
     setPost({ ...post,...props.post });
-  }, [props.post.uid]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props?.post?.uid]);
+
+  if (typeof window === 'undefined') return null;
 
   const onChange = (prePost: any) => (newData: string, delta: any, source: any, editor: any) => {
     setPost({
