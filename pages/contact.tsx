@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-const About = () => {
+const Contact = () => {
   const [status, setStatus] = useState('');
 
   const submitForm = (ev: any) => {
@@ -24,12 +24,11 @@ const About = () => {
     xhr.send(data);
   }
   return (
-    <>
       <div className='post-page-view'>
-        <div className="w-full p-6 h-24">
-          <Link href="/">
-            <a className="border-solid border border-black rounded-full inline-block" >
-              <Image height={40} width={40} src="/icons/left_arrow.svg" alt="alt" />
+        <div className="w-full p-6 h-20">
+          <Link href="/" >
+            <a className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+              <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
             </a>
           </Link>
         </div>
@@ -59,37 +58,7 @@ const About = () => {
         }
       </div>
     </div>
-    <style jsx >{`
-      /* Style inputs with type="text", select elements and textareas */
-      input[type=text], input[type="email"], select, textarea {
-        width: 100%; /* Full width */
-        padding: 12px; /* Some padding */ 
-        border: 1px solid #ccc; /* Gray border */
-        border-radius: 4px; /* Rounded borders */
-        box-sizing: border-box; /* Make sure that padding and width stays in place */
-        margin-top: 6px; /* Add a top margin */
-        margin-bottom: 16px; /* Bottom margin */
-        resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
-      }
-
-      /* Style the submit button with a specific background color etc */
-      button[type=submit] {
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      /* When moving the mouse over the submit button, add a darker green color */
-      input[type=submit]:hover {
-        background-color: #45a049;
-      }
-
-    `}</style>
-    </>
   );
 };
 
-export default About;
+export default Contact;
