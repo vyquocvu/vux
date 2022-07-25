@@ -30,7 +30,7 @@ const AdminPage = (props: Props) => {
       setPosts(docs);
       setIsLoaded(true);
     } catch (error) {}
-  }, []);
+  }, [authUser.id]);
 
   useEffect(() => {
     if (typeof window !== undefined && !authUser) {
@@ -38,6 +38,7 @@ const AdminPage = (props: Props) => {
     } else {
       fetchingPosts();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

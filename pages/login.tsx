@@ -26,13 +26,17 @@ function Login(props: Props) {
   };
   const router = useRouter();
 
+  var firstInput: (HTMLInputElement | null) = null;
+  const [inputs, setInputs] = useState(initial);
+
+  useEffect(() => {
+    firstInput?.focus();
+  }, [firstInput]);
+
+
   if (typeof window !== undefined && props?.AuthUserInfo?.token) {
     return router.push("/admin");
   }
-
-  var firstInput: (HTMLInputElement | null) = null;
-
-  const [inputs, setInputs] = useState(initial);
 
   const handleSubmit = async (e: ChangeEvent<any>) => {
     e.preventDefault();
@@ -51,10 +55,6 @@ function Login(props: Props) {
       [e.target.name]: e.target.value
     });
   };
-
-  useEffect(() => {
-    firstInput?.focus();
-  }, []);
 
   return (
     <>

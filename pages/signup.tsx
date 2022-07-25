@@ -51,7 +51,7 @@ function Signup() {
 
   useEffect(() => {
     firstInput?.focus();
-  }, []); // [] = run once
+  }, [firstInput]); // [] = run once
 
   return (
     <>

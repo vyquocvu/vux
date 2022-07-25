@@ -25,7 +25,7 @@ const PostPage = (props :any) => {
     if (typeof window !== undefined && !authUser) {
       router.push("/login");
     }
-  }, []);
+  }, [authUser, router]);
 
   const onSubmit = async (postData: any) => {
     delete postData.uid;
