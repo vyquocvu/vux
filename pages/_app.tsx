@@ -2,6 +2,7 @@ import * as React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
+import Layout from 'components/Layout';
 import config from 'config';
 
 import { ToastProvider } from 'react-toast-notifications';
@@ -29,7 +30,9 @@ class MyApp extends App {
         </Head>
         <ToastProvider>
           <NextNProgress />
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </ToastProvider>
       </div>
     )
