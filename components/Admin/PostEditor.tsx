@@ -120,7 +120,7 @@ const PostEditor = (props: any) => {
         value={post.title || ''}
         name="title" onChange={onUpdate}
         placeholder="Title"
-        className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400"
+        className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400 font-medium"
       />
       <div className="mb-3">
         <ReactQuill
