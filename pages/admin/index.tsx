@@ -1,10 +1,8 @@
 import React, { useEffect, useCallback, useState } from "react";
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
-import Sidebar from 'components/Sidebar';
 import PostList from 'components/Post/List';
 import Loading from 'components/shared/Loading';
-import MainContent from 'components/MainContent';
 
 import { Post } from "interfaces/Post";
 import { AuthInterface } from "interfaces/User";
@@ -17,11 +15,11 @@ type Props = {
 };
 
 const AdminPage = (props: Props) => {
+  const router = useRouter();
   const { AuthUserInfo } = props;
   const [posts, setPosts] = useState([] as any);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const router = useRouter();
   const authUser = get(AuthUserInfo, "AuthUser");
 
   const fetchingPosts = useCallback(async () => {
@@ -43,10 +41,7 @@ const AdminPage = (props: Props) => {
 
   return (
     <div className="">
-      <Sidebar />
-      <MainContent>
-        { !isLoaded ? <Loading /> : <PostList items={posts} isAdmin /> }
-      </MainContent>
+      { !isLoaded ? <Loading /> : <PostList items={posts} isAdmin /> }
     </div>
   );
 }
