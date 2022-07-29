@@ -21,7 +21,6 @@ const PostPage = (props :any) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const { addToast } = useToasts();
   const [post, setPost] = useState<any>({});
-
   useEffect(() => {
     if (typeof window !== undefined && !authUser) {
       router.push("/login");
@@ -56,10 +55,13 @@ const PostPage = (props :any) => {
   };
 
   useEffect(() => {
-    router.query.id ? fetchingPost(router.query.id) : '';
+    if (router.query.id) {
+      const id = String(router.query.id).split(".").pop();
+      fetchingPost(id)
+    }
   }, [fetchingPost, router.query]);
 
-  if (typeof window === undefined) return null;
+  if (typeof window === 'undefined') return null;
 
   return (
     <div className="post-page-view">
