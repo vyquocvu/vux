@@ -36,7 +36,7 @@ class CustomDocument extends Document<Props> {
               })(window,document,'script','dataLayer','GTM-THCFN5G');`
             }
           </Script>
-          {/* TAg */}'}
+          {/* TAg */}
           <Script async src="https://www.googletagmanager.com/gtag/js?id=G-9MDL41Z920" />
           <Script id="google-analytics" strategy="afterInteractive">
             {`
