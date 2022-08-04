@@ -1,5 +1,6 @@
 import React from 'react';
 import get from 'lodash/get';
+import Script from 'next/script'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 import { AuthInterface } from 'interfaces/User';
@@ -24,8 +25,28 @@ class CustomDocument extends Document<Props> {
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
           <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet" />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=GTM-THCFN5G"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){window.dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'GTM-THCFN5G');
+            `}
+          </Script>
         </Head>
         <body>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-THCFN5G"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}/>
+        </noscript>
           <Main />
           <NextScript />
         </body>
