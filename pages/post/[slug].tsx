@@ -15,7 +15,7 @@ const PostPage = (props: { post: Post }) => {
 
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
-    <div className='post-page-view h-full w-screen flex'>
+    <div className='post-page-view h-full w-full flex'>
       <div className="mx-4">
         <div className="w-full py-6 h-24 ">
           <Link href="/" >
