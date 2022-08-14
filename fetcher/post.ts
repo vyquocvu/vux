@@ -53,7 +53,8 @@ export const getPostsByUserId = async (id: string) => {
   try {
     const postRepo = await postCollection
       .where('author', '==', id)
-      .orderBy('createdAt', 'desc').get();
+      .orderBy('createdAt', 'desc')
+      .get();
     const posts = postRepo.docs.map((sp: any) => ({...sp.data(), uid: sp.id }));
     return posts
   } catch (error) {

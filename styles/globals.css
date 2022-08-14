@@ -67,3 +67,7 @@ button[type=submit] {
 input[type=submit]:hover {
   background-color: #45a049;
 }
+
+.post-content a {
+  color: #06c !important;
+}

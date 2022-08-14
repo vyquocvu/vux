@@ -40,7 +40,7 @@ const AdminPage = (props: Props) => {
   }, []);
 
   return (
-    <div className="">
+    <div className="admin pb-14">
       { !isLoaded ? <Loading /> : <PostList items={posts} isAdmin /> }
     </div>
   );
