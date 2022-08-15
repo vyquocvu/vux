@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import config from 'config';
 
-const SideBar = () => (
+const SideBar: React.FC = () => (
   <div className="fixed h-screen bg-gray-200 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-6 md:pt-8">
     <div className="relative" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
       <div className="">
@@ -42,7 +42,5 @@ const SideBar = () => (
     </div>
   </div>
 )
-
-SideBar.getInitialProps = () => ({});
 
 export default SideBar;

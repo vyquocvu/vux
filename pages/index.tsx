@@ -1,9 +1,6 @@
 import React from 'react';
-import dynamic from "next/dynamic";
+import PostList from "components/Post/List";
 
-const PostList = dynamic(() => import('components/Post/List'));
-
-import config from 'config';
 import { Post } from 'interfaces/Post';
 import { AuthInterface } from 'interfaces/User'
 import { getPublishedPosts } from 'fetcher/post';

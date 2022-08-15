@@ -27,7 +27,7 @@ const PostPage = (props :any) => {
     }
   }, [authUser, router]);
 
-  const fetchingPost = useCallback(async id => {
+  const fetchingPost = useCallback(async (id: string) => {
     try {
       const postDoc : Post = await getPostById(id, true) as Post;
       if (postDoc.uid) setPost({ ...postDoc });
@@ -57,7 +57,7 @@ const PostPage = (props :any) => {
   useEffect(() => {
     if (router.query.id) {
       const id = String(router.query.id).split(".").pop();
-      fetchingPost(id)
+      fetchingPost(id || '');
     }
   }, [fetchingPost, router.query]);
 

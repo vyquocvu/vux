@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import dynamic from 'next/dynamic';
 import upload from 'utils/upload';
-import { Post } from "interfaces/Post";
 
-const ReactQuill = dynamic(import('react-quill'),
-  { ssr: false, loading: () => <p>Loading ...</p> });
+const ReactQuill = dynamic(import('react-quill'), { ssr: false });
+// const ReactQuill = require('react-quill');
 
 const postMetaData = {
   url: '',

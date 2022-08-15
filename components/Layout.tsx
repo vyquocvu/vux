@@ -1,11 +1,9 @@
 import React from 'react';
 
 import Head from "next/head";
-import dynamic from "next/dynamic";
-
+import Sidebar from "components/Sidebar";
+import MainContent from "components/MainContent";
 import config from 'config';
-const Sidebar = dynamic(() => import('components/Sidebar'));
-const MainContent = dynamic(() => import('components/MainContent'));
 
 
 const Layout = ({ children }: { children: React.ReactChild }) => {
