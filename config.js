@@ -15,5 +15,6 @@ export default {
     { "url": "https://fb.com/vyquocvu", "label": "Facebook", "icon": "/icons/facebook.svg" },
     { "url": "https://linkedin.com/in/vyquocvu", "label": "Linkedin", "icon": "/icons/linkedin.svg" },
     { "url": "https://github.com/vyquocvu", "label": "Github", "icon": "/icons/github.svg" }
-  ]
+  ],
+  "repo": "https://github.com/vyquocvu/vux"
 }
