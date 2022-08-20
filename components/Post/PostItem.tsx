@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { timeFromNow, friendlyStr } from 'utils/common';
 import { Post } from 'interfaces/Post';
+import { deletePost } from 'fetcher/post';
 
 type Props = {
   data: Post,
@@ -21,6 +22,17 @@ const PostLink = (isAdmin: boolean, id: string) => (
 const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => {
   const { isPublished } = data;
   const slug = `${friendlyStr(data.title)}.${data.uid}`;
+  const handleDelete = async () => {
+    let text = "Press OK to make sure you want to delete this post";
+    if (confirm(text) == true) {
+      try {
+        await deletePost(data.uid);
+        location.reload();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   return (
     <div className="pt-3 px-2 border-b border-b-solid">
       <h2 className="inline-block">
@@ -41,6 +53,7 @@ const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => {
         { data.thumbText + '...' }
         <div>
           {PostLink(isAdmin, slug)}
+          {isAdmin && <button className='text-gray-900 text-sm m-2 px-3 pt-[5px] pb-[3px] rounded-full inline-block border border-gray-500' onClick={handleDelete}> Delete </button>}
         </div>
       </div>
     </div>
