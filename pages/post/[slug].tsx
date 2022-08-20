@@ -1,25 +1,24 @@
 import * as React from 'react';
-import Link from 'next/link';
 import Image from "next/image";
+import { useRouter } from 'next/router'
 import { NextPageContext } from 'next';
 
 import { Post } from 'interfaces/Post';
 import { timeFromNow } from 'utils/common';
-import { getPostById } from "fetcher/post";
+import { getPostById } from "fetcher/post";;
 
 const PostPage = (props: { post: Post }) => {
   const { post } = props;
+  const router = useRouter();
 
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
     <div className='post-page-view h-full w-full flex'>
       <div className="mx-4 w-full pt-16">
         <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0">
-          <Link href="/" >
-            <a className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
-              <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
-            </a>
-          </Link>
+          <a onClick={router.back} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+            <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
+          </a>
         </div>
         <h1 className="post-title text-2xl font-bold ml-0 pb-1"
           >{ post.title }</h1>
