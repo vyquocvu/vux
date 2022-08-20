@@ -76,3 +76,12 @@ export const addPost = async (postData: Post) => {
     throw error;
   }
 };
+
+export const deletePost = async (id: string) => {
+  try {
+    const post = await postCollection.doc(id).delete();
+    return post;
+  } catch (error) {
+    throw error;
+  }
+}

@@ -25,7 +25,7 @@ export const getServerSideProps = async ({ res }: NextPageContext ) => {
             <url>
               <loc>${url}</loc>
               <lastmod>${new Date().toISOString()}</lastmod>
-              <changefreq>monthly</changefreq>
+              <changefreq>daily</changefreq>
               <priority>1.0</priority>
             </url>
           `;
