@@ -22,7 +22,11 @@ const SideBar: FC = () => (
           <div className="w-1/2 my-5 border-b border-gray-700"></div>
             {
               config.pages.map(page => (
-                <Link key={page.path} href={page.path} legacyBehavior className="text-sm py-1 text-gray-800 tracking-wide font-semibold block uppercase">{page.label}</Link>
+                <Link key={page.path} href={page.path} legacyBehavior >
+                  <a className="text-sm py-1 text-gray-800 tracking-wide font-semibold block uppercase">
+                    {page.label}
+                  </a>
+                </Link>
               ))
             }
           <div className="w-1/2 my-5 border-b border-gray-700"/>
