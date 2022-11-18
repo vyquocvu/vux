@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import type { ChangeEvent } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import Link from "next/link";
@@ -25,7 +26,7 @@ function Signup() {
 
   const [inputs, setInputs] = useState(initialValues);
 
-  const handleSubmit = async (e: React.ChangeEvent<any>) => {
+  const handleSubmit = async (e: ChangeEvent<any>) => {
     e.preventDefault();
     try {
       await firebase.auth().createUserWithEmailAndPassword(inputs.email, inputs.password);
@@ -41,7 +42,7 @@ function Signup() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<any>) => {
+  const handleInputChange = (e: ChangeEvent<any>) => {
     e.persist();
     setInputs({
       ...inputs,
@@ -93,7 +94,7 @@ function Signup() {
       </form>
       <p>
         {"or "}
-        <Link href="/login">
+        <Link href="/login" legacyBehavior>
           <a>[ log in ]</a>
         </Link>
       </p>

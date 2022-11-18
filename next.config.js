@@ -10,8 +10,12 @@ module.exports = {
   images: {
     domains: ['avatars.githubusercontent.com'],
   },
+  trailingSlash: true,
+  experimental: {
+    appDir: true
+  },
   exportPathMap: () => ({
-    "/": { page: "/" },
+    "/": { page: "/", query: { __nextDefaultLocale: "en", __nextLocale: "en" }},
     "/about": { page: "/about" },
     "/contact": { page: "/contact" },
     "/login": { page: "/login" },

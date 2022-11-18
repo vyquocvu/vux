@@ -1,11 +1,10 @@
-import React from "react";
 import Link from "next/link";
 
 const Header = () => {
   return (
     <>
       <p>
-        <Link href={"/"}>
+        <Link href={"/"} legacyBehavior>
           <a className="text-xs">[ home ]</a>
         </Link>
       </p>

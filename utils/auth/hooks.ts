@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext, createContext } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import initFirebase from "./initFirebase";
@@ -10,10 +10,10 @@ initFirebase();
 // https://benmcmahen.com/using-firebase-with-react-hooks/
 
 // Defaults to empty AuthUserInfo object.
-export const AuthUserInfoContext = React.createContext(createAuthUserInfo());
+export const AuthUserInfoContext = createContext(createAuthUserInfo());
 
 export const useAuthUserInfo = () => {
-  return React.useContext(AuthUserInfoContext);
+  return useContext(AuthUserInfoContext);
 };
 
 // Returns a Firebase JS SDK user object.

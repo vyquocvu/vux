@@ -1,5 +1,3 @@
-/* eslint react/jsx-props-no-spreading: 0 */
-import React from "react";
 import get from "lodash/get";
 import set from "lodash/set";
 import { NextPageContext } from "next";

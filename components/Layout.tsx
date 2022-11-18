@@ -1,13 +1,11 @@
-import React from 'react';
-
+import { ReactChild } from 'react';
 import Head from "next/head";
+
+import config from 'config';
 import Sidebar from "components/Sidebar";
 import MainContent from "components/MainContent";
-import config from 'config';
 
-
-const Layout = ({ children }: { children: React.ReactChild }) => {
-
+const Layout = ({ children }: { children: ReactChild }) => {
   return (
     <>
       <Head>

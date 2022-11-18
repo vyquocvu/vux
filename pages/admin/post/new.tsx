@@ -1,7 +1,7 @@
 
-import React, { useEffect, useState } from "react";
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from "react";
 import { useToasts } from 'react-toast-notifications';
 
 import { addPost } from "fetcher/post";

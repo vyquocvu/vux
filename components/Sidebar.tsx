@@ -1,13 +1,13 @@
-import React from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import config from 'config';
 
-const SideBar: React.FC = () => (
+const SideBar: FC = () => (
   <div className="fixed h-screen bg-gray-200 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-6 md:pt-8">
     <div className="relative" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
       <div className="">
-        <Link href="/" passHref>
+        <Link href="/" passHref legacyBehavior>
           <a>
             <div className="pr-8">
               <Image width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
@@ -22,7 +22,7 @@ const SideBar: React.FC = () => (
           <div className="w-1/2 my-5 border-b border-gray-700"></div>
             {
               config.pages.map(page => (
-                <Link key={page.path} href={page.path} >
+                <Link key={page.path} href={page.path} legacyBehavior>
                   <a className={ "text-sm py-1 text-gray-800 tracking-wide font-semibold block uppercase"} >{page.label}</a>
                 </Link>
               ))
