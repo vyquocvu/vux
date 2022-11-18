@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -26,10 +26,10 @@ const Contact = () => {
   return (
       <div className='post-page-view'>
         <div className="w-full p-6 h-20">
-          <Link href="/" >
-            <a className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+          <Link href="/" legacyBehavior>
+            <span className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
               <Image width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
-            </a>
+            </span>
           </Link>
         </div>
         <div className="m-auto py-6 px-4 w-128">

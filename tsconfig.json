@@ -29,7 +29,12 @@
         "utils/*"
       ]
     },
-    "incremental": true
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "exclude": [
     "node_modules"
@@ -39,6 +44,7 @@
     "**/*.ts",
     "**/*.tsx",
     "utils/auth/initFirebase.ts",
-    "utils/auth/user.ts"
+    "utils/auth/user.ts",
+    ".next/types/**/*.ts"
   ]
 }

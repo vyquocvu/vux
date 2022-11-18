@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
 import PostList from 'components/Post/List';

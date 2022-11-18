@@ -1,10 +1,10 @@
-import * as React from 'react'
+import type { ReactNode, FC } from 'react'
 
 type Props = {
-  children: React.ReactNode
+  children: ReactNode
 }
 
-const MainContent: React.FC<Props> = ({ children }) => {
+const MainContent: FC<Props> = ({ children }) => {
 
   return (
     <div className="h-screen sm:ml-0 md:ml-64 p-8">

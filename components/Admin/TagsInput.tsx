@@ -1,5 +1,3 @@
-import React from "react";
-
 const KeyCodes = {
   comma: 188,
   enter: 13,

@@ -1,4 +1,3 @@
-import React from 'react';
 import get from 'lodash/get';
 import Script from 'next/script'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
@@ -12,7 +11,7 @@ class CustomDocument extends Document<Props> {
   render() {
     const { AuthUserInfo } = this.props
     return (
-      <Html lang="vi">
+      <Html>
         <Head>
           <script
             id="__MY_AUTH_USER_INFO"

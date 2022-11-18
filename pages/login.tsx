@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import get from 'lodash/get';

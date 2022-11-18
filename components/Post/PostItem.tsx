@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type { FunctionComponent } from 'react'
 import Link from 'next/link'
 
 import { timeFromNow, friendlyStr } from 'utils/common';
@@ -12,14 +12,14 @@ type Props = {
 }
 
 const PostLink = (isAdmin: boolean, id: string) => (
-    <Link href={`${isAdmin ? '/admin' : ''}/post/[id]`} as={`${isAdmin ? '/admin' : ''}/post/${id}`}>
+    <Link href={`${isAdmin ? '/admin' : ''}/post/[id]`} as={`${isAdmin ? '/admin' : ''}/post/${id}`} legacyBehavior>
       <a className="text-gray-900 text-sm my-2 px-3 pt-[5px] pb-[3px] rounded-full inline-block border border-gray-500">
         {isAdmin ? 'Edit' : 'Read more'} →
       </a>
     </Link>
 );
 
-const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => {
+const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
   const { isPublished } = data;
   const slug = `${friendlyStr(data.title)}.${data.uid}`;
   const handleDelete = async () => {
@@ -36,7 +36,7 @@ const PostItem: React.FunctionComponent<Props> = ({ data, isAdmin }) => {
   return (
     <div className="pt-3 px-2 border-b border-b-solid">
       <h2 className="inline-block">
-        <Link href="/post/[id]" as={`/post/${slug}`}>
+        <Link href="/post/[id]" as={`/post/${slug}`} legacyBehavior>
           <a className="text-gray-900 block text-2xl -ml-1 transition-opacity duration-200 ease-in-out hover:underline"> {data.title} </a>
         </Link>
       </h2>

@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import dynamic from 'next/dynamic';
 import upload from 'utils/upload';
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
-// const ReactQuill = require('react-quill');
 
 const postMetaData = {
   url: '',
@@ -61,7 +60,7 @@ const PostEditor = (props: any) => {
     });
   };
 
-  const onUpdate = function (event: React.FormEvent) {
+  const onUpdate = function (event: FormEvent) {
     const value: string = (event.target as any).value;
     const name: string = (event.target as any).name;
     setPost({ ...post, [name]: value });
