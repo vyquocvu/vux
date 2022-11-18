@@ -12,7 +12,7 @@ const SideBar: FC = () => (
             <div className="pr-8">
               <Image width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
             </div>
-            <h1 className="mt-4 text-3xl text-gray-700 font-semibold">{config.name}</h1>
+            <h1 className="mt-4 text-3xl text-gray-700 font-medium">{config.name}</h1>
           </a>
         </Link>
         <nav className="" role="navigation">
@@ -22,9 +22,7 @@ const SideBar: FC = () => (
           <div className="w-1/2 my-5 border-b border-gray-700"></div>
             {
               config.pages.map(page => (
-                <Link key={page.path} href={page.path} legacyBehavior>
-                  <a className={ "text-sm py-1 text-gray-800 tracking-wide font-semibold block uppercase"} >{page.label}</a>
-                </Link>
+                <Link key={page.path} href={page.path} legacyBehavior className="text-sm py-1 text-gray-800 tracking-wide font-semibold block uppercase">{page.label}</Link>
               ))
             }
           <div className="w-1/2 my-5 border-b border-gray-700"/>

@@ -94,9 +94,7 @@ function Signup() {
       </form>
       <p>
         {"or "}
-        <Link href="/login" legacyBehavior>
-          <a>[ log in ]</a>
-        </Link>
+        <Link href="/login" legacyBehavior>[ log in ]</Link>
       </p>
       <Footer />
     </>
