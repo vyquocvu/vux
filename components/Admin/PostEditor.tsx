@@ -45,7 +45,6 @@ const PostEditor = (props: any) => {
     updatedAt: new Date(),
   });
   const quillRef = useRef<any>(null);
-  console.log('post server');
 
   useEffect(() => {
     setPost({ ...post,...props.post });
