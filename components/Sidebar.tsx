@@ -10,7 +10,7 @@ const SideBar: FC = () => (
         <Link href="/" passHref legacyBehavior>
           <a>
             <div className="pr-8">
-              <Image width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
+              <Image priority width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
             </div>
             <h1 className="mt-4 text-3xl text-gray-700 font-medium">{config.name}</h1>
           </a>
@@ -34,7 +34,7 @@ const SideBar: FC = () => (
             {
               config.socials.map(media => (
                 <a key={media.icon} href={media.url} className="w-10 opacity-75" >
-                  <Image height={24} width={25} src={media.icon} alt="media" />
+                  <Image priority height={24} width={25} src={media.icon} alt="media" />
                 </a>
               ))
             }

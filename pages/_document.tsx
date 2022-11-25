@@ -9,7 +9,8 @@ type Props = {
 }
 class CustomDocument extends Document<Props> {
   render() {
-    const { AuthUserInfo } = this.props
+    const { AuthUserInfo } = this.props;
+
     return (
       <Html>
         <Head>
