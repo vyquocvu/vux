@@ -1,17 +1,32 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from "next/image";
+import { useEffect } from 'react';
+import highlight from 'highlight.js';
 import { NextPageContext } from 'next';
+
 
 import { Post } from 'interfaces/Post';
 import { timeFromNow } from 'utils/common';
 import { getPostById } from "fetcher/post";
-import config from 'config';
 
+const PostPage = (props: { post: Post, host: string, referer:  string}) => {
+  const { post, host, referer } = props;
+  useEffect(() => {
+    document.querySelectorAll('pre').forEach((el: any) => {
+      highlight.highlightElement(el);
+    });
+  }, [post?.uid]);
 
-const PostPage = (props: { post: Post, host: string }) => {
-  const { post, host } = props;
-  console.log("props", props);
+  const getBackUrl = () => {
+    if (!referer) return "/";
+    try {
+      const url = new URL(referer);
+      return url.pathname;
+    } catch (error) {
+      return "/";
+    }
+  }
 
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
@@ -29,16 +44,17 @@ const PostPage = (props: { post: Post, host: string }) => {
         {post.thumbImage ?? <meta property="og:image" content={post.thumbImage}/>}
 
       </Head>
-      <div className="mx-4 w-full pt-16">
+      <div className="mx-4 w-full pt-16 ql-snow">
         <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0">
-          <Link href="/" className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+          {/* <--! Back button --> */}
+          <a href={getBackUrl()} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
             <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
-          </Link>
+          </a>
         </div>
         <h1 className="post-title text-2xl font-bold ml-0 pb-1"
           >{ post.title }</h1>
         <p> {timeFromNow(post.updatedAt.seconds)}</p>
-        <div className="pb-5 post-content" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+        <div className="pb-5 post-content ql-editor" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
       </div>
     </div>
   )
@@ -51,7 +67,7 @@ PostPage.getInitialProps = async ({ query, req }: NextPageContext) => {
     const id = query.slug.split(".").pop() || "";
     const post = await getPostById(id);
     let host = req?.headers?.host;
-    return { post, host };
+    return { post, host, referer: req?.headers.referer };
   } catch (error) {
     return {};
   }

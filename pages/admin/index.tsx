@@ -24,11 +24,11 @@ const AdminPage = (props: Props) => {
 
   const fetchingPosts = useCallback(async () => {
     try {
-      const docs : [Post] = await getPostsByUserId(authUser.id) as any;
+      const docs : [Post] = await getPostsByUserId(authUser?.id) as any;
       setPosts(docs);
       setIsLoaded(true);
     } catch (error) {}
-  }, [authUser.id]);
+  }, [authUser?.id]);
 
   useEffect(() => {
     if (typeof window !== undefined && !authUser) {

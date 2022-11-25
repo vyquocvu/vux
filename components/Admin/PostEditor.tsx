@@ -6,12 +6,10 @@ import dynamic from 'next/dynamic';
 import highlight from 'highlight.js';
 import ReactQuill from "react-quill";
 
-// import WrapQuill from './WrapQuill';
 const WrapQuill = dynamic(() => import('./WrapQuill'), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
-// console.log("ReactQuill", ReactQuill)
 
 const postMetaData = {
   url: '',
@@ -51,7 +49,7 @@ const PostEditor = (props: any) => {
     languages: ['javascript', 'ruby', 'python']
   });
   // eslint-disable-next-line
-  window.hljs = highlight;
+  (window as any).hljs = highlight;
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
