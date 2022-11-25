@@ -8,6 +8,7 @@ import { ToastProvider } from 'react-toast-notifications';
 
 import "styles/globals.css";
 import "react-quill/dist/quill.snow.css";
+import "highlight.js/styles/atom-one-dark.css";
 
 const NextNProgress = dynamic(
   () => import('components/Nprogress'),

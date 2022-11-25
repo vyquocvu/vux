@@ -2,7 +2,16 @@
 
 import { useEffect, useState, FormEvent, useRef } from "react";
 import upload from 'utils/upload';
-import ReactQuill from "react-quill"
+import dynamic from 'next/dynamic';
+import highlight from 'highlight.js';
+import ReactQuill from "react-quill";
+
+// import WrapQuill from './WrapQuill';
+const WrapQuill = dynamic(() => import('./WrapQuill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
+// console.log("ReactQuill", ReactQuill)
 
 const postMetaData = {
   url: '',
@@ -17,7 +26,6 @@ const postMetaData = {
   publishContent: '',
   isPublished: false,
 };
-
 
 const imageHandler = function (this: any) {
   const input = document.createElement('input');
@@ -39,12 +47,17 @@ const imageHandler = function (this: any) {
 }
 
 const PostEditor = (props: any) => {
+  highlight.configure({
+    languages: ['javascript', 'ruby', 'python']
+  });
+  // eslint-disable-next-line
+  window.hljs = highlight;
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
-  const quillRef = useRef<any>(null);
+  const quillRef = useRef<ReactQuill>(null);
 
   useEffect(() => {
     setPost({ ...post,...props.post });
@@ -73,23 +86,25 @@ const PostEditor = (props: any) => {
   const modules = {
     toolbar: {
       container: [
-        [{'header': [1, 2, false]}],
-        ['bold', 'italic', 'underline','strike', 'blockquote'],
+        [{'header': [1, 2, 3, 4, 5, false]}],
+        ['bold', 'italic', 'underline','strike'],
+        ['blockquote', 'code-block'],
         [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
         ['link', 'image'],
-        ['clean']
+        ['clean'],
       ],
       handlers: {
         image: imageHandler
-      }
-    }
+      },
+    },
+    syntax: true,
   };
 
   const formats = [
     'header',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
     'list', 'bullet', 'indent',
-    'link', 'image'
+    'link', 'image', "code-block",
   ];
 
 
@@ -104,12 +119,12 @@ const PostEditor = (props: any) => {
         className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400 font-medium"
       />
       <div className="mb-3">
-        <ReactQuill
+        <WrapQuill
           theme="snow"
           formats={formats}
           modules={modules}
-          ref={quillRef}
           value={post.draffContent || ''}
+          quillRef={quillRef}
           placeholder={'Tell your story…'}
         />
       </div>
