@@ -10,9 +10,11 @@ import { Post } from "interfaces/Post";
 import { getPostById, setPostById } from "fetcher/post";
 
 import Loading from 'components/shared/Loading';
-import PostEditor from 'components/Admin/PostEditor';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
+import dynamic from "next/dynamic";
+
+const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 
 const PostPage = (props :any) => {
   const router = useRouter();
@@ -61,7 +63,6 @@ const PostPage = (props :any) => {
     }
   }, [fetchingPost, router.query]);
 
-  if (typeof window === 'undefined') return null;
 
   return (
     <div className="post-page-view">

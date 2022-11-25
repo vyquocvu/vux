@@ -1,14 +1,16 @@
 
 import get from 'lodash/get';
+import dynamic from "next/dynamic";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import { useToasts } from 'react-toast-notifications';
 
 import { addPost } from "fetcher/post";
 
-import PostEditor from 'components/Admin/PostEditor';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
+
+const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 
 const PostPage = (props :any) => {
   const { AuthUserInfo } = props;
@@ -22,7 +24,7 @@ const PostPage = (props :any) => {
   const { addToast } = useToasts();
 
   useEffect(() => {
-    if (typeof window !== undefined && !authUser) {
+    if (!authUser) {
       router.push("/login");
     }
   }, [authUser, router]);

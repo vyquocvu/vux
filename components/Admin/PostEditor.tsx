@@ -1,8 +1,8 @@
-import { useEffect, useState, FormEvent } from "react";
-import dynamic from 'next/dynamic';
-import upload from 'utils/upload';
+'use client';
 
-const ReactQuill = dynamic(import('react-quill'), { ssr: false });
+import { useEffect, useState, FormEvent, useRef } from "react";
+import upload from 'utils/upload';
+import ReactQuill from "react-quill"
 
 const postMetaData = {
   url: '',
@@ -29,7 +29,7 @@ const imageHandler = function (this: any) {
     if (!input.files) return;
     const file = input.files[0];
     const range = quill.getSelection(true);
-    quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/placeholder.gif`);
+    quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/placeholder.webp`);
     quill.setSelection(range.index + 1);
     const url = await upload(file, 'images');
     if (!url) return false;
@@ -44,21 +44,14 @@ const PostEditor = (props: any) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   });
+  const quillRef = useRef<any>(null);
+  console.log('post server');
 
   useEffect(() => {
     setPost({ ...post,...props.post });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props?.post?.uid]);
 
-  if (typeof window === 'undefined') return null;
-
-  const onChange = (prePost: any) => (newData: string, delta: any, source: any, editor: any) => {
-    setPost({
-      ...prePost,
-      draffContent: newData,
-      thumbText: editor.getText().replace(/(\r\n|\n|\r)+/gm, " ").substring(0, 100)
-    });
-  };
 
   const onUpdate = function (event: FormEvent) {
     const value: string = (event.target as any).value;
@@ -67,8 +60,15 @@ const PostEditor = (props: any) => {
   }
 
   const onSave = function (mode: string) {
-    post.isPublished = mode === 'publish' || post.isPublished;
-    props.onSubmit(post);
+    if (quillRef.current) {
+      const updatePost  = {
+        ...post,
+        draffContent: quillRef.current.getEditorContents(),
+        thumbText: quillRef.current.getEditor().getText().slice(0, 100),
+      }
+      updatePost.isPublished = mode === 'publish' || post.isPublished;
+      props.onSubmit(updatePost);
+    }
   }
 
   const modules = {
@@ -93,25 +93,9 @@ const PostEditor = (props: any) => {
     'link', 'image'
   ];
 
-  // const handleDelete = function (i: number) {
-  //   const tags = [...post.tags];
-  //   tags.splice(i, 1);
-  //   setPost({ ...post, tags });
-  // }
 
-  // const handleAddition = function (tag: string) {
-  //   const tags = [...post.tags, tag];
-  //   setPost({ ...post, tags });
-  // }
+  if (!post.uid || typeof window === 'undefined') return null;
 
-  // const handleDrag = function (tag: string, currPos: number, newPos: number) {
-  //   const tags = [...post.tags];
-  //   const newTags = tags.slice();
-  //   newTags.splice(currPos, 1);
-  //   newTags.splice(newPos, 0, tag);
-  //   setPost({ ...post, tags: newTags });
-  // }
-  if (!post.uid) return null;
   return (
     <div className="flex w-9/12 my-10 mx-auto flex-col">
       <input
@@ -125,9 +109,9 @@ const PostEditor = (props: any) => {
           theme="snow"
           formats={formats}
           modules={modules}
+          ref={quillRef}
           value={post.draffContent || ''}
           placeholder={'Tell your story…'}
-          onChange={onChange(post)}
         />
       </div>
       <div className="actions">
