@@ -1,8 +1,7 @@
-import Link from 'next/link';
 import Head from 'next/head';
 import Image from "next/image";
 import { useEffect } from 'react';
-import highlight from 'highlight.js';
+import highlight from 'highlight.js/lib/common';
 import { NextPageContext } from 'next';
 
 

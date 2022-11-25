@@ -27,11 +27,8 @@
     "nprogress": "^0.2.0",
     "quill-image-resize-module": "^3.0.0",
     "react": "18",
-    "react-dnd": "^11.1.1",
-    "react-dnd-html5-backend": "^11.1.1",
     "react-dom": "^18.2.0",
     "react-quill": "2.0.0",
-    "react-tag-input": "^6.4.2",
     "react-toast-notifications": "^2.4.0"
   },
   "devDependencies": {

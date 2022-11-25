@@ -3,7 +3,7 @@
 import { useEffect, useState, FormEvent, useRef } from "react";
 import upload from 'utils/upload';
 import dynamic from 'next/dynamic';
-import highlight from 'highlight.js';
+import highlight from 'highlight.js/lib/common';
 import ReactQuill from "react-quill";
 
 const WrapQuill = dynamic(() => import('./WrapQuill'), {
