@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from "react";
-import get from 'lodash/get';
+import {get} from 'utils/common';
 import { useRouter } from 'next/router';
 import PostList from 'components/Post/List';
 import Loading from 'components/shared/Loading';

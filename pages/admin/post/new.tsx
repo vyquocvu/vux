@@ -1,10 +1,9 @@
-
-import get from 'lodash/get';
 import dynamic from "next/dynamic";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import { useToasts } from 'react-toast-notifications';
 
+import { get } from 'utils/common';
 import { addPost } from "fetcher/post";
 
 import withAuthUser from "utils/pageWrappers/withAuthUser";

@@ -1,4 +1,4 @@
-import { get } from "lodash";
+import { get } from "utils/common";
 import { NextPageContext } from "next";
 
 import { AuthInterface } from 'interfaces/User';

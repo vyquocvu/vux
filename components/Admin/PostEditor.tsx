@@ -3,8 +3,10 @@
 import { useEffect, useState, FormEvent, useRef } from "react";
 import upload from 'utils/upload';
 import dynamic from 'next/dynamic';
-import highlight from 'highlight.js/lib/common';
 import ReactQuill from "react-quill";
+
+import Script from "next/script";
+import { highlight } from "utils/common";
 
 const WrapQuill = dynamic(() => import('./WrapQuill'), {
   ssr: false,
@@ -45,11 +47,6 @@ const imageHandler = function (this: any) {
 }
 
 const PostEditor = (props: any) => {
-  highlight.configure({
-    languages: ['javascript', 'ruby', 'python']
-  });
-  // eslint-disable-next-line
-  (window as any).hljs = highlight;
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
@@ -110,6 +107,10 @@ const PostEditor = (props: any) => {
 
   return (
     <div className="flex w-9/12 my-10 mx-auto flex-col">
+      <Script
+        src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
+        onLoad={highlight}
+      />
       <input
         value={post.title || ''}
         name="title" onChange={onUpdate}
