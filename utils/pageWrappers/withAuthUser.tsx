@@ -1,5 +1,4 @@
-import get from "lodash/get";
-import set from "lodash/set";
+import { get } from "utils/common";
 import { NextPageContext } from "next";
 import { createAuthUser, createAuthUserInfo } from "utils/auth/user";
 import { AuthUserInfoContext, useFirebaseAuth } from "utils/auth/hooks";
@@ -31,7 +30,9 @@ const withAuthUser = (ComposedComponent: any) => {
     );
   };
 
-  WithAuthUserComp.getInitialProps = async (ctx: NextPageContext) => {
+  WithAuthUserComp.getInitialProps = async (ctx: NextPageContext & { myCustomData: {
+    AuthUserInfo: AuthInterface
+  } }) => {
     const { req, res } = ctx;
     // Get the AuthUserInfo object.
     let AuthUserInfo;
@@ -71,7 +72,9 @@ const withAuthUser = (ComposedComponent: any) => {
 
     // Explicitly add the user to a custom prop in the getInitialProps
     // context for ease of use in child components.
-    set(ctx, "myCustomData.AuthUserInfo", AuthUserInfo);
+    ctx.myCustomData = {
+      AuthUserInfo
+    }
 
     // Evaluate the composed component's getInitialProps().
     let composedInitialProps = {};

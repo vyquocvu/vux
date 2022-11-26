@@ -13,6 +13,7 @@ module.exports = withBundleAnalyzer({
   },
   images: {
     domains: ['avatars.githubusercontent.com'],
+    unoptimized: true,
   },
   trailingSlash: true,
   exportPathMap: () => ({

@@ -21,7 +21,6 @@
     "dayjs": "^1.8.32",
     "firebase": "^7.14.0",
     "firebase-admin": "8.9.0",
-    "highlight.js": "^11.7.0",
     "isomorphic-unfetch": "^3.0.0",
     "next": "13",
     "nprogress": "^0.2.0",
@@ -29,13 +28,10 @@
     "react-dom": "^18.2.0",
     "react-quill": "2.0.0",
     "react-toast-notifications": "^2.4.0",
-    "sharp": "^0.31.2"
+    "sass": "^1.56.1"
   },
   "devDependencies": {
     "@types/cookie-session": "^2.0.38",
-    "@types/lodash": "^4.14.182",
-    "@types/lodash.get": "^4.4.6",
-    "@types/lodash.set": "^4.3.6",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.7",

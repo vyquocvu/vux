@@ -1,7 +1,7 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
-import get from 'lodash/get';
+import { get } from 'utils/common';
 import { useRouter } from "next/router";
 import initFirebase from "utils/auth/initFirebase";
 

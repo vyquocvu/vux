@@ -1,8 +1,10 @@
 
 import { useEffect, useCallback, useState } from "react";
-import get from 'lodash/get';
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+import { get } from 'utils/common';
 import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
@@ -12,7 +14,6 @@ import { getPostById, setPostById } from "fetcher/post";
 import Loading from 'components/shared/Loading';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
-import dynamic from "next/dynamic";
 
 const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 

@@ -1,6 +1,4 @@
-import { get, has } from "lodash";
-// having trouble getting types from lodash/object
-
+import { get, has } from 'utils/common';
 /**
  * Take the user object from Firebase (from either the Firebase admin SDK or
  * or the client-side Firebase JS SDK) and return a consistent AuthUser object.
