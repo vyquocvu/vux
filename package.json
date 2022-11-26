@@ -28,7 +28,8 @@
     "react": "18",
     "react-dom": "^18.2.0",
     "react-quill": "2.0.0",
-    "react-toast-notifications": "^2.4.0"
+    "react-toast-notifications": "^2.4.0",
+    "sharp": "^0.31.2"
   },
   "devDependencies": {
     "@types/cookie-session": "^2.0.38",
