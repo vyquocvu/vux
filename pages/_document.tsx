@@ -12,7 +12,7 @@ class CustomDocument extends Document<Props> {
     const { AuthUserInfo } = this.props;
 
     return (
-      <Html>
+      <Html lang='vi'>
         <Head>
           <script
             id="__MY_AUTH_USER_INFO"
