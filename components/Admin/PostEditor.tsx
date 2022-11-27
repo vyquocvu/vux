@@ -109,7 +109,9 @@ const PostEditor = (props: any) => {
     <div className="flex w-9/12 my-10 mx-auto flex-col">
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
-        onLoad={highlight}
+        onLoad={() => {
+          (window as any).hljs.configure({ languages: ['javascript', 'css', 'html', 'typescript'] });
+        }}
       />
       <input
         value={post.title || ''}
