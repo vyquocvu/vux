@@ -25,6 +25,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   return (
     <>
       <Head>
+        <title>{post.title}</title>
         <meta name="title" content={post.title} />
         <meta name="description" content={post.thumbText} />
         <meta name="keywords" content="Vy Quốc Vũ, Blog, Notes, Developer" />

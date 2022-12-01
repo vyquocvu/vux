@@ -34,7 +34,7 @@ const SideBar: FC = () => (
             {
               config.socials.map(media => (
                 <a key={media.icon} href={media.url} className="w-10 opacity-75" >
-                  <Image priority height={24} width={25} src={media.icon} alt="media" />
+                  <Image priority height={25} width={25} src={media.icon} alt="media" />
                 </a>
               ))
             }
