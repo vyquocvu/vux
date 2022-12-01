@@ -1,17 +1,10 @@
 'use client';
 
-import { useEffect, useState, FormEvent, useRef } from "react";
+import { useEffect, useState, FormEvent, useRef, useCallback } from "react";
 import upload from 'utils/upload';
-import dynamic from 'next/dynamic';
-import ReactQuill from "react-quill";
 
 import Script from "next/script";
-import { highlight } from "utils/common";
-
-const WrapQuill = dynamic(() => import('./WrapQuill'), {
-  ssr: false,
-  loading: () => <p>Loading...</p>,
-});
+import Loading from "~components/shared/Loading";
 
 const postMetaData = {
   url: '',
@@ -46,13 +39,40 @@ const imageHandler = function (this: any) {
   }
 }
 
+
+const modules = {
+  toolbar: {
+    container: [
+      [{'header': [1, 2, 3, 4, 5, false]}],
+      ['bold', 'italic', 'underline','strike'],
+      ['blockquote', 'code-block'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image'],
+      ['clean'],
+    ],
+    handlers: {
+      image: imageHandler
+    },
+  },
+  syntax: true,
+};
+
+const formats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent',
+  'link', 'image', "code-block",
+];
+
 const PostEditor = (props: any) => {
   const [post, setPost] = useState({
     ...postMetaData,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
-  const quillRef = useRef<ReactQuill>(null);
+  const [isLoadQuill, setIsLoadQuill] = useState(false);
+  const [isLoadHighlight, setIsLoadHighlight] = useState(false);
+  const quillRef = useRef<any>(null);
 
   useEffect(() => {
     setPost({ ...post,...props.post });
@@ -67,40 +87,27 @@ const PostEditor = (props: any) => {
   }
 
   const onSave = function (mode: string) {
-    if (quillRef.current) {
+    const quill = quillRef.current
+    if (quill) {
       const updatePost  = {
         ...post,
-        draffContent: quillRef.current.getEditorContents(),
-        thumbText: quillRef.current.getEditor().getText().slice(0, 100),
+        draffContent: quill.root.innerHTML,
+        thumbText: quill.getText().slice(0, 100),
       }
       updatePost.isPublished = mode === 'publish' || post.isPublished;
       props.onSubmit(updatePost);
     }
   }
 
-  const modules = {
-    toolbar: {
-      container: [
-        [{'header': [1, 2, 3, 4, 5, false]}],
-        ['bold', 'italic', 'underline','strike'],
-        ['blockquote', 'code-block'],
-        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-        ['link', 'image'],
-        ['clean'],
-      ],
-      handlers: {
-        image: imageHandler
-      },
-    },
-    syntax: true,
-  };
-
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image', "code-block",
-  ];
+  useEffect(() => {
+    if (isLoadQuill && isLoadHighlight && post.uid) {
+      quillRef.current =  new (window as any).Quill('#editor', {
+        theme: 'snow',
+        modules,
+        formats
+      });
+    }
+  }, [isLoadHighlight, isLoadQuill, post.uid])
 
 
   if (!post.uid || typeof window === 'undefined') return null;
@@ -109,8 +116,15 @@ const PostEditor = (props: any) => {
     <div className="flex w-9/12 my-10 mx-auto flex-col">
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
-        onLoad={() => {
+        onReady={() => {
           (window as any).hljs.configure({ languages: ['javascript', 'css', 'html', 'typescript'] });
+          setIsLoadHighlight(true);
+        }}
+      />
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
+        onReady={() => {
+          setIsLoadQuill(true);
         }}
       />
       <input
@@ -120,14 +134,9 @@ const PostEditor = (props: any) => {
         className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400 font-medium"
       />
       <div className="mb-3">
-        <WrapQuill
-          theme="snow"
-          formats={formats}
-          modules={modules}
-          value={post.draffContent || ''}
-          quillRef={quillRef}
-          placeholder={'Tell your story…'}
-        />
+        {isLoadQuill ? "" : <Loading />}
+        <div className={isLoadQuill ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draffContent || '' }}>
+        </div>
       </div>
       <div className="actions">
         <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
