@@ -7,7 +7,6 @@ import config from 'config';
 import { ToastProvider } from 'react-toast-notifications';
 
 import "styles/globals.css";
-import "react-quill/dist/quill.snow.css";
 import "styles/monokai-sublime.min.css";
 
 const NextNProgress = dynamic(

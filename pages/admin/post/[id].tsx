@@ -67,6 +67,7 @@ const PostPage = (props :any) => {
 
   return (
     <div className="post-page-view">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
       <div className="w-full p-6 h-24">
         <Link href="/admin" legacyBehavior>
           <a className="border-solid border border-black rounded-full inline-block cursor-pointer w-10 h-10" >
