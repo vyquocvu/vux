@@ -113,7 +113,7 @@ const PostEditor = (props: any) => {
   if (!post.uid || typeof window === 'undefined') return null;
 
   return (
-    <div className="flex w-9/12 my-10 mx-auto flex-col">
+    <div className="flex xl:w-9/12 my-10 mx-auto flex-col">
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {

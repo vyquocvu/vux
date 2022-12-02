@@ -79,7 +79,7 @@ const PostPage = (props :any) => {
         {
           !isLoaded ? <Loading /> : (
             <>
-              <h2 className="flex w-9/12 mx-auto"> Edit Post</h2>
+              <h2 className="flex xl:w-9/12 mx-auto"> Edit Post</h2>
               <PostEditor post={post} onSubmit={onSubmit} />
             </>
           )
