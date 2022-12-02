@@ -25,6 +25,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   return (
     <>
       <Head>
+        <title>{post.title}</title>
         <meta name="title" content={post.title} />
         <meta name="description" content={post.thumbText} />
         <meta name="keywords" content="Vy Quốc Vũ, Blog, Notes, Developer" />
@@ -40,8 +41,8 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onLoad={highlight}
       />
-      <div className={'post-page-view h-full w-full flex'}>
-        <div className="mx-4 w-full pt-16 ql-snow">
+      <div className={'post-page-view h-full md:w-full flex'}>
+        <div className="md:mx-4 w-full pt-16 ql-snow">
           <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0">
             {/* <--! Back button --> */}
             <a href={getBackUrl()} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
