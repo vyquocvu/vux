@@ -9,10 +9,10 @@ import MainContent from "components/MainContent";
 // If loading a variable font, you don't need to specify the font weight
 const roboto = Roboto({ weight: [ '100','300','400','500','700','900'], display: 'swap', subsets: ['latin', 'vietnamese'] });
 
-const Layout = ({ children }: { children: ReactChild }) => {
+const Layout = ({ children, isPost }: { children: ReactChild, isPost: boolean }) => {
   return (
     <>
-      <Head>
+      {!isPost ? <Head>
         <meta name="author" content={config.author} />
         <meta name="keywords" content={config.keywords} />
         <meta name="description" content={config.description}/>
@@ -20,7 +20,7 @@ const Layout = ({ children }: { children: ReactChild }) => {
         <meta name="og:title" content={config.title}/>
         <meta name="og:image" content={config.avatar}/>
         <meta name="og:description" content={config.description}/>
-      </Head>
+      </Head> : ""}
       <div className={roboto.className}>
         <Sidebar />
         <MainContent>

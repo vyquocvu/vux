@@ -7,6 +7,7 @@ import { NextPageContext } from 'next';
 import { Post } from 'interfaces/Post';
 import { getPostById } from "fetcher/post";
 import { highlight, timeFromNow } from 'utils/common';
+import config from 'config';
 
 const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   const { post, host, referer } = props;
@@ -35,7 +36,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <meta property="og:url" content={host} />
         <meta property="og:title" content={post.title}/>
         <meta property="og:description" content={post.thumbText}/>
-        {post.thumbImage ?? <meta property="og:image" content={post.thumbImage}/>}
+        <meta property="og:image" content={post.thumbImage}/>
       </Head>
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'

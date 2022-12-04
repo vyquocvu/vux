@@ -37,7 +37,7 @@ class MyApp extends App {
             </a>
           <ToastProvider>
             <NextNProgress />
-            <Layout>
+            <Layout isPost={!!pageProps.post}>
               <Component {...pageProps} />
             </Layout>
           </ToastProvider>

@@ -1,6 +1,14 @@
 'use client';
 
-import { useEffect, useState, FormEvent, useRef, useCallback } from "react";
+
+declare global {
+  interface Window {
+    ImageResize: any;
+    Quill: any;
+  }
+}
+
+import { useEffect, useState, FormEvent, useRef } from "react";
 import upload from 'utils/upload';
 
 import Script from "next/script";
@@ -87,12 +95,15 @@ const PostEditor = (props: any) => {
   }
 
   const onSave = function (mode: string) {
-    const quill = quillRef.current
+    const quill = quillRef.current;
+    const { ops = [] } = quill.getContents();
+    const firstImage = ops.find((op: any) => op.insert?.image);
     if (quill) {
       const updatePost  = {
         ...post,
         draffContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
+        thumbImage: firstImage?.insert?.image,
       }
       updatePost.isPublished = mode === 'publish' || post.isPublished;
       props.onSubmit(updatePost);
@@ -101,11 +112,13 @@ const PostEditor = (props: any) => {
 
   useEffect(() => {
     if (isLoadQuill && isLoadHighlight && post.uid) {
-      quillRef.current =  new (window as any).Quill('#editor', {
-        theme: 'snow',
-        modules,
-        formats
-      });
+      setTimeout(() => {
+        quillRef.current =  new window.Quill('#editor', {
+          theme: 'snow',
+          modules,
+          formats
+        });
+      }, 10);
     }
   }, [isLoadHighlight, isLoadQuill, post.uid])
 
@@ -114,6 +127,7 @@ const PostEditor = (props: any) => {
 
   return (
     <div className="flex xl:w-9/12 my-10 mx-auto flex-col">
+      <Script src="/image-resize.min.js" />
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
