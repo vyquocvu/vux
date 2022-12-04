@@ -29,14 +29,14 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <title>{post.title}</title>
         <meta name="title" content={post.title} />
         <meta name="description" content={post.thumbText} />
-        <meta name="keywords" content="Vy Quốc Vũ, Blog, Notes, Developer" />
+        <meta name="keywords" content={config.keywords} />
         <meta name="author" content="Vy Quốc Vũ" />
         {/* Open Graph / Facebook  */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={host} />
         <meta property="og:title" content={post.title}/>
         <meta property="og:description" content={post.thumbText}/>
-        <meta property="og:image" content={post.thumbImage}/>
+        <meta property="og:image" content={post.thumbImage || config.avatar}/>
       </Head>
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'

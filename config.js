@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   "name": "Vuvy's Notes",
   "title": "Note của Vũ | Vy Quốc Vũ",
