@@ -11,6 +11,8 @@ export const friendlyStr = (str: string) => {
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/\s/g, "-")
       .replace(/[^a-zA-Z-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "")
       .toLocaleLowerCase();
   return formatted;
 }
