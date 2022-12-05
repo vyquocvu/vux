@@ -15,7 +15,7 @@ export const getServerSideProps = async ({ res }: NextPageContext ) => {
 
   const posts = await getPublishedPosts();
   const dynamicRoutes = posts.map(post => `${baseUrl}/post/${friendlyStr(post.title)}.${post?.uid}`)
-  const staticPages = ['/', '/contact', '/about', '/sitemap'].map((path) => `${baseUrl}${path}`);
+  const staticPages = ['', '/contact', '/about'].map((path) => `${baseUrl}${path}`);
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
