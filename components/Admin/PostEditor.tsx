@@ -103,7 +103,7 @@ const PostEditor = (props: any) => {
         ...post,
         draffContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
-        thumbImage: firstImage?.insert?.image,
+        thumbImage: firstImage?.insert?.image || '',
       }
       updatePost.isPublished = mode === 'publish' || post.isPublished;
       props.onSubmit(updatePost);
