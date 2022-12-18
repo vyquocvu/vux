@@ -118,7 +118,7 @@ const PostEditor = (props: any) => {
           modules,
           formats
         });
-      }, 10);
+      }, 100);
     }
   }, [isLoadHighlight, isLoadQuill, post.uid])
 

@@ -74,6 +74,10 @@ input[type=submit]:hover {
 .post-page-view img{
   margin: 0 auto;
 }
+.post-list img {
+  height: 100%;
+  object-fit: cover;
+}
 
 .github-corner:hover .octo-arm{
   animation: octocat-wave 560ms ease-in-out

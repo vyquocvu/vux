@@ -1,5 +1,6 @@
 import type { FunctionComponent } from 'react'
-import Link from 'next/link'
+import Link from 'next/link';
+import Image from 'next/image';
 
 import { timeFromNow, friendlyStr } from 'utils/common';
 import { Post } from 'interfaces/Post';
@@ -34,28 +35,33 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
     }
   };
   return (
-    <div className="pt-3 px-2 border-b border-b-solid">
-      <h2 className="inline-block">
-        <Link href={`/post/${slug}`}>
-          <span className="text-gray-900 block text-2xl -ml-1 transition-opacity duration-200 ease-in-out hover:underline cursor-pointer">
-            {data.title}
-          </span>
-        </Link>
-      </h2>
-      {
-        isPublished ? '' : <span className="text-red-500"> (Draft) </span>
-      }
-      <br />
-      <div className="text-sm mt-2 mb-2 inline-block">
-        <div className="text-xs mr-2 tracking-wider inline-block uppercase text-gray-500">
-          {timeFromNow(data.updatedAt.seconds)}
-        </div>
+    <div className='flex pt-3 px-2'>
+      <div className='px-3 pt-2 min-w-[320px]'>
+        <Image src={data.thumbImage || "/noimage.avif"} alt={data.title} width={300} height={150} style={{ maxHeight: 150 }} />
       </div>
-      <div>
-        { data.thumbText + '...' }
+      <div className="px-2 border-b border-b-solid">
+        <h2 className="inline-block">
+          <Link href={`/post/${slug}`}>
+            <span className="text-gray-900 block text-2xl -ml-1 transition-opacity duration-200 ease-in-out hover:underline cursor-pointer">
+              {data.title}
+            </span>
+          </Link>
+        </h2>
+        {
+          isPublished ? '' : <span className="text-red-500"> (Draft) </span>
+        }
+        <br />
+        <div className="text-sm mt-2 mb-2 inline-block">
+          <div className="text-xs mr-2 tracking-wider inline-block uppercase text-gray-500">
+            {timeFromNow(data.updatedAt.seconds)}
+          </div>
+        </div>
         <div>
-          {PostLink(isAdmin, slug)}
-          {isAdmin && <button className='text-gray-900 text-sm m-2 px-3 pt-[5px] pb-[3px] rounded-full inline-block border border-gray-500' onClick={handleDelete}> Delete </button>}
+          { data.thumbText + '...' }
+          <div>
+            {PostLink(isAdmin, slug)}
+            {isAdmin && <button className='text-gray-900 text-sm m-2 px-3 pt-[5px] pb-[3px] rounded-full inline-block border border-gray-500' onClick={handleDelete}> Delete </button>}
+          </div>
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ const List: FunctionComponent<Props> = ({ items = [], isAdmin = false }) => {
     return <PostItem key={item.uid} data={item} isAdmin={isAdmin} />
   }
   return (
-    <div>
+    <div className='post-list'>
     {(items as any[]).map((item: Post) => renderItem(item))}
     {isAdmin ? (
       <div className="mt-4 fixed bottom-0 w-full bg-white">
