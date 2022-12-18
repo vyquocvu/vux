@@ -15,7 +15,7 @@ module.exports = withBundleAnalyzer({
     domains: ['avatars.githubusercontent.com'],
     unoptimized: true,
   },
-  trailingSlash: true,
+  trailingSlash: false,
   exportPathMap: () => ({
     "/": { page: "/", query: { __nextDefaultLocale: "en", __nextLocale: "en" }},
     "/about": { page: "/about" },
