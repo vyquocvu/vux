@@ -50,8 +50,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
               <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
             </a>
           </div>
-          <h1 className="post-title text-2xl font-bold ml-0 pb-1"
-            >{ post.title }</h1>
+          <h1 className="post-title flex text-4xl font-bold -ml-2 pb-1">{ post.title }</h1>
           <p> {timeFromNow(post.updatedAt.seconds)}</p>
           <div className="pb-5 post-content ql-editor" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>

@@ -71,6 +71,9 @@ input[type=submit]:hover {
 .post-content a {
   color: #06c !important;
 }
+.post-content h2 {
+  font-size: 2rem;
+}
 .post-page-view img{
   margin: 0 auto;
 }
