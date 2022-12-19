@@ -37,6 +37,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <meta property="og:title" content={post.title}/>
         <meta property="og:description" content={post.thumbText}/>
         <meta property="og:image" content={post.thumbImage || config.avatar}/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
       </Head>
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
