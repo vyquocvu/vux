@@ -1,11 +1,11 @@
 import { useEffect, useState, useContext, createContext } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
+// import firebase from "firebase/app";
+// import "firebase/auth";
 import initFirebase from "./initFirebase";
 import { setSession } from "./firebaseSessionHandler";
 import { createAuthUserInfo } from "./user";
 
-initFirebase();
+const firebase = initFirebase();
 
 // https://benmcmahen.com/using-firebase-with-react-hooks/
 

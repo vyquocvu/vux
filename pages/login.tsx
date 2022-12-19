@@ -1,15 +1,15 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
+// import firebase from "firebase/app";
+// import "firebase/auth";
 import { get } from 'utils/common';
-import { useRouter } from "next/router";
 import initFirebase from "utils/auth/initFirebase";
 
 import { AuthInterface } from 'interfaces/User';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
+import { useRouter } from "next/router";
 
-initFirebase();
+const firebase = initFirebase();
 
 type Inputs = {
   email: string;
