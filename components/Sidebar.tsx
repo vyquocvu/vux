@@ -12,7 +12,7 @@ const SideBar: FC = () => (
             <div className="pr-8">
               <Image priority width={192} height={192} src={config.avatar} className="avatar rounded-full" alt="avatar" />
             </div>
-            <h1 className="mt-4 text-3xl text-gray-700 font-medium">{config.name}</h1>
+            <p className="mt-4 text-3xl text-gray-700 font-medium">{config.name}</p>
           </a>
         </Link>
         <nav className="" role="navigation">

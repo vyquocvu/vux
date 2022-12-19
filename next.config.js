@@ -17,10 +17,10 @@ module.exports = withBundleAnalyzer({
   },
   trailingSlash: false,
   exportPathMap: () => ({
-    "/": { page: "/", query: { __nextDefaultLocale: "en", __nextLocale: "en" }},
-    "/about": { page: "/about" },
-    "/contact": { page: "/contact" },
-    "/login": { page: "/login" },
-    "/signup": { page: "/signup" },
+    "/": { page: "/", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" }},
+    "/about": { page: "/about", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },
+    "/contact": { page: "/contact", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },
+    "/login": { page: "/login", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },
+    "/signup": { page: "/signup", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },
   }),
 });
