@@ -4,7 +4,10 @@ export default {
   "title": "Note của Vũ | Vy Quốc Vũ",
   "author": "Vy Quốc Vũ",
   "keywords": "Vy Quốc Vũ, developer, Full Stack, Vuvy, Vũ, Vy, Vuvy's Notes",
-  "content": "My name is Vy Quốc Vũ , call me Ryan.</br> Ryan alway love JS bfw ♥.",
+  "content": `I'm Vy Quốc Vũ (aka Ryan)</br>
+              Bachelor of Computer Science </br>
+              I'm a Fullstack developer 🇻🇳</br>
+              Ruby, JS bfw ♥.`,
   "avatar": "https://avatars.githubusercontent.com/u/13213996?v=4",
   "description": "Vy Quốc Vũ, I'm a web developer.",
   "pages": [
