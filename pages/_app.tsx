@@ -27,7 +27,7 @@ class MyApp extends App {
           <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
           <link rel="manifest" href="/site.webmanifest"></link>
         </Head>
-        <div className="h-screen">
+        <div>
           <a href={config.repo} className="github-corner fixed top-0 right-0 z-10" aria-label="View source on GitHub">
             <svg width="80" height="80" viewBox="0 0 250 250" style={{ fill: "#151513", color: "#fff", position: "absolute", top: 0, border: 0, right: 0}} aria-hidden="true">
               <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
