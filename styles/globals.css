@@ -41,6 +41,9 @@ body {
   margin-left: -18px;
   font-weight: normal;
 }
+.post-content.ql-editor {
+  overflow-y: visible;
+}
 
 input[type=text], input[type="email"], select, textarea {
   width: 100%; /* Full width */
