@@ -12,7 +12,7 @@ import { useEffect, useState, FormEvent, useRef } from "react";
 import upload from 'utils/upload';
 
 import Script from "next/script";
-import Loading from "~components/shared/Loading";
+import Loading from "components/shared/Loading";
 
 const postMetaData = {
   url: '',
@@ -55,6 +55,7 @@ const modules = {
       ['bold', 'italic', 'underline','strike'],
       ['blockquote', 'code-block'],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      [{'align': [] }],
       ['link', 'image'],
       ['clean'],
     ],
@@ -68,6 +69,7 @@ const modules = {
 const formats = [
   'header',
   'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'align',
   'list', 'bullet', 'indent',
   'link', 'image', "code-block",
 ];

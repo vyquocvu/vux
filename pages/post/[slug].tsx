@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Image from "next/image";
 import Script from 'next/script';
 import { NextPageContext } from 'next';
+import { useEffect, useState } from 'react';
 
 
 import { Post } from 'interfaces/Post';
@@ -9,8 +10,17 @@ import { getPostById } from "fetcher/post";
 import { highlight, timeFromNow } from 'utils/common';
 import config from 'config';
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'applause-button': any
+    }
+  }
+}
+
 const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   const { post, host, referer } = props;
+  const [url, setUrl] = useState<string>('');
 
   const getBackUrl = () => {
     if (!referer) return "/";
@@ -21,6 +31,10 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
       return "/";
     }
   }
+
+  useEffect(() => {
+    setUrl(location.href)
+  }, []);
 
   if (!post.uid) return 'Không tìm thấy bài viết';
   return (
@@ -38,7 +52,10 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <meta property="og:description" content={post.thumbText}/>
         <meta property="og:image" content={post.thumbImage || config.avatar}/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
+        <link rel="stylesheet" href="https://unpkg.com/applause-button/dist/applause-button.css" />
+
       </Head>
+      <Script src="https://unpkg.com/applause-button/dist/applause-button.js" />
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onLoad={highlight}
@@ -54,6 +71,9 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
           <h1 className="post-title flex text-4xl font-bold -ml-2 pb-1">{ post.title }</h1>
           <p> {timeFromNow(post.updatedAt.seconds)}</p>
           <div className="pb-5 post-content ql-editor" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+        </div>
+        <div className="fixed w-13 h-13 right-2 bottom-2 bg-white rounded-full	">
+          <applause-button url={url} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
       </div>
     </>
