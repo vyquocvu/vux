@@ -129,20 +129,21 @@ const PostEditor = (props: any) => {
 
   return (
     <div className="flex xl:w-9/12 my-10 mx-auto flex-col">
-      <Script src="/image-resize.min.js" />
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
           (window as any).hljs.configure({ languages: ['javascript', 'css', 'html', 'typescript'] });
+          console.log(new Date());
           setIsLoadHighlight(true);
         }}
       />
-      <Script
+      {isLoadHighlight ? <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
         onReady={() => {
+          console.log(new Date());
           setIsLoadQuill(true);
         }}
-      />
+      /> : ""}
       <input
         value={post.title || ''}
         name="title" onChange={onUpdate}

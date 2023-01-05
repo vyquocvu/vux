@@ -20,7 +20,7 @@ declare global {
 
 const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   const { post, host, referer } = props;
-  const [url, setUrl] = useState<string>('');
+  const [pathname, setPathname] = useState<string>('');
 
   const getBackUrl = () => {
     if (!referer) return "/";
@@ -33,7 +33,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   }
 
   useEffect(() => {
-    setUrl(location.href)
+    setPathname(location.pathname)
   }, []);
 
   if (!post.uid) return 'Không tìm thấy bài viết';
@@ -73,7 +73,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
           <div className="pb-5 post-content ql-editor" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>
         <div className="fixed w-13 h-13 right-2 bottom-2 bg-white rounded-full	">
-          <applause-button url={url} multiclap="true" style={{ width: 48, height: 48 }} />
+          <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
       </div>
     </>

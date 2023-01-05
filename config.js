@@ -12,6 +12,7 @@ export default {
   "description": "Vy Quốc Vũ, I'm a web developer.",
   "pages": [
     { "path": "/", "label": "Home" },
+    { "path": "/tags", "label": "Tags" },
     { "path": "/about", "label": "About" },
     { "path": "/contact", "label": "Contact" }
   ],

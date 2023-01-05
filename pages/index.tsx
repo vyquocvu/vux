@@ -17,7 +17,18 @@ const Index = (props: Props) => {
 Index.getInitialProps = async () => {
   try {
     const posts = await getPublishedPosts();
-    return { posts };
+    const shapePosts = posts.map((post) => {
+      return {
+        uid: post.uid,
+        title: post.title,
+        updatedAt: post.updatedAt,
+        thumbText: post.thumbText,
+        createdAt: post.createdAt,
+        thumbImage: post.thumbImage,
+        isPublished: post.isPublished,
+      }
+    });
+    return { posts: shapePosts };
   } catch (error) {
     return {};
   }
