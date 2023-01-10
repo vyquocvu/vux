@@ -36,9 +36,9 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
   };
   return (
     <div className='flex pt-4 px-0 sm:px-2 xs:flex-wrap lg:flex-nowrap'>
-      <div className='pl-1 py-2 pr-3 min-w-[320px] xs:w-full sm:w-auto'>
+      {/* <div className='pl-1 py-2 pr-3 min-w-[320px] xs:w-full sm:w-auto'>
         <Image priority src={data.thumbImage || "/noimage.avif"} alt={data.title} width={300} height={150} style={{ maxHeight: 150 }} />
-      </div>
+      </div> */}
       <div className="px-2 border-b border-b-solid">
         <h2 className="inline-block">
           <Link href={`/post/${slug}`}>
