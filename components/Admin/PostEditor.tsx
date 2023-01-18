@@ -8,11 +8,20 @@ declare global {
   }
 }
 
-import { useEffect, useState, FormEvent, useRef } from "react";
-import upload from 'utils/upload';
-
 import Script from "next/script";
+import dynamic from "next/dynamic";
+import { Tag } from 'react-tag-input';
+import { useEffect, useState, FormEvent, useRef } from "react";
+
+import upload from 'utils/upload';
 import Loading from "components/shared/Loading";
+import { TAGS } from "~utils/tags";
+
+const ReactTags = dynamic(
+  () => import('react-tag-input').then(lib => lib.WithContext) as any,
+  { ssr: false }
+);
+
 
 const postMetaData = {
   url: '',
@@ -47,7 +56,12 @@ const imageHandler = function (this: any) {
   }
 }
 
-
+const suggestions = TAGS.map(tag => {
+  return {
+    id: tag,
+    text: tag
+  };
+});
 const modules = {
   toolbar: {
     container: [
@@ -74,6 +88,13 @@ const formats = [
   'link', 'image', "code-block",
 ];
 
+const KeyCodes = {
+  comma: 188,
+  enter: 13
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
+
 const PostEditor = (props: any) => {
   const [post, setPost] = useState({
     ...postMetaData,
@@ -81,6 +102,7 @@ const PostEditor = (props: any) => {
     updatedAt: new Date(),
   });
   const [isLoadQuill, setIsLoadQuill] = useState(false);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [isLoadHighlight, setIsLoadHighlight] = useState(false);
   const quillRef = useRef<any>(null);
 
@@ -89,6 +111,16 @@ const PostEditor = (props: any) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props?.post?.uid]);
 
+  useEffect(() => {
+    setTags(post.tags.map((tag: string) => {
+      return {
+        id: tag,
+        text: tag
+      };
+    }));
+  }, [post.tags]);
+  console.log(post)
+  console.log(tags)
 
   const onUpdate = function (event: FormEvent) {
     const value: string = (event.target as any).value;
@@ -106,11 +138,33 @@ const PostEditor = (props: any) => {
         draffContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
         thumbImage: firstImage?.insert?.image || '',
+        tags: tags.map(tag => tag.text),
       }
       updatePost.isPublished = mode === 'publish' || post.isPublished;
       props.onSubmit(updatePost);
     }
   }
+  const handleDelete = (i: number) => {
+    setTags(tags.filter((tag, index) => index !== i));
+  };
+
+  const handleAddition = (tag: Tag) => {
+    setTags([...tags, tag]);
+  };
+
+  const handleDrag = (tag: Tag, currPos: number, newPos: number) => {
+    const newTags = tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    setTags(newTags);
+  };
+
+  const handleTagClick = (index: number) => {
+    console.log('The tag at index ' + index + ' was clicked');
+  };
 
   useEffect(() => {
     if (isLoadQuill && isLoadHighlight && post.uid) {
@@ -155,7 +209,17 @@ const PostEditor = (props: any) => {
         <div className={isLoadQuill ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draffContent || '' }}>
         </div>
       </div>
-      <div className="actions">
+      Tags
+      <ReactTags
+        tags={tags}
+        suggestions={suggestions}
+        delimiters={delimiters}
+        handleDrag={handleDrag}
+        handleDelete={handleDelete}
+        handleAddition={handleAddition}
+        handleTagClick={handleTagClick}
+      />
+      <div className="actions mt-10">
         <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
         <button className='bg-blue-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('publish')}> Publish </button>
       </div>

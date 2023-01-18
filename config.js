@@ -13,7 +13,7 @@ export default {
   "pages": [
     { "path": "/", "label": "Home" },
     { "path": "/tags", "label": "Tags" },
-    { "path": "/about", "label": "About" },
+    { "path": "/about", "label": "About Me" },
     { "path": "/contact", "label": "Contact" }
   ],
   "socials": [

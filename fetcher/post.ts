@@ -30,17 +30,15 @@ export const setPostById = async (id: string, postData: Post) => {
   }
 };
 
-export const getPublishedPosts = async (isServer = false) => {
+export const getPublishedPosts = async () => {
   try {
     const postRepo = await postCollection
       .where('isPublished', '==', true).get();
     let posts = postRepo.docs.map((sp: any) => {
       const data = sp.data();
-      if (!isServer) return { ...data, uid: sp.id };
       return {
-        uid: sp.id,
-        thumbText: data.thumbText,
-        updatedAt: data.updatedAt,
+        ...data,
+        uid: sp.id
       }
     });
     posts = posts.sort((a: Post, b: Post) => {
