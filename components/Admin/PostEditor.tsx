@@ -10,7 +10,7 @@ declare global {
 
 import Script from "next/script";
 import dynamic from "next/dynamic";
-import { Tag } from 'react-tag-input';
+import { ReactTagsProps, Tag } from 'react-tag-input';
 import { useEffect, useState, FormEvent, useRef } from "react";
 
 import upload from 'utils/upload';
@@ -20,7 +20,7 @@ import { TAGS } from "~utils/tags";
 const ReactTags = dynamic(
   () => import('react-tag-input').then(lib => lib.WithContext) as any,
   { ssr: false }
-);
+) as React.ComponentType<ReactTagsProps>;
 
 
 const postMetaData = {
@@ -119,8 +119,6 @@ const PostEditor = (props: any) => {
       };
     }));
   }, [post.tags]);
-  console.log(post)
-  console.log(tags)
 
   const onUpdate = function (event: FormEvent) {
     const value: string = (event.target as any).value;
@@ -187,14 +185,12 @@ const PostEditor = (props: any) => {
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
           (window as any).hljs.configure({ languages: ['javascript', 'css', 'html', 'typescript'] });
-          console.log(new Date());
           setIsLoadHighlight(true);
         }}
       />
       {isLoadHighlight ? <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
         onReady={() => {
-          console.log(new Date());
           setIsLoadQuill(true);
         }}
       /> : ""}
