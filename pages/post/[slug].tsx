@@ -43,7 +43,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <title>{post.title}</title>
         <meta name="title" content={post.title} />
         <meta name="description" content={post.thumbText} />
-        <meta name="keywords" content={config.keywords} />
+        <meta name="keywords" content={config.keywords +","+ post.tags?.join(",")} />
         <meta name="author" content="Vy Quốc Vũ" />
         {/* Open Graph / Facebook  */}
         <meta property="og:type" content="website" />

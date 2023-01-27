@@ -16,7 +16,7 @@ const SideBar: FC = () => (
           </a>
         </Link>
         <nav className="" role="navigation">
-          <p className="block text-sm my-5 leading-6">
+          <p className="block text-sm my-5 leading-6 intro">
             <span dangerouslySetInnerHTML={{ __html: config.content }} />
           </p>
           <div className="w-1/2 my-5 border-b border-gray-700"></div>

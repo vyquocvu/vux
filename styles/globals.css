@@ -7,6 +7,9 @@ body {
   margin: 0 auto;
   font-weight: 300;
 }
+.intro a {
+  text-decoration: underline;
+}
 
 
 .lds-dual-ring:after {

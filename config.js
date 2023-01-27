@@ -1,13 +1,14 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
-  "name": "Vuvy's Notes",
+  "name": "Vu Vy",
   "title": "Note của Vũ | Vy Quốc Vũ",
   "author": "Vy Quốc Vũ",
-  "keywords": "Vy Quốc Vũ, developer, Full Stack, Vuvy, Vũ, Vy, Vuvy's Notes",
-  "content": `I'm Vy Quốc Vũ (aka Ryan)</br>
-              Bachelor of Computer Science </br>
-              I'm a Fullstack developer 🇻🇳</br>
-              Ruby, JS bfw ♥.`,
+  "keywords": "Vy Quốc Vũ,Full Stack,Vuvy Notes",
+  "content": `My name is Vy Quốc Vũ (aka Ryan)</br>
+              <a href="https://oisp.hcmut.edu.vn/en/study-programs/bachelor-degree/computer-science">Bachelor of Computer Science</a>
+               </br>
+              Fullstack developer from 🇻🇳</br>
+              Anyway Ruby, JS builder with ♥`,
   "avatar": "https://avatars.githubusercontent.com/u/13213996?v=4",
   "description": "Vy Quốc Vũ, I'm a web developer.",
   "pages": [
