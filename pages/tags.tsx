@@ -6,7 +6,7 @@ const TagsPage = ({ tags }: { tags: { [key: string]: number  }}) => {
     <div>
       <h1 className="text-3xl">This is some tags</h1>
       <br />
-      {Object.keys(tags).map((tag) => {
+      {Object.keys(tags).sort((l, r) => tags[r] - tags[l]).map((tag) => {
         const postCount = tags[tag];
         return (
           <div key={tag}>
