@@ -9,9 +9,9 @@ export const timeFromNow = (second: number) =>
 export const friendlyStr = (str: string) => {
   const formatted = str.normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[đĐ]/g, m => m === 'đ' ? 'd' : 'D')
-      .replace(/([^0-9a-z-\s])/g, '')
       .replace(/(\s+)/g, '-')
+      .replace(/[đĐ]/g, m => m === 'đ' ? 'd' : 'D')
+      .replace(/[^a-zA-Z-]/g, "")
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "")
       .toLocaleLowerCase();
