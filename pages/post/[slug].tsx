@@ -75,13 +75,19 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <div className="fixed w-13 h-13 right-2 bottom-2 bg-white rounded-full	">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
-        <div id="cusdis_thread"
+        <hr className='text-lg mt-4 ml-4 w-full'/>
+        <h2 className='text-lg m-4 font-normal'>Comments</h2>
+
+        <div
+          id="cusdis_thread"
+          className="ml-3 mt-3 w-full"
           data-page-id={post.uid}
           data-page-url={pathname}
           data-page-title={post.title}
           data-host="https://cusdis.com"
           data-app-id="e2a6f339-0f07-48c1-8a25-b6ef4820ffa8"
-        />
+        >
+        </div>
         <Script async src="https://cusdis.com/js/cusdis.es.js" />
       </div>
     </>
