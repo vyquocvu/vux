@@ -12,7 +12,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@giscus/react": "^2.2.6",
     "@next/bundle-analyzer": "^13.0.5",
     "@next/font": "^13.0.4",
     "@types/nprogress": "^0.2.0",

@@ -60,7 +60,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onLoad={highlight}
       />
-      <div className={'post-page-view h-full md:w-full flex'}>
+      <div className={'post-page-view h-full md:w-full flex flex-col'}>
         <div className="md:mx-4 w-full pt-16 ql-snow">
           <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0">
             {/* <--! Back button --> */}
@@ -75,6 +75,14 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <div className="fixed w-13 h-13 right-2 bottom-2 bg-white rounded-full	">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
+        <div id="cusdis_thread"
+          data-page-id={post.uid}
+          data-page-url={pathname}
+          data-page-title={post.title}
+          data-host="https://cusdis.com"
+          data-app-id="e2a6f339-0f07-48c1-8a25-b6ef4820ffa8"
+        />
+        <Script async src="https://cusdis.com/js/cusdis.es.js" />
       </div>
     </>
   )
