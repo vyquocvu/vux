@@ -14,24 +14,35 @@ const Index = (props: Props) => {
   return <PostList items={posts} />;
 };
 
-Index.getInitialProps = async () => {
+export const getStaticProps = async () => {
   try {
     const posts = await getPublishedPosts();
     const shapePosts = posts.map((post) => {
       return {
         uid: post.uid,
         title: post.title,
-        updatedAt: post.updatedAt,
+        updatedAt: post.updatedAt.toJSON(),
         thumbText: post.thumbText,
-        createdAt: post.createdAt,
+        createdAt: post.createdAt.toJSON(),
         thumbImage: post.thumbImage,
         isPublished: post.isPublished,
       }
     });
-    return { posts: shapePosts };
+
+    return {
+      props: {
+        posts: shapePosts 
+      },
+      revalidate: 60 * 60,
+    };
   } catch (error) {
-    return {};
+    return {
+      props: {
+        posts: [],
+      }
+    };
   }
+  
 }
 
 export default Index;

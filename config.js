@@ -1,9 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
-  "name": "Vu Vy",
+  "name": "Vy Quốc Vũ",
   "title": "Note của Vũ | Vy Quốc Vũ",
   "author": "Vy Quốc Vũ",
-  "keywords": "Vy Quốc Vũ,Full Stack,Vuvy Notes",
+  "keywords": "Vy Quốc Vũ, Full Stack, Vuvy Notes",
   "content": `My name is Vy Quốc Vũ (aka Ryan)</br>
               <a href="https://oisp.hcmut.edu.vn/en/study-programs/bachelor-degree/computer-science">Bachelor of Computer Science</a>
                </br>
@@ -22,5 +22,6 @@ export default {
     { "url": "https://linkedin.com/in/vyquocvu", "label": "Linkedin", "icon": "/icons/linkedin.svg" },
     { "url": "https://github.com/vyquocvu", "label": "Github", "icon": "/icons/github.svg" }
   ],
-  "repo": "https://github.com/vyquocvu/vux"
+  "repo": "https://github.com/vyquocvu/vux",
+  "host": "https://vyquocvu.co/",
 }

@@ -1,13 +1,14 @@
+import React from 'react';
 import Head from 'next/head';
 import Image from "next/image";
 import Script from 'next/script';
-import { NextPageContext } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 
 import { Post } from 'interfaces/Post';
-import { getPostById } from "fetcher/post";
-import { highlight, timeFromNow } from 'utils/common';
+import { getPostById, getPublishedPosts } from "fetcher/post";
+import { friendlyStr, highlight, timeFromNow } from 'utils/common';
 import config from 'config';
 
 declare global {
@@ -18,36 +19,32 @@ declare global {
   }
 }
 
-const PostPage = (props: { post: Post, host: string, referer:  string}) => {
-  const { post, host, referer } = props;
+const PostPage = (props: { post: Post, host: string}) => {
+  const { post } = props;
   const [pathname, setPathname] = useState<string>('');
+  const router = useRouter();
 
-  const getBackUrl = () => {
-    if (!referer) return "/";
-    try {
-      const url = new URL(referer);
-      return url.pathname;
-    } catch (error) {
-      return "/";
-    }
+  const getBackUrl = (e: any) => {
+    e.preventDefault();
+    router.back()
   }
 
   useEffect(() => {
     setPathname(location.pathname)
   }, []);
 
-  if (!post.uid) return 'Không tìm thấy bài viết';
+  if (!post?.uid) return 'Không tìm thấy bài viết';
   return (
     <>
       <Head>
         <title>{post.title}</title>
         <meta name="title" content={post.title} />
         <meta name="description" content={post.thumbText} />
-        <meta name="keywords" content={config.keywords +","+ post.tags?.join(",")} />
+        <meta name="keywords" content={config.keywords +", "+ post.tags?.join(",")} />
         <meta name="author" content="Vy Quốc Vũ" />
         {/* Open Graph / Facebook  */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={host} />
+        <meta property="og:url" content={config.host} />
         <meta property="og:title" content={post.title}/>
         <meta property="og:description" content={post.thumbText}/>
         <meta property="og:image" content={post.thumbImage || config.avatar}/>
@@ -64,7 +61,7 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
         <div className="md:mx-4 w-full pt-16 ql-snow">
           <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0">
             {/* <--! Back button --> */}
-            <a href={getBackUrl()} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+            <a href="#" onClick={getBackUrl} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
               <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
             </a>
           </div>
@@ -94,16 +91,36 @@ const PostPage = (props: { post: Post, host: string, referer:  string}) => {
   )
 }
 
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const paths = posts.map((post) => {
+    const slug = `${friendlyStr(post.title)}.${post.uid}`;
+    return { params: { slug } };
+  });
+  return {
+    paths,
+    fallback: 'blocking'
+  }
+}
+
 // Run on server side
-PostPage.getInitialProps = async ({ query, req }: NextPageContext) => {
+export const getStaticProps = async ({ params }: any) => {
   try {
-    if (typeof query.slug != 'string') return {};
-    const id = query.slug.split(".").pop() || "";
+    if (typeof params.slug != 'string') return {};
+    const id = params.slug.split(".").pop() || "";
     const post = await getPostById(id);
-    let host = req?.headers?.host;
-    return { post, host, referer: req?.headers.referer };
+    post.createdAt = post.createdAt.toJSON();
+    post.updatedAt = post.updatedAt.toJSON();
+    return { 
+      props: {
+        post, 
+      },
+      revalidate: 60 * 60,
+    };
   } catch (error) {
-    return {};
+    return {
+      props: {}
+    };
   }
 }
 
