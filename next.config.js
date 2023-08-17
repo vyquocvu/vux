@@ -17,7 +17,7 @@ module.exports = withBundleAnalyzer({
   },
   trailingSlash: false,
   exportPathMap: () => ({
-    "/": { page: "/", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" }},
+    "/": { page: "/", query: { __nextDefaultLocale: "vi", __nextLocale: "vi", __nextDataReq: "" }},
     "/about": { page: "/about", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },
     "/contact": { page: "/contact", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },
     "/login": { page: "/login", query: { __nextDefaultLocale: "vi", __nextLocale: "vi" } },

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=3001 NODE_ENV=development next dev",
+    "dev": "PORT=3000 NODE_ENV=development next dev",
     "export": "next export",
     "build": "NODE_ENV=production next build",
     "start": "NODE_ENV=production next start",

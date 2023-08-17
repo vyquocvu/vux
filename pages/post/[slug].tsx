@@ -10,6 +10,7 @@ import { Post } from 'interfaces/Post';
 import { getPostById, getPublishedPosts } from "fetcher/post";
 import { friendlyStr, highlight, timeFromNow } from 'utils/common';
 import config from 'config';
+import Link from 'next/link';
 
 declare global {
   namespace JSX {
@@ -23,11 +24,6 @@ const PostPage = (props: { post: Post, host: string}) => {
   const { post } = props;
   const [pathname, setPathname] = useState<string>('');
   const router = useRouter();
-
-  const getBackUrl = (e: any) => {
-    e.preventDefault();
-    router.back()
-  }
 
   useEffect(() => {
     setPathname(location.pathname)
@@ -61,13 +57,13 @@ const PostPage = (props: { post: Post, host: string}) => {
         <div className="md:mx-4 w-full pt-16 ql-snow">
           <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0">
             {/* <--! Back button --> */}
-            <a href="#" onClick={getBackUrl} className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
+            <Link href="/" className="border border-solid border-black rounded-full inline-block cursor-pointer w-10 h-10" >
               <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
-            </a>
+            </Link>
           </div>
-          <h1 className="post-title flex text-4xl font-bold -ml-2 pb-1">{ post.title }</h1>
-          <p> {timeFromNow(post.updatedAt.seconds)}</p>
-          <div className="pb-5 post-content ql-editor" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+          <h1 className="post-title flex text-4xl font-medium -ml-2 pb-1">{ post.title }</h1>
+          <p className="pl-1.5"> {timeFromNow(post.updatedAt.seconds)}</p>
+          <div className="pb-5 post-content ql-editor pl-1.5" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>
         <div className="fixed w-13 h-13 right-2 bottom-2 bg-white rounded-full	">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
