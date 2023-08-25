@@ -40,8 +40,8 @@ body {
 .post-title::before {
   content: "#";
   color: #CCC;
-  margin-right: 8px;
-  margin-left: -18px;
+  margin-right: 6px;
+  margin-left: -22px;
   font-weight: normal;
 }
 .post-content.ql-editor {
