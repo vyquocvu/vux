@@ -25,7 +25,7 @@ const PostPage = (props :any) => {
   const { addToast } = useToasts();
   const [post, setPost] = useState<any>({});
   useEffect(() => {
-    if (typeof window !== undefined && !authUser) {
+    if (typeof window !== 'undefined' && !authUser) {
       router.push("/login");
     }
   }, [authUser, router]);

@@ -31,7 +31,7 @@ const AdminPage = (props: Props) => {
   }, [authUser?.id]);
 
   useEffect(() => {
-    if (typeof window !== undefined && !authUser) {
+    if (typeof window !== 'undefined' && !authUser) {
       router.push("/login");
     } else {
       fetchingPosts();

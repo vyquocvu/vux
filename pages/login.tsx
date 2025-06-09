@@ -32,7 +32,7 @@ function Login(props: Props) {
   }, [firstInput]);
 
 
-  if (typeof window !== undefined && props?.AuthUserInfo?.token) {
+  if (typeof window !== 'undefined' && props?.AuthUserInfo?.token) {
     return router.push("/admin");
   }
 
