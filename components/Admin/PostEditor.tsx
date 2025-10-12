@@ -15,6 +15,7 @@ import { useEffect, useState, FormEvent, useRef } from "react";
 
 import upload from 'utils/upload';
 import Loading from "components/shared/Loading";
+import LoadingOverlay from "components/shared/LoadingOverlay";
 import { TAGS } from "~utils/tags";
 
 const ReactTags = dynamic(
@@ -104,10 +105,14 @@ const PostEditor = (props: any) => {
   const [isLoadQuill, setIsLoadQuill] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const [isLoadHighlight, setIsLoadHighlight] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savingMessage, setSavingMessage] = useState('');
   const quillRef = useRef<any>(null);
 
   useEffect(() => {
     setPost({ ...post,...props.post });
+    // Hide loading overlay when post changes (submission complete)
+    setIsSaving(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props?.post?.uid]);
 
@@ -131,6 +136,10 @@ const PostEditor = (props: any) => {
     const { ops = [] } = quill.getContents();
     const firstImage = ops.find((op: any) => op.insert?.image);
     if (quill) {
+      // Show overlay with appropriate message
+      setSavingMessage(mode === 'publish' ? 'Publishing...' : 'Saving draft...');
+      setIsSaving(true);
+      
       const updatePost  = {
         ...post,
         draffContent: quill.root.innerHTML,
@@ -181,6 +190,7 @@ const PostEditor = (props: any) => {
 
   return (
     <div className="flex xl:w-9/12 my-10 mx-auto flex-col">
+      {isSaving && <LoadingOverlay message={savingMessage} />}
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
