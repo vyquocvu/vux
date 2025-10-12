@@ -574,6 +574,11 @@
   resolved "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-13.0.4.tgz"
   integrity sha512-QB8qoZrvHhZsz62nUrTKlp5IiZ8I7KZsaa6437H/W/NOZHLGJjCxROnhUjLvKVe/T5P86pjya2SUOUqWAjz4Pg==
 
+"@next/swc-linux-x64-musl@13.0.4":
+  version "13.0.4"
+  resolved "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-13.0.4.tgz"
+  integrity sha512-WaahF6DYUQRg1QqIMcuOu2ZsFhS3aC5iWeQyeptMHklP9wb4FfTNmBArKHknX/GXD8P9gI38WTAHJ25cc0zVwg==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"

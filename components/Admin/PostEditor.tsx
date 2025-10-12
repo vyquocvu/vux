@@ -181,6 +181,24 @@ const PostEditor = (props: any) => {
           modules,
           formats
         });
+
+        // Preserve scroll position on paste to prevent auto-scroll to top
+        const quill = quillRef.current;
+        const editorContainer = quill.container;
+        let scrollTop = 0;
+        let scrollLeft = 0;
+        
+        // Listen for the clipboard paste event
+        editorContainer.addEventListener('paste', () => {
+          // Store current scroll position before paste
+          scrollTop = window.scrollY || document.documentElement.scrollTop;
+          scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+          
+          // Restore scroll position after Quill processes the paste
+          setTimeout(() => {
+            window.scrollTo(scrollLeft, scrollTop);
+          }, 0);
+        });
       }, 100);
     }
   }, [isLoadHighlight, isLoadQuill, post.uid])
