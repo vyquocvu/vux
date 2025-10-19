@@ -46,3 +46,4 @@ serviceAccount*
 .vercel
 .firebaserc
 .vscode
+tsconfig.tsbuildinfo
