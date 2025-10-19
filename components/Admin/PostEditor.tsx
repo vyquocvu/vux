@@ -5,6 +5,7 @@ declare global {
   interface Window {
     ImageResize: any;
     Quill: any;
+    QuillBetterTable: any;
   }
 }
 
@@ -72,12 +73,14 @@ const modules = {
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
       [{'align': [] }],
       ['link', 'image'],
+      [{'table': 'table'}],
       ['clean'],
     ],
     handlers: {
       image: imageHandler
     },
   },
+  table: false,
   syntax: true,
 };
 
@@ -87,6 +90,7 @@ const formats = [
   'align',
   'list', 'bullet', 'indent',
   'link', 'image', "code-block",
+  'table', 'table-cell-line',
 ];
 
 const KeyCodes = {
@@ -105,6 +109,7 @@ const PostEditor = (props: any) => {
   const [isLoadQuill, setIsLoadQuill] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const [isLoadHighlight, setIsLoadHighlight] = useState(false);
+  const [isLoadBetterTable, setIsLoadBetterTable] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [savingMessage, setSavingMessage] = useState('');
   const quillRef = useRef<any>(null);
@@ -174,12 +179,39 @@ const PostEditor = (props: any) => {
   };
 
   useEffect(() => {
-    if (isLoadQuill && isLoadHighlight && post.uid) {
+    if (isLoadQuill && isLoadHighlight && isLoadBetterTable && post.uid) {
       setTimeout(() => {
+        // Register the table module
+        window.Quill.register({
+          'modules/better-table': window.QuillBetterTable.default
+        }, true);
+
         quillRef.current =  new window.Quill('#editor', {
           theme: 'snow',
-          modules,
+          modules: {
+            ...modules,
+            table: false,  // disable default table
+            'better-table': {
+              operationMenu: {
+                items: {
+                  unmergeCells: {
+                    text: 'Unmerge cells'
+                  }
+                }
+              }
+            },
+            keyboard: {
+              bindings: window.QuillBetterTable.keyboardBindings
+            }
+          },
           formats
+        });
+
+        // Add table button to toolbar
+        const toolbar = quillRef.current.getModule('toolbar');
+        toolbar.addHandler('table', function() {
+          const tableModule = quillRef.current.getModule('better-table');
+          tableModule.insertTable(3, 3);
         });
 
         // Preserve scroll position on paste to prevent auto-scroll to top
@@ -201,7 +233,7 @@ const PostEditor = (props: any) => {
         });
       }, 100);
     }
-  }, [isLoadHighlight, isLoadQuill, post.uid])
+  }, [isLoadHighlight, isLoadQuill, isLoadBetterTable, post.uid])
 
 
   if (!post.uid || typeof window === 'undefined') return null;
@@ -209,6 +241,7 @@ const PostEditor = (props: any) => {
   return (
     <div className="flex xl:w-9/12 my-10 mx-auto flex-col">
       {isSaving && <LoadingOverlay message={savingMessage} />}
+      <link rel="stylesheet" href="https://unpkg.com/quill-better-table@1.2.10/dist/quill-better-table.css" />
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
@@ -220,6 +253,12 @@ const PostEditor = (props: any) => {
         src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
         onReady={() => {
           setIsLoadQuill(true);
+        }}
+      /> : ""}
+      {isLoadQuill ? <Script
+        src="https://unpkg.com/quill-better-table@1.2.10/dist/quill-better-table.js"
+        onReady={() => {
+          setIsLoadBetterTable(true);
         }}
       /> : ""}
       <input

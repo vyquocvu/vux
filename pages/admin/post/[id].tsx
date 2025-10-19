@@ -68,6 +68,7 @@ const PostPage = (props :any) => {
   return (
     <div className="post-page-view">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
+      <link rel="stylesheet" href="https://unpkg.com/quill-better-table@1.2.10/dist/quill-better-table.css" />
       <div className="w-full">
         <Link href="/" className="border-solid border border-black rounded-full inline-block cursor-pointer w-10 h-10" >
           <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />

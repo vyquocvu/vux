@@ -218,3 +218,49 @@ div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
     color: #333;
     text-align: center;
 }
+
+/* Table Styles for Better Display */
+.post-content table,
+.ql-editor table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.post-content table td,
+.post-content table th,
+.ql-editor table td,
+.ql-editor table th {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    word-wrap: break-word;
+}
+
+.post-content table th,
+.ql-editor table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Mobile responsive table */
+@media (max-width: 768px) {
+    .post-content table,
+    .ql-editor table {
+        font-size: 0.875rem;
+    }
+    
+    .post-content table td,
+    .post-content table th,
+    .ql-editor table td,
+    .ql-editor table th {
+        padding: 6px 8px;
+    }
+}
+
+/* Table wrapper for horizontal scroll on mobile */
+.post-content .quill-better-table-wrapper,
+.ql-editor .quill-better-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
