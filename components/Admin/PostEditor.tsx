@@ -78,6 +78,14 @@ const modules = {
       image: imageHandler
     },
   },
+  imageResize: {
+    displayStyles: {
+      backgroundColor: 'black',
+      border: 'none',
+      color: 'white'
+    },
+    modules: ['Resize', 'DisplaySize', 'Toolbar']
+  },
   syntax: true,
 };
 
@@ -105,6 +113,7 @@ const PostEditor = (props: any) => {
   const [isLoadQuill, setIsLoadQuill] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const [isLoadHighlight, setIsLoadHighlight] = useState(false);
+  const [isLoadImageResize, setIsLoadImageResize] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [savingMessage, setSavingMessage] = useState('');
   const quillRef = useRef<any>(null);
@@ -174,8 +183,11 @@ const PostEditor = (props: any) => {
   };
 
   useEffect(() => {
-    if (isLoadQuill && isLoadHighlight && post.uid) {
+    if (isLoadQuill && isLoadHighlight && isLoadImageResize && post.uid) {
       setTimeout(() => {
+        // Register ImageResize module before creating Quill instance
+        window.Quill.register('modules/imageResize', window.ImageResize.default);
+        
         quillRef.current =  new window.Quill('#editor', {
           theme: 'snow',
           modules,
@@ -201,7 +213,7 @@ const PostEditor = (props: any) => {
         });
       }, 100);
     }
-  }, [isLoadHighlight, isLoadQuill, post.uid])
+  }, [isLoadHighlight, isLoadQuill, isLoadImageResize, post.uid])
 
 
   if (!post.uid || typeof window === 'undefined') return null;
@@ -222,6 +234,12 @@ const PostEditor = (props: any) => {
           setIsLoadQuill(true);
         }}
       /> : ""}
+      {isLoadQuill ? <Script
+        src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"
+        onReady={() => {
+          setIsLoadImageResize(true);
+        }}
+      /> : ""}
       <input
         value={post.title || ''}
         name="title" onChange={onUpdate}
@@ -229,8 +247,8 @@ const PostEditor = (props: any) => {
         className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400 font-medium"
       />
       <div className="mb-3">
-        {isLoadQuill ? "" : <Loading />}
-        <div className={isLoadQuill ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draffContent || '' }}>
+        {isLoadQuill && isLoadImageResize ? "" : <Loading />}
+        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draffContent || '' }}>
         </div>
       </div>
       Tags
