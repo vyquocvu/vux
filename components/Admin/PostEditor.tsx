@@ -1,6 +1,5 @@
 'use client';
 
-
 declare global {
   interface Window {
     ImageResize: any;
@@ -187,7 +186,7 @@ const PostEditor = (props: any) => {
       setTimeout(() => {
         // Register ImageResize module before creating Quill instance
         window.Quill.register('modules/imageResize', window.ImageResize.default);
-        
+  
         quillRef.current =  new window.Quill('#editor', {
           theme: 'snow',
           modules,
@@ -228,17 +227,13 @@ const PostEditor = (props: any) => {
           setIsLoadHighlight(true);
         }}
       />
-      {isLoadHighlight ? <Script
+      <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
-        onReady={() => {
-          setIsLoadQuill(true);
-        }}
-      /> : ""}
+        onReady={() => setIsLoadQuill(true)}
+      />
       {isLoadQuill ? <Script
         src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"
-        onReady={() => {
-          setIsLoadImageResize(true);
-        }}
+        onReady={() => setIsLoadImageResize(true)}
       /> : ""}
       <input
         value={post.title || ''}
