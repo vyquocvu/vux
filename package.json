@@ -12,35 +12,35 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/bundle-analyzer": "^13.0.5",
-    "@next/font": "^13.0.4",
-    "@types/nprogress": "^0.2.0",
-    "@types/react-tag-input": "^6.6.1",
+    "@next/bundle-analyzer": "13.0.5",
+    "@next/font": "13.0.4",
+    "@types/nprogress": "^0.2.3",
+    "@types/react-tag-input": "^6.6.6",
     "@types/react-toast-notifications": "^2.4.0",
     "cookie-session": "1.4.0",
-    "dayjs": "^1.8.32",
-    "firebase": "^7.14.0",
-    "firebase-admin": "8.9.0",
+    "dayjs": "^1.11.19",
+    "firebase": "^12.5.0",
+    "firebase-admin": "13.5.0",
     "isomorphic-unfetch": "^3.0.0",
-    "next": "13",
+    "next": "13.0.4",
     "nprogress": "^0.2.0",
     "react": "18",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^18.2.0",
-    "react-tag-input": "^6.8.1",
+    "react-dom": "18.2.0",
+    "react-tag-input": "^6.10.6",
     "react-toast-notifications": "^2.4.0",
-    "sass": "^1.56.1"
+    "sass": "^1.93.2"
   },
   "devDependencies": {
-    "@types/cookie-session": "^2.0.38",
+    "@types/cookie-session": "^2.0.49",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "autoprefixer": "^10.4.7",
-    "eslint": "8.20.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "9.38.0",
     "eslint-config-next": "12.2.3",
-    "postcss": "^8.4.14",
-    "tailwindcss": "^3.1.4",
-    "typescript": "4.5.5"
+    "postcss": "^8.5.6",
+    "tailwindcss": "3.1.4",
+    "typescript": "5.9.3"
   }
 }
