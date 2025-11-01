@@ -146,7 +146,7 @@ const PostEditor = (props: PostEditorProps) => {
         draftContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
         thumbImage: firstImage?.insert?.image || '',
-        tags: tags.map(tag => tag.text) as [string],
+        tags: tags.map(tag => tag.text),
         isPublished: mode === EDITOR_MODE.PUBLISH || post.isPublished || false,
       };
       props.onSubmit(updatePost as Post);

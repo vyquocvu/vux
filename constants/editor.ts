@@ -8,30 +8,6 @@ export const KEY_CODES = {
   ENTER: 13,
 } as const;
 
-// Quill editor configuration
-export const QUILL_MODULES = {
-  toolbar: {
-    container: [
-      [{ 'header': [1, 2, 3, 4, 5, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean'],
-    ],
-  },
-  imageResize: {
-    displayStyles: {
-      backgroundColor: 'black',
-      border: 'none',
-      color: 'white'
-    },
-    modules: ['Resize', 'DisplaySize', 'Toolbar']
-  },
-  syntax: true,
-} as const;
-
 export const QUILL_FORMATS = [
   'header',
   'bold',
@@ -52,7 +28,7 @@ export const QUILL_FORMATS = [
 export const DEFAULT_POST_METADATA = {
   url: '',
   uid: '',
-  tags: [] as any,
+  tags: [] as string[],
   title: '',
   createdAt: '',
   updatedAt: '',

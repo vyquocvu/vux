@@ -2,7 +2,7 @@ export interface Post {
   uid: string;
   url: string;
   title: string;
-  tags: [string];
+  tags: string[];
   label?: string;
   createdAt: any;
   author: string;
