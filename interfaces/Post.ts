@@ -9,7 +9,7 @@ export interface Post {
   updatedAt: any;
   thumbText: string;
   thumbImage: string;
-  draffContent: string;
+  draftContent: string;
   isPublished: boolean;
   publishContent: string;
 }

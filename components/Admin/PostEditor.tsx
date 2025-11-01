@@ -32,7 +32,7 @@ const postMetaData = {
   updatedAt: '',
   thumbText: '',
   thumbImage: '',
-  draffContent: '',
+  draftContent: '',
   publishContent: '',
   isPublished: false,
 };
@@ -150,7 +150,7 @@ const PostEditor = (props: any) => {
       
       const updatePost  = {
         ...post,
-        draffContent: quill.root.innerHTML,
+        draftContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
         thumbImage: firstImage?.insert?.image || '',
         tags: tags.map(tag => tag.text),
@@ -243,7 +243,7 @@ const PostEditor = (props: any) => {
       />
       <div className="mb-3">
         {isLoadQuill && isLoadImageResize ? "" : <Loading />}
-        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draffContent || '' }}>
+        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
         </div>
       </div>
       Tags

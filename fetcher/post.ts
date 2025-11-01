@@ -13,7 +13,7 @@ export const getPostById = async (id: string, isEdit = false) => {
     const postDoc = await postCollection.doc(id).get();
     const post: any = postDoc.exists ?
       { ...postDoc.data(), uid: postDoc.id } : {};
-    if (!isEdit) delete post.draffContent;
+    if (!isEdit) delete post.draftContent;
 
     return post;
   } catch (error) {

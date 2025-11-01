@@ -42,7 +42,7 @@ const PostPage = (props :any) => {
     try {
       setIsLoaded(false);
       if (postData.isPublished) {
-        postData.publishContent = postData.draffContent;
+        postData.publishContent = postData.draftContent;
       }
       await setPostById(postData.uid, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
