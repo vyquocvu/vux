@@ -13,12 +13,6 @@ export const verifyIdToken = (token: string) => {
     });
   }
 
-  const cert = {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-  };
-
   return admin
     .auth()
     .verifyIdToken(token)
