@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
 import { Post } from "interfaces/Post";
+import { AuthInterface } from "interfaces/User";
 import { getPostById, setPostById } from "fetcher/post";
 
 import Loading from 'components/shared/Loading';
@@ -18,13 +19,17 @@ import QuillStyles from "components/Admin/QuillStyles";
 
 const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 
-const PostPage = (props :any) => {
+interface PostPageProps {
+  AuthUserInfo: AuthInterface;
+}
+
+const PostPage = (props: PostPageProps) => {
   const router = useRouter();
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
   const [isLoaded, setIsLoaded] = useState(false);
   const { addToast } = useToasts();
-  const [post, setPost] = useState<any>({});
+  const [post, setPost] = useState<Post | Record<string, never>>({});
   useEffect(() => {
     if (typeof window !== 'undefined' && !authUser) {
       router.push("/login");
@@ -39,7 +44,7 @@ const PostPage = (props :any) => {
     } catch (error) {};
   }, []);
 
-  const onSubmit = async (postData: any) => {
+  const onSubmit = async (postData: Post) => {
     try {
       setIsLoaded(false);
       if (postData.isPublished) {

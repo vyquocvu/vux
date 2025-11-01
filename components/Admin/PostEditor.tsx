@@ -16,17 +16,23 @@ import upload from 'utils/upload';
 import Loading from "components/shared/Loading";
 import LoadingOverlay from "components/shared/LoadingOverlay";
 import { TAGS } from "~utils/tags";
+import { Post } from "interfaces/Post";
 
 const ReactTags = dynamic(
   () => import('react-tag-input').then(lib => lib.WithContext) as any,
   { ssr: false }
 ) as React.ComponentType<ReactTagsProps>;
 
+interface PostEditorProps {
+  post: Partial<Post>;
+  onSubmit: (post: Post) => void;
+}
 
-const postMetaData = {
+
+const postMetaData: Partial<Post> = {
   url: '',
   uid: '',
-  tags: [],
+  tags: [] as any,
   title: '',
   createdAt: '',
   updatedAt: '',
@@ -103,8 +109,8 @@ const KeyCodes = {
 
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
-const PostEditor = (props: any) => {
-  const [post, setPost] = useState({
+const PostEditor = (props: PostEditorProps) => {
+  const [post, setPost] = useState<Partial<Post>>({
     ...postMetaData,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -125,12 +131,14 @@ const PostEditor = (props: any) => {
   }, [props?.post?.uid]);
 
   useEffect(() => {
-    setTags(post.tags.map((tag: string) => {
-      return {
-        id: tag,
-        text: tag
-      };
-    }));
+    if (post.tags && Array.isArray(post.tags)) {
+      setTags(post.tags.map((tag: string) => {
+        return {
+          id: tag,
+          text: tag
+        };
+      }));
+    }
   }, [post.tags]);
 
   const onUpdate = function (event: FormEvent) {
@@ -139,7 +147,7 @@ const PostEditor = (props: any) => {
     setPost({ ...post, [name]: value });
   }
 
-  const onSave = function (mode: string) {
+  const onSave = function (mode: 'draft' | 'publish') {
     const quill = quillRef.current;
     const { ops = [] } = quill.getContents();
     const firstImage = ops.find((op: any) => op.insert?.image);
@@ -148,15 +156,16 @@ const PostEditor = (props: any) => {
       setSavingMessage(mode === 'publish' ? 'Publishing...' : 'Saving draft...');
       setIsSaving(true);
       
-      const updatePost  = {
+      const updatePost = {
         ...post,
+        uid: post.uid || '',
         draftContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
         thumbImage: firstImage?.insert?.image || '',
-        tags: tags.map(tag => tag.text),
-      }
-      updatePost.isPublished = mode === 'publish' || post.isPublished;
-      props.onSubmit(updatePost);
+        tags: tags.map(tag => tag.text) as [string],
+        isPublished: mode === 'publish' || post.isPublished || false,
+      };
+      props.onSubmit(updatePost as Post);
     }
   }
   const handleDelete = (i: number) => {

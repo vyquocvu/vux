@@ -5,6 +5,8 @@ import { useToasts } from 'react-toast-notifications';
 
 import { get } from 'utils/common';
 import { addPost } from "fetcher/post";
+import { Post } from "interfaces/Post";
+import { AuthInterface } from "interfaces/User";
 
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
@@ -12,7 +14,11 @@ import QuillStyles from "components/Admin/QuillStyles";
 
 const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 
-const PostPage = (props :any) => {
+interface PostPageProps {
+  AuthUserInfo: AuthInterface;
+}
+
+const PostPage = (props: PostPageProps) => {
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
   const [post] = useState<any>({
@@ -29,10 +35,10 @@ const PostPage = (props :any) => {
     }
   }, [authUser, router]);
 
-  const onSubmit = async (postData: any) => {
-    delete postData.uid;
+  const onSubmit = async (postData: Post) => {
+    delete (postData as any).uid;
     try {
-      const newPost: any = await addPost(postData);
+      const newPost = await addPost(postData);
       addToast('Create post successfully!', { appearance: 'success', autoDismiss: true });
       router.push(`/admin/post/${newPost.uid}`);
     } catch (error) {
