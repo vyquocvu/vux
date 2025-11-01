@@ -17,6 +17,15 @@ import Loading from "components/shared/Loading";
 import LoadingOverlay from "components/shared/LoadingOverlay";
 import { TAGS } from "~utils/tags";
 import { Post } from "interfaces/Post";
+import { 
+  KEY_CODES, 
+  QUILL_FORMATS, 
+  DEFAULT_POST_METADATA,
+  EDITOR_MODE,
+  EDITOR_MESSAGES,
+  PLACEHOLDER_IMAGE,
+  SUPPORTED_LANGUAGES
+} from "constants/editor";
 
 const ReactTags = dynamic(
   () => import('react-tag-input').then(lib => lib.WithContext) as any,
@@ -28,21 +37,6 @@ interface PostEditorProps {
   onSubmit: (post: Post) => void;
 }
 
-
-const postMetaData: Partial<Post> = {
-  url: '',
-  uid: '',
-  tags: [] as any,
-  title: '',
-  createdAt: '',
-  updatedAt: '',
-  thumbText: '',
-  thumbImage: '',
-  draftContent: '',
-  publishContent: '',
-  isPublished: false,
-};
-
 const imageHandler = function (this: any) {
   const input = document.createElement('input');
   const quill = this.quill;
@@ -53,7 +47,7 @@ const imageHandler = function (this: any) {
     if (!input.files) return;
     const file = input.files[0];
     const range = quill.getSelection(true);
-    quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/placeholder.webp`);
+    quill.insertEmbed(range.index, 'image', `${ window.location.origin }${PLACEHOLDER_IMAGE}`);
     quill.setSelection(range.index + 1);
     const url = await upload(file, 'images');
     if (!url) return false;
@@ -68,6 +62,7 @@ const suggestions = TAGS.map(tag => {
     text: tag
   };
 });
+
 const modules = {
   toolbar: {
     container: [
@@ -94,24 +89,13 @@ const modules = {
   syntax: true,
 };
 
-const formats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'align',
-  'list', 'bullet', 'indent',
-  'link', 'image', "code-block",
-];
+const formats = QUILL_FORMATS;
 
-const KeyCodes = {
-  comma: 188,
-  enter: 13
-};
-
-const delimiters = [KeyCodes.comma, KeyCodes.enter];
+const delimiters = [KEY_CODES.COMMA, KEY_CODES.ENTER];
 
 const PostEditor = (props: PostEditorProps) => {
   const [post, setPost] = useState<Partial<Post>>({
-    ...postMetaData,
+    ...DEFAULT_POST_METADATA,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -153,7 +137,7 @@ const PostEditor = (props: PostEditorProps) => {
     const firstImage = ops.find((op: any) => op.insert?.image);
     if (quill) {
       // Show overlay with appropriate message
-      setSavingMessage(mode === 'publish' ? 'Publishing...' : 'Saving draft...');
+      setSavingMessage(mode === EDITOR_MODE.PUBLISH ? EDITOR_MESSAGES.PUBLISHING : EDITOR_MESSAGES.SAVING_DRAFT);
       setIsSaving(true);
       
       const updatePost = {
@@ -163,7 +147,7 @@ const PostEditor = (props: PostEditorProps) => {
         thumbText: quill.getText().slice(0, 100),
         thumbImage: firstImage?.insert?.image || '',
         tags: tags.map(tag => tag.text) as [string],
-        isPublished: mode === 'publish' || post.isPublished || false,
+        isPublished: mode === EDITOR_MODE.PUBLISH || post.isPublished || false,
       };
       props.onSubmit(updatePost as Post);
     }
@@ -232,7 +216,7 @@ const PostEditor = (props: PostEditorProps) => {
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
-          (window as any).hljs.configure({ languages: ['javascript', 'css', 'html', 'typescript'] });
+          (window as any).hljs.configure({ languages: SUPPORTED_LANGUAGES });
           setIsLoadHighlight(true);
         }}
       />
@@ -266,8 +250,8 @@ const PostEditor = (props: PostEditorProps) => {
         handleTagClick={handleTagClick}
       />
       <div className="actions mt-10">
-        <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
-        <button className='bg-blue-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('publish')}> Publish </button>
+        <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave(EDITOR_MODE.DRAFT)}> Save Draft </button>
+        <button className='bg-blue-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave(EDITOR_MODE.PUBLISH)}> Publish </button>
       </div>
     </div>
   );
