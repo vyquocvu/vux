@@ -5,13 +5,20 @@ import { useToasts } from 'react-toast-notifications';
 
 import { get } from 'utils/common';
 import { addPost } from "fetcher/post";
+import { Post } from "interfaces/Post";
+import { AuthInterface } from "interfaces/User";
 
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
+import QuillStyles from "components/Admin/QuillStyles";
 
 const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 
-const PostPage = (props :any) => {
+interface PostPageProps {
+  AuthUserInfo: AuthInterface;
+}
+
+const PostPage = (props: PostPageProps) => {
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
   const [post] = useState<any>({
@@ -28,10 +35,10 @@ const PostPage = (props :any) => {
     }
   }, [authUser, router]);
 
-  const onSubmit = async (postData: any) => {
-    delete postData.uid;
+  const onSubmit = async (postData: Post) => {
+    delete (postData as any).uid;
     try {
-      const newPost: any = await addPost(postData);
+      const newPost = await addPost(postData);
       addToast('Create post successfully!', { appearance: 'success', autoDismiss: true });
       router.push(`/admin/post/${newPost.uid}`);
     } catch (error) {
@@ -41,8 +48,7 @@ const PostPage = (props :any) => {
 
   return (
     <div className="m-auto py-6 px-4">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" />
+      <QuillStyles />
       <h2> Create new Post </h2>
       <PostEditor post={post} onSubmit={onSubmit} />
     </div>

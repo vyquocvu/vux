@@ -16,26 +16,26 @@ import upload from 'utils/upload';
 import Loading from "components/shared/Loading";
 import LoadingOverlay from "components/shared/LoadingOverlay";
 import { TAGS } from "~utils/tags";
+import { Post } from "interfaces/Post";
+import { 
+  KEY_CODES, 
+  QUILL_FORMATS, 
+  DEFAULT_POST_METADATA,
+  EDITOR_MODE,
+  EDITOR_MESSAGES,
+  PLACEHOLDER_IMAGE,
+  SUPPORTED_LANGUAGES
+} from "constants/editor";
 
 const ReactTags = dynamic(
   () => import('react-tag-input').then(lib => lib.WithContext) as any,
   { ssr: false }
 ) as React.ComponentType<ReactTagsProps>;
 
-
-const postMetaData = {
-  url: '',
-  uid: '',
-  tags: [],
-  title: '',
-  createdAt: '',
-  updatedAt: '',
-  thumbText: '',
-  thumbImage: '',
-  draffContent: '',
-  publishContent: '',
-  isPublished: false,
-};
+interface PostEditorProps {
+  post: Partial<Post>;
+  onSubmit: (post: Post) => void;
+}
 
 const imageHandler = function (this: any) {
   const input = document.createElement('input');
@@ -47,7 +47,7 @@ const imageHandler = function (this: any) {
     if (!input.files) return;
     const file = input.files[0];
     const range = quill.getSelection(true);
-    quill.insertEmbed(range.index, 'image', `${ window.location.origin }/images/placeholder.webp`);
+    quill.insertEmbed(range.index, 'image', `${ window.location.origin }${PLACEHOLDER_IMAGE}`);
     quill.setSelection(range.index + 1);
     const url = await upload(file, 'images');
     if (!url) return false;
@@ -62,6 +62,7 @@ const suggestions = TAGS.map(tag => {
     text: tag
   };
 });
+
 const modules = {
   toolbar: {
     container: [
@@ -88,24 +89,13 @@ const modules = {
   syntax: true,
 };
 
-const formats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'align',
-  'list', 'bullet', 'indent',
-  'link', 'image', "code-block",
-];
+const formats = QUILL_FORMATS;
 
-const KeyCodes = {
-  comma: 188,
-  enter: 13
-};
+const delimiters = [KEY_CODES.COMMA, KEY_CODES.ENTER];
 
-const delimiters = [KeyCodes.comma, KeyCodes.enter];
-
-const PostEditor = (props: any) => {
-  const [post, setPost] = useState({
-    ...postMetaData,
+const PostEditor = (props: PostEditorProps) => {
+  const [post, setPost] = useState<Partial<Post>>({
+    ...DEFAULT_POST_METADATA,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -125,12 +115,14 @@ const PostEditor = (props: any) => {
   }, [props?.post?.uid]);
 
   useEffect(() => {
-    setTags(post.tags.map((tag: string) => {
-      return {
-        id: tag,
-        text: tag
-      };
-    }));
+    if (post.tags && Array.isArray(post.tags)) {
+      setTags(post.tags.map((tag: string) => {
+        return {
+          id: tag,
+          text: tag
+        };
+      }));
+    }
   }, [post.tags]);
 
   const onUpdate = function (event: FormEvent) {
@@ -139,24 +131,25 @@ const PostEditor = (props: any) => {
     setPost({ ...post, [name]: value });
   }
 
-  const onSave = function (mode: string) {
+  const onSave = function (mode: 'draft' | 'publish') {
     const quill = quillRef.current;
     const { ops = [] } = quill.getContents();
     const firstImage = ops.find((op: any) => op.insert?.image);
     if (quill) {
       // Show overlay with appropriate message
-      setSavingMessage(mode === 'publish' ? 'Publishing...' : 'Saving draft...');
+      setSavingMessage(mode === EDITOR_MODE.PUBLISH ? EDITOR_MESSAGES.PUBLISHING : EDITOR_MESSAGES.SAVING_DRAFT);
       setIsSaving(true);
       
-      const updatePost  = {
+      const updatePost = {
         ...post,
-        draffContent: quill.root.innerHTML,
+        uid: post.uid || '',
+        draftContent: quill.root.innerHTML,
         thumbText: quill.getText().slice(0, 100),
         thumbImage: firstImage?.insert?.image || '',
         tags: tags.map(tag => tag.text),
-      }
-      updatePost.isPublished = mode === 'publish' || post.isPublished;
-      props.onSubmit(updatePost);
+        isPublished: mode === EDITOR_MODE.PUBLISH || post.isPublished || false,
+      };
+      props.onSubmit(updatePost as Post);
     }
   }
   const handleDelete = (i: number) => {
@@ -223,7 +216,7 @@ const PostEditor = (props: any) => {
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onReady={() => {
-          (window as any).hljs.configure({ languages: ['javascript', 'css', 'html', 'typescript'] });
+          (window as any).hljs.configure({ languages: SUPPORTED_LANGUAGES });
           setIsLoadHighlight(true);
         }}
       />
@@ -243,7 +236,7 @@ const PostEditor = (props: any) => {
       />
       <div className="mb-3">
         {isLoadQuill && isLoadImageResize ? "" : <Loading />}
-        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draffContent || '' }}>
+        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
         </div>
       </div>
       Tags
@@ -257,8 +250,8 @@ const PostEditor = (props: any) => {
         handleTagClick={handleTagClick}
       />
       <div className="actions mt-10">
-        <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('draft')}> Save Draft </button>
-        <button className='bg-blue-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave('publish')}> Publish </button>
+        <button className='bg-green-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave(EDITOR_MODE.DRAFT)}> Save Draft </button>
+        <button className='bg-blue-500 shadow-xs px-2 py-1 mr-3 text-white' onClick={() => onSave(EDITOR_MODE.PUBLISH)}> Publish </button>
       </div>
     </div>
   );

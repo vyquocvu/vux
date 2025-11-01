@@ -9,21 +9,27 @@ import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
 import { Post } from "interfaces/Post";
+import { AuthInterface } from "interfaces/User";
 import { getPostById, setPostById } from "fetcher/post";
 
 import Loading from 'components/shared/Loading';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
+import QuillStyles from "components/Admin/QuillStyles";
 
 const PostEditor = dynamic(import('components/Admin/PostEditor'), { ssr: false });
 
-const PostPage = (props :any) => {
+interface PostPageProps {
+  AuthUserInfo: AuthInterface;
+}
+
+const PostPage = (props: PostPageProps) => {
   const router = useRouter();
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
   const [isLoaded, setIsLoaded] = useState(false);
   const { addToast } = useToasts();
-  const [post, setPost] = useState<any>({});
+  const [post, setPost] = useState<Post | Record<string, never>>({});
   useEffect(() => {
     if (typeof window !== 'undefined' && !authUser) {
       router.push("/login");
@@ -38,11 +44,11 @@ const PostPage = (props :any) => {
     } catch (error) {};
   }, []);
 
-  const onSubmit = async (postData: any) => {
+  const onSubmit = async (postData: Post) => {
     try {
       setIsLoaded(false);
       if (postData.isPublished) {
-        postData.publishContent = postData.draffContent;
+        postData.publishContent = postData.draftContent;
       }
       await setPostById(postData.uid, postData);
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
@@ -67,8 +73,7 @@ const PostPage = (props :any) => {
 
   return (
     <div className="post-page-view">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" />
+      <QuillStyles />
       <div className="w-full">
         <Link href="/" className="border-solid border border-black rounded-full inline-block cursor-pointer w-10 h-10" >
           <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
