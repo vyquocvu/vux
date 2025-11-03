@@ -24,9 +24,12 @@ const QuillStyles = () => (
       .ql-snow .ql-toolbar button.ql-audio {
         width: 28px;
       }
-      .ql-editor audio {
+      .ql-editor audio,
+      .custom-audio-player {
         display: block;
         margin: 10px 0;
+        width: 100%;
+        max-width: 500px;
       }
       .ql-editor video {
         display: block;

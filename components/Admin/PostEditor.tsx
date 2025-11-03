@@ -68,7 +68,7 @@ const videoHandler = function (this: any) {
 
 const audioHandler = function (this: any) {
   const quill = this.quill;
-  const choice = confirm('Click OK to upload an audio file, or Cancel to enter a URL');
+  const choice = confirm('Would you like to upload an audio file? Click OK to upload, or Cancel to enter a URL instead.');
   
   if (choice) {
     // Upload audio file
@@ -80,11 +80,19 @@ const audioHandler = function (this: any) {
       if (!input.files) return;
       const file = input.files[0];
       const range = quill.getSelection(true);
-      const url = await upload(file, 'audios');
-      if (!url) return false;
-      // Insert audio HTML
-      quill.insertEmbed(range.index, 'audio', url);
-      quill.setSelection(range.index + 1);
+      try {
+        const url = await upload(file, 'audios');
+        if (!url) {
+          alert('Failed to upload audio file. Please try again.');
+          return;
+        }
+        // Insert audio HTML
+        quill.insertEmbed(range.index, 'audio', url);
+        quill.setSelection(range.index + 1);
+      } catch (error) {
+        alert('Failed to upload audio file. Please try again.');
+        console.error('Audio upload error:', error);
+      }
     }
   } else {
     // Enter URL
@@ -223,25 +231,32 @@ const PostEditor = (props: PostEditorProps) => {
         // Register ImageResize module before creating Quill instance
         window.Quill.register('modules/imageResize', window.ImageResize.default);
   
-        // Register custom audio Blot
-        const BlockEmbed = window.Quill.import('blots/block/embed');
-        class AudioBlot extends BlockEmbed {
-          static create(value: string) {
-            const node = super.create();
-            node.setAttribute('src', value);
-            node.setAttribute('controls', 'controls');
-            node.setAttribute('controlsList', 'nodownload');
-            node.setAttribute('style', 'width: 100%; max-width: 500px;');
-            return node;
+        // Register custom audio Blot (check if not already registered)
+        try {
+          const existingBlot = window.Quill.import('formats/audio');
+          if (!existingBlot) {
+            throw new Error('Audio blot not registered');
           }
+        } catch (e) {
+          const BlockEmbed = window.Quill.import('blots/block/embed');
+          class AudioBlot extends BlockEmbed {
+            static create(value: string) {
+              const node = super.create();
+              node.setAttribute('src', value);
+              node.setAttribute('controls', 'controls');
+              node.setAttribute('controlsList', 'nodownload');
+              node.className = 'custom-audio-player';
+              return node;
+            }
 
-          static value(node: HTMLElement) {
-            return node.getAttribute('src');
+            static value(node: HTMLElement) {
+              return node.getAttribute('src');
+            }
           }
+          AudioBlot.blotName = 'audio';
+          AudioBlot.tagName = 'audio';
+          window.Quill.register(AudioBlot);
         }
-        AudioBlot.blotName = 'audio';
-        AudioBlot.tagName = 'audio';
-        window.Quill.register(AudioBlot);
 
         quillRef.current =  new window.Quill('#editor', {
           theme: 'snow',
