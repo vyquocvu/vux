@@ -15,6 +15,25 @@ const QuillStyles = () => (
       rel="stylesheet" 
       href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" 
     />
+    <style>{`
+      .ql-snow .ql-toolbar button.ql-audio::before {
+        content: "♪";
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .ql-snow .ql-toolbar button.ql-audio {
+        width: 28px;
+      }
+      .ql-editor audio {
+        display: block;
+        margin: 10px 0;
+      }
+      .ql-editor video {
+        display: block;
+        margin: 10px 0;
+        max-width: 100%;
+      }
+    `}</style>
   </>
 );
 

@@ -21,6 +21,8 @@ export const QUILL_FORMATS = [
   'indent',
   'link',
   'image',
+  'video',
+  'audio',
   'code-block',
 ] as const;
 

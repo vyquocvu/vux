@@ -56,6 +56,47 @@ const imageHandler = function (this: any) {
   }
 }
 
+const videoHandler = function (this: any) {
+  const quill = this.quill;
+  const url = prompt('Enter video URL (YouTube, Vimeo, etc.):');
+  if (url) {
+    const range = quill.getSelection(true);
+    quill.insertEmbed(range.index, 'video', url);
+    quill.setSelection(range.index + 1);
+  }
+}
+
+const audioHandler = function (this: any) {
+  const quill = this.quill;
+  const choice = confirm('Click OK to upload an audio file, or Cancel to enter a URL');
+  
+  if (choice) {
+    // Upload audio file
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'audio/*');
+    input.click();
+    input.onchange = async function (e) {
+      if (!input.files) return;
+      const file = input.files[0];
+      const range = quill.getSelection(true);
+      const url = await upload(file, 'audios');
+      if (!url) return false;
+      // Insert audio HTML
+      quill.insertEmbed(range.index, 'audio', url);
+      quill.setSelection(range.index + 1);
+    }
+  } else {
+    // Enter URL
+    const url = prompt('Enter audio URL:');
+    if (url) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'audio', url);
+      quill.setSelection(range.index + 1);
+    }
+  }
+}
+
 const suggestions = TAGS.map(tag => {
   return {
     id: tag,
@@ -71,11 +112,13 @@ const modules = {
       ['blockquote', 'code-block'],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
       [{'align': [] }],
-      ['link', 'image'],
+      ['link', 'image', 'video', 'audio'],
       ['clean'],
     ],
     handlers: {
-      image: imageHandler
+      image: imageHandler,
+      video: videoHandler,
+      audio: audioHandler
     },
   },
   imageResize: {
@@ -180,6 +223,26 @@ const PostEditor = (props: PostEditorProps) => {
         // Register ImageResize module before creating Quill instance
         window.Quill.register('modules/imageResize', window.ImageResize.default);
   
+        // Register custom audio Blot
+        const BlockEmbed = window.Quill.import('blots/block/embed');
+        class AudioBlot extends BlockEmbed {
+          static create(value: string) {
+            const node = super.create();
+            node.setAttribute('src', value);
+            node.setAttribute('controls', 'controls');
+            node.setAttribute('controlsList', 'nodownload');
+            node.setAttribute('style', 'width: 100%; max-width: 500px;');
+            return node;
+          }
+
+          static value(node: HTMLElement) {
+            return node.getAttribute('src');
+          }
+        }
+        AudioBlot.blotName = 'audio';
+        AudioBlot.tagName = 'audio';
+        window.Quill.register(AudioBlot);
+
         quillRef.current =  new window.Quill('#editor', {
           theme: 'snow',
           modules,
