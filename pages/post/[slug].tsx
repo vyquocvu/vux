@@ -46,7 +46,18 @@ const PostPage = (props: { post: Post, host: string}) => {
         <meta property="og:image" content={post.thumbImage || config.avatar}/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
         <link rel="stylesheet" href="https://unpkg.com/applause-button/dist/applause-button.css" />
-
+        <style>{`
+          .ql-editor audio {
+            display: block;
+            margin: 10px 0;
+            max-width: 100%;
+          }
+          .ql-editor video {
+            display: block;
+            margin: 10px 0;
+            max-width: 100%;
+          }
+        `}</style>
       </Head>
       <Script src="https://unpkg.com/applause-button/dist/applause-button.js" />
       <Script
