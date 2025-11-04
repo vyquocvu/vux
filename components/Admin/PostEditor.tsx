@@ -56,6 +56,55 @@ const imageHandler = function (this: any) {
   }
 }
 
+const videoHandler = function (this: any) {
+  const quill = this.quill;
+  const url = prompt('Enter video URL (YouTube, Vimeo, etc.):');
+  if (url) {
+    const range = quill.getSelection(true);
+    quill.insertEmbed(range.index, 'video', url);
+    quill.setSelection(range.index + 1);
+  }
+}
+
+const audioHandler = function (this: any) {
+  const quill = this.quill;
+  const choice = confirm('Would you like to upload an audio file? Click OK to upload, or Cancel to enter a URL instead.');
+  
+  if (choice) {
+    // Upload audio file
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'audio/*');
+    input.click();
+    input.onchange = async function (e) {
+      if (!input.files) return;
+      const file = input.files[0];
+      const range = quill.getSelection(true);
+      try {
+        const url = await upload(file, 'audios');
+        if (!url) {
+          alert('Failed to upload audio file. Please try again.');
+          return;
+        }
+        // Insert audio HTML
+        quill.insertEmbed(range.index, 'audio', url);
+        quill.setSelection(range.index + 1);
+      } catch (error) {
+        alert('Failed to upload audio file. Please try again.');
+        console.error('Audio upload error:', error);
+      }
+    }
+  } else {
+    // Enter URL
+    const url = prompt('Enter audio URL:');
+    if (url) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'audio', url);
+      quill.setSelection(range.index + 1);
+    }
+  }
+}
+
 const suggestions = TAGS.map(tag => {
   return {
     id: tag,
@@ -71,11 +120,13 @@ const modules = {
       ['blockquote', 'code-block'],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
       [{'align': [] }],
-      ['link', 'image'],
+      ['link', 'image', 'video', 'audio'],
       ['clean'],
     ],
     handlers: {
-      image: imageHandler
+      image: imageHandler,
+      video: videoHandler,
+      audio: audioHandler
     },
   },
   imageResize: {
@@ -180,6 +231,33 @@ const PostEditor = (props: PostEditorProps) => {
         // Register ImageResize module before creating Quill instance
         window.Quill.register('modules/imageResize', window.ImageResize.default);
   
+        // Register custom audio Blot (check if not already registered)
+        try {
+          const existingBlot = window.Quill.import('formats/audio');
+          if (!existingBlot) {
+            throw new Error('Audio blot not registered');
+          }
+        } catch (e) {
+          const BlockEmbed = window.Quill.import('blots/block/embed');
+          class AudioBlot extends BlockEmbed {
+            static create(value: string) {
+              const node = super.create();
+              node.setAttribute('src', value);
+              node.setAttribute('controls', 'controls');
+              node.setAttribute('controlsList', 'nodownload');
+              node.className = 'custom-audio-player';
+              return node;
+            }
+
+            static value(node: HTMLElement) {
+              return node.getAttribute('src');
+            }
+          }
+          AudioBlot.blotName = 'audio';
+          AudioBlot.tagName = 'audio';
+          window.Quill.register(AudioBlot);
+        }
+
         quillRef.current =  new window.Quill('#editor', {
           theme: 'snow',
           modules,
