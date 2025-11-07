@@ -7,8 +7,10 @@ type Props = {
 const MainContent: FC<Props> = ({ children }) => {
 
   return (
-    <div className="h-screen sm:ml-0 md:ml-64 sm:mr-0 lg:mr-64 p-8">
-      {children}
+    <div className="min-h-screen sm:ml-0 md:ml-64 sm:mr-0 lg:mr-64 p-8 md:p-12 bg-white">
+      <div className="max-w-4xl">
+        {children}
+      </div>
     </div>
   )
 }
