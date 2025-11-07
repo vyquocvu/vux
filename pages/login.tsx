@@ -56,32 +56,37 @@ function Login(props: Props) {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <p>
-          <label htmlFor="email">email: </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            onChange={handleInputChange}
-            value={inputs.email}
-            ref={r => (firstInput = r)}
-          />
-        </p>
-        <p>
-          <label htmlFor="password">password: </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            onChange={handleInputChange}
-            value={inputs.password}
-          />
-        </p>
-        <p>
-          <button type="submit">[ log in ]</button>
-        </p>
-      </form>
+      <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-medium border border-neutral-200">
+        <h1 className="text-3xl font-bold text-neutral-900 mb-6 text-center">Log In</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 mb-1">Email: </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              onChange={handleInputChange}
+              value={inputs.email}
+              ref={r => (firstInput = r)}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 mb-1">Password: </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              onChange={handleInputChange}
+              value={inputs.password}
+              className="w-full"
+            />
+          </div>
+          <div className="pt-4">
+            <button type="submit" className="w-full">Log In</button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }
