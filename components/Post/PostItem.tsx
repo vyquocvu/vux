@@ -58,9 +58,9 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
         </div>
         <div className="text-neutral-600 leading-relaxed">
           { data.thumbText + '...' }
-          <div className="mt-4 flex gap-2 flex-wrap">
+          <div className="mt-4 flex gap-2 flex-wrap items-center">
             {PostLink(isAdmin, slug)}
-            {isAdmin && <button className='text-red-600 text-sm px-4 py-2 rounded-lg inline-flex items-center border border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200' onClick={handleDelete}> Delete </button>}
+            {isAdmin && <button className='text-red-600 text-sm px-4 py-2 h-9 rounded-lg inline-flex items-center border border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200' onClick={handleDelete}> Delete </button>}
           </div>
         </div>
       </div>
