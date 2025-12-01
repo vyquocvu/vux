@@ -33,7 +33,7 @@ export const getStaticProps = async () => {
       props: {
         posts: shapePosts 
       },
-      revalidate: 60 * 10,
+      revalidate: 60,
     };
   } catch (error) {
     return {
