@@ -69,7 +69,7 @@ const PostPage = (props: { post: Post, host: string}) => {
       />
       <div className={'post-page-view h-full md:w-full flex flex-col'}>
         <div className="md:mx-4 w-full pt-12 ql-snow">
-          <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0 z-10 shadow-sm">
+          <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0 z-0 shadow-sm">
             {/* <--! Back button --> */}
             <Link href="/" className="border-2 border-neutral-300 hover:border-primary-500 rounded-full inline-flex items-center justify-center cursor-pointer w-10 h-10 transition-all duration-200 hover:shadow-soft" >
               <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import config from 'config';
 
 const SideBar: FC = () => (
-  <div className="fixed h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-7 md:pt-10 border-r border-neutral-200 shadow-soft">
+  <div className="fixed h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-7 md:pt-10 border-r border-neutral-200">
     <div className="relative" data-animation="default" data-collapse="medium" data-contain="1" data-duration="400">
       <div className="">
         <Link href="/" passHref legacyBehavior>
