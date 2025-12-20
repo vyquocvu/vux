@@ -35,7 +35,7 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
     }
   };
   return (
-    <div className='flex pt-6 pb-8 px-2 sm:px-4 xs:flex-wrap lg:flex-nowrap border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50 transition-colors duration-200 rounded-lg -mx-2'>
+    <div className='flex pb-8 px-2 sm:px-4 xs:flex-wrap lg:flex-nowrap border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50 transition-colors duration-200 rounded-lg -mx-2'>
       {/* <div className='pl-1 py-2 pr-3 min-w-[320px] xs:w-full sm:w-auto'>
         <Image priority src={data.thumbImage || "/noimage.avif"} alt={data.title} width={300} height={150} style={{ maxHeight: 150 }} />
       </div> */}
@@ -58,7 +58,7 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
         </div>
         <div className="text-neutral-600 leading-relaxed">
           { data.thumbText + '...' }
-          <div className="mt-4 flex gap-2 flex-wrap items-center">
+          <div className="flex gap-2 flex-wrap items-center">
             {PostLink(isAdmin, slug)}
             {isAdmin && <button className='text-red-600 text-sm px-4 py-2 h-9 rounded-lg inline-flex items-center border border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200' onClick={handleDelete}> Delete </button>}
           </div>

@@ -4,7 +4,7 @@ export default {
   "title": "Note của Vũ | Vy Quốc Vũ",
   "author": "Vy Quốc Vũ",
   "keywords": "Vy Quốc Vũ, Full Stack, Vuvy Notes",
-  "content": `My name is Vy Quốc Vũ (aka Ryan)</br>
+  "content": `My name is Vy Quốc Vũ (aka  Vu.Vy)</br>
               <a href="https://oisp.hcmut.edu.vn/en/study-programs/bachelor-degree/computer-science">Bachelor of Computer Science</a>
                </br>
               Fullstack developer from 🇻🇳</br>
