@@ -67,6 +67,10 @@ body {
   margin-left: -24px;
   font-weight: normal;
 }
+
+.dark .post-title::before {
+  color: #525252;
+}
 .post-content.ql-editor {
   padding: 0;
   overflow-y: visible;
@@ -122,6 +126,14 @@ button[type=submit]:hover {
 
 .post-content a:hover {
   color: #0284c7 !important;
+}
+
+.dark .post-content a {
+  color: #38bdf8 !important;
+}
+
+.dark .post-content a:hover {
+  color: #0ea5e9 !important;
 }
 
 .post-content h2 {
