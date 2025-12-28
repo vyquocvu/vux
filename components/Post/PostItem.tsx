@@ -14,7 +14,7 @@ type Props = {
 
 const PostLink = (isAdmin: boolean, id: string) => (
     <Link href={`${isAdmin ? '/admin' : ''}/post/${id}`}>
-      <span className="text-primary-600 text-sm font-medium my-2 px-4 py-2 rounded-lg inline-flex items-center gap-1 cursor-pointer transition-all duration-200 hover:bg-primary-50 hover:shadow-soft border border-primary-200 hover:border-primary-300">
+      <span className="text-primary-600 dark:text-primary-400 text-sm font-medium my-2 px-4 py-2 rounded-lg inline-flex items-center gap-1 cursor-pointer transition-all duration-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:shadow-soft border border-primary-200 dark:border-primary-700 hover:border-primary-300 dark:hover:border-primary-600">
         {isAdmin ? 'Edit' : 'Read more'} →
       </span>
     </Link>
@@ -35,14 +35,14 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
     }
   };
   return (
-    <div className='flex pb-8 px-2 sm:px-4 xs:flex-wrap lg:flex-nowrap border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50 transition-colors duration-200 rounded-lg -mx-2'>
+    <div className='flex pb-8 px-2 sm:px-4 xs:flex-wrap lg:flex-nowrap border-b border-neutral-200 dark:border-neutral-700 last:border-b-0 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors duration-200 rounded-lg -mx-2'>
       {/* <div className='pl-1 py-2 pr-3 min-w-[320px] xs:w-full sm:w-auto'>
         <Image priority src={data.thumbImage || "/noimage.avif"} alt={data.title} width={300} height={150} style={{ maxHeight: 150 }} />
       </div> */}
       <div className="px-2 flex-1">
         <h2 className="inline-block">
           <Link href={`/post/${slug}`}>
-            <span className="text-neutral-900 block text-2xl font-bold -ml-1 transition-all duration-200 ease-in-out hover:text-primary-600 cursor-pointer leading-tight">
+            <span className="text-neutral-900 dark:text-neutral-100 block text-2xl font-bold -ml-1 transition-all duration-200 ease-in-out hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer leading-tight">
               {data.title}
             </span>
           </Link>
@@ -52,15 +52,15 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
         }
         <br />
         <div className="text-sm mt-3 mb-3 inline-block">
-          <div className="text-xs mr-2 tracking-wider inline-block uppercase text-neutral-500 font-semibold">
+          <div className="text-xs mr-2 tracking-wider inline-block uppercase text-neutral-500 dark:text-neutral-400 font-semibold">
             {timeFromNow(data.updatedAt.seconds)}
           </div>
         </div>
-        <div className="text-neutral-600 leading-relaxed">
+        <div className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
           { data.thumbText + '...' }
           <div className="flex gap-2 flex-wrap items-center">
             {PostLink(isAdmin, slug)}
-            {isAdmin && <button className='text-red-600 text-sm px-4 py-2 h-9 rounded-lg inline-flex items-center border border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200' onClick={handleDelete}> Delete </button>}
+            {isAdmin && <button className='text-red-600 dark:text-red-400 text-sm px-4 py-2 h-9 rounded-lg inline-flex items-center border border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/30 hover:border-red-300 dark:hover:border-red-700 transition-all duration-200' onClick={handleDelete}> Delete </button>}
           </div>
         </div>
       </div>

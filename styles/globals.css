@@ -11,6 +11,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.dark body {
+  color: #e5e5e5;
+  background-color: #171717;
+}
 .intro a {
   text-decoration: underline;
   color: #0ea5e9;
@@ -19,6 +24,14 @@ body {
 
 .intro a:hover {
   color: #0284c7;
+}
+
+.dark .intro a {
+  color: #38bdf8;
+}
+
+.dark .intro a:hover {
+  color: #0ea5e9;
 }
 
 
@@ -72,6 +85,12 @@ input[type=text], input[type="email"], select, textarea {
   font-size: 14px;
 }
 
+.dark input[type=text], .dark input[type="email"], .dark select, .dark textarea {
+  background-color: #262626;
+  border-color: #404040;
+  color: #e5e5e5;
+}
+
 input[type=text]:focus, input[type="email"]:focus, select:focus, textarea:focus {
   outline: none;
   border-color: #0ea5e9;
@@ -113,6 +132,10 @@ button[type=submit]:hover {
   color: #171717;
 }
 
+.dark .post-content h2 {
+  color: #fafafa;
+}
+
 .post-page-view img{
   margin: 0 auto;
 
@@ -138,6 +161,10 @@ button[type=submit]:hover {
   z-index: 1;
   background-color: #fff;
   border-radius: 8px 8px 0 0;
+}
+
+.dark .ql-toolbar {
+  background-color: #262626;
 }
 
 @keyframes octocat-wave {
@@ -187,6 +214,12 @@ div.ReactTags__selected span.ReactTags__tag {
     border-radius: 6px;
     transition: all 0.2s ease;
 }
+
+.dark div.ReactTags__selected span.ReactTags__tag {
+    border-color: #404040;
+    background: #262626;
+    color: #e5e5e5;
+}
 div.ReactTags__selected span.ReactTags__tag:hover {
     background: #e5e5e5;
     border-color: #d4d4d4;
@@ -216,11 +249,21 @@ div.ReactTags__suggestions ul {
     border-radius: 8px;
     overflow: hidden;
 }
+
+.dark div.ReactTags__suggestions ul {
+    background: #262626;
+    box-shadow: 0 4px 25px -5px rgba(0,0,0,0.5), 0 10px 30px -5px rgba(0,0,0,0.3);
+}
 div.ReactTags__suggestions li {
     border-bottom: 1px solid #e5e5e5;
     padding: 8px 12px;
     margin: 0;
     transition: background-color 0.2s ease;
+}
+
+.dark div.ReactTags__suggestions li {
+    border-bottom-color: #404040;
+    color: #e5e5e5;
 }
 div.ReactTags__suggestions li:last-child {
     border-bottom: none;
@@ -260,12 +303,20 @@ div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 }
 
+.dark .loading-overlay-content {
+    background-color: #262626;
+}
+
 .loading-overlay-text {
     margin-top: 1rem;
     font-size: 1.125rem;
     font-weight: 600;
     color: #171717;
     text-align: center;
+}
+
+.dark .loading-overlay-text {
+    color: #fafafa;
 }
 
 /* Image Resize Styles */

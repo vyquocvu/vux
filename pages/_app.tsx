@@ -6,6 +6,7 @@ import GitHubCorner from 'components/shared/GitHubCorner';
 import config from 'config';
 
 import { ToastProvider } from 'react-toast-notifications';
+import { ThemeProvider } from 'contexts/ThemeContext';
 
 import "styles/globals.css";
 import "styles/monokai-sublime.min.css";
@@ -26,15 +27,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest"></link>
       </Head>
-      <div>
-        <GitHubCorner repoUrl={config.repo} />
-        <ToastProvider>
-          <NextNProgress />
-          <Layout isPost={!!pageProps.post}>
-            <Component {...pageProps} />
-          </Layout>
-        </ToastProvider>
-      </div>
+      <ThemeProvider>
+        <div>
+          <GitHubCorner repoUrl={config.repo} />
+          <ToastProvider>
+            <NextNProgress />
+            <Layout isPost={!!pageProps.post}>
+              <Component {...pageProps} />
+            </Layout>
+          </ToastProvider>
+        </div>
+      </ThemeProvider>
     </>
   );
 };
