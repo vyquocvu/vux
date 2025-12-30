@@ -69,21 +69,21 @@ const PostPage = (props: { post: Post, host: string}) => {
       />
       <div className={'post-page-view h-full md:w-full flex flex-col'}>
         <div className="md:mx-4 w-full pt-12 ql-snow">
-          <div className="w-full py-3 h-16 -ml-6 fixed bg-white top-0 z-0 shadow-sm">
+          <div className="w-full py-3 h-16 -ml-6 fixed bg-white dark:bg-neutral-900 top-0 z-0 shadow-sm dark:shadow-neutral-800">
             {/* <--! Back button --> */}
-            <Link href="/" className="border-2 border-neutral-300 hover:border-primary-500 rounded-full inline-flex items-center justify-center cursor-pointer w-10 h-10 transition-all duration-200 hover:shadow-soft" >
+            <Link href="/" className="border-2 border-neutral-300 dark:border-neutral-600 hover:border-primary-500 dark:hover:border-primary-400 rounded-full inline-flex items-center justify-center cursor-pointer w-10 h-10 transition-all duration-200 hover:shadow-soft" >
               <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
             </Link>
           </div>
-          <h1 className="post-title flex text-4xl font-bold -ml-2 pb-2 text-neutral-900 leading-tight">{ post.title }</h1>
-          <p className="pl-1.5 text-sm text-neutral-500 font-semibold uppercase tracking-wide mb-6"> {timeFromNow(post.updatedAt.seconds)}</p>
-          <div className="pb-5 post-content ql-editor pl-1.5 text-neutral-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+          <h1 className="post-title flex text-4xl font-bold -ml-2 pb-2 text-neutral-900 dark:text-neutral-100 leading-tight">{ post.title }</h1>
+          <p className="pl-1.5 text-sm text-neutral-500 dark:text-neutral-400 font-semibold uppercase tracking-wide mb-6"> {timeFromNow(post.updatedAt.seconds)}</p>
+          <div className="pb-5 post-content ql-editor pl-1.5 text-neutral-700 dark:text-neutral-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>
-        <div className="fixed w-13 h-13 right-2 bottom-2 bg-white rounded-full shadow-medium">
+        <div className="fixed w-13 h-13 right-2 bottom-2 bg-white dark:bg-neutral-800 rounded-full shadow-medium">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
-        <hr className='text-lg mt-8 ml-4 w-full border-neutral-200'/>
-        <h2 className='text-2xl m-4 font-bold text-neutral-900'>Comments</h2>
+        <hr className='text-lg mt-8 ml-4 w-full border-neutral-200 dark:border-neutral-700'/>
+        <h2 className='text-2xl m-4 font-bold text-neutral-900 dark:text-neutral-100'>Comments</h2>
 
         <div
           id="cusdis_thread"
