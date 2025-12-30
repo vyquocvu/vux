@@ -1,7 +1,17 @@
+import { useEffect, useState } from 'react';
 import { useTheme } from 'contexts/ThemeContext';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-12 h-12" />;
+  }
 
   return (
     <button
