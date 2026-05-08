@@ -29,7 +29,9 @@ const PostPage = (props: { post: Post, host: string}) => {
     setPathname(location.pathname)
   }, []);
 
-  if (!post?.uid) return <div className="text-center text-neutral-600 py-12">Post not found</div>;
+  if (!post?.uid) return (
+    <div className="text-center font-body text-muted dark:text-muted-soft py-12">Post not found</div>
+  );
   return (
     <>
       <Head>
@@ -69,21 +71,27 @@ const PostPage = (props: { post: Post, host: string}) => {
       />
       <div className={'post-page-view h-full md:w-full flex flex-col'}>
         <div className="md:mx-4 w-full pt-12 ql-snow">
-          <div className="w-full py-3 h-16 -ml-6 fixed bg-white dark:bg-neutral-900 top-0 z-0 shadow-sm dark:shadow-neutral-800">
-            {/* <--! Back button --> */}
-            <Link href="/" className="border-2 border-neutral-300 dark:border-neutral-600 hover:border-primary-500 dark:hover:border-primary-400 rounded-full inline-flex items-center justify-center cursor-pointer w-10 h-10 transition-all duration-200 hover:shadow-soft" >
-              <Image priority width={40} height={40} src="/icons/left_arrow.svg" alt="left" />
+          <div className="w-full py-3 h-16 -ml-6 fixed bg-canvas dark:bg-surface-dark top-0 z-0 border-b border-hairline dark:border-surface-dark-elevated">
+            <Link
+              href="/"
+              className="border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors duration-200"
+            >
+              <Image priority width={36} height={36} src="/icons/left_arrow.svg" alt="left" />
             </Link>
           </div>
-          <h1 className="post-title flex text-4xl font-bold -ml-2 pb-2 text-neutral-900 dark:text-neutral-100 leading-tight">{ post.title }</h1>
-          <p className="pl-1.5 text-sm text-neutral-500 dark:text-neutral-400 font-semibold uppercase tracking-wide mb-6"> {timeFromNow(post.updatedAt.seconds)}</p>
-          <div className="pb-5 post-content ql-editor pl-1.5 text-neutral-700 dark:text-neutral-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+          <h1 className="post-title font-display flex text-4xl font-normal -ml-2 pb-2 text-ink dark:text-on-dark leading-tight tracking-tight">
+            {post.title}
+          </h1>
+          <p className="pl-1.5 font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-6">
+            {timeFromNow(post.updatedAt.seconds)}
+          </p>
+          <div className="pb-5 post-content ql-editor pl-1.5 font-body text-body dark:text-on-dark-soft leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>
-        <div className="fixed w-13 h-13 right-2 bottom-2 bg-white dark:bg-neutral-800 rounded-full shadow-medium">
+        <div className="fixed w-13 h-13 right-2 bottom-2 bg-canvas dark:bg-surface-dark-elevated rounded-full border border-hairline dark:border-surface-dark-elevated">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
-        <hr className='text-lg mt-8 ml-4 w-full border-neutral-200 dark:border-neutral-700'/>
-        <h2 className='text-2xl m-4 font-bold text-neutral-900 dark:text-neutral-100'>Comments</h2>
+        <hr className='mt-12 ml-4 w-full border-hairline dark:border-surface-dark-elevated'/>
+        <h2 className='font-display text-2xl font-normal m-4 text-ink dark:text-on-dark tracking-tight'>Comments</h2>
 
         <div
           id="cusdis_thread"
@@ -121,9 +129,9 @@ export const getStaticProps = async ({ params }: any) => {
     const post = await getPostById(id);
     post.createdAt = post.createdAt.toJSON();
     post.updatedAt = post.updatedAt.toJSON();
-    return { 
+    return {
       props: {
-        post, 
+        post,
       },
       revalidate: 60,
     };

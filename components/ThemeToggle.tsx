@@ -10,18 +10,18 @@ const ThemeToggle = () => {
   }, []);
 
   if (!mounted) {
-    return <div className="w-12 h-12" />;
+    return <div className="w-8 h-8" />;
   }
 
   return (
     <button
       onClick={toggleTheme}
-      className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+      className="w-8 h-8 rounded-full bg-surface-card dark:bg-surface-dark-elevated border border-hairline dark:border-surface-dark-elevated flex items-center justify-center transition-colors duration-200 hover:border-primary"
       aria-label="Toggle theme"
     >
       {theme === 'light' ? (
         <svg
-          className="w-6 h-6 text-neutral-800"
+          className="w-4 h-4 text-muted"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ const ThemeToggle = () => {
         </svg>
       ) : (
         <svg
-          className="w-6 h-6 text-yellow-400"
+          className="w-4 h-4 text-on-dark-soft"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

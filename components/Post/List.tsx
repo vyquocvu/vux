@@ -15,15 +15,20 @@ const List: FunctionComponent<Props> = ({ items = [], isAdmin = false }) => {
     return <PostItem key={item.uid} data={item} isAdmin={isAdmin} />
   }
   return (
-    <div className='post-list'>
-    {(items as any[]).map((item: Post) => renderItem(item))}
-    {isAdmin ? (
-      <div className="mt-6 fixed bottom-6 right-6 md:right-auto md:left-6">
-        <Link href="/admin/post/new" legacyBehavior className="inline-flex items-center gap-2 bg-primary-600 text-white text-sm font-semibold px-6 py-3 rounded-full shadow-medium hover:bg-primary-700 hover:shadow-lg transition-all duration-200"> 
-          + New Post 
-        </Link>
-      </div>) : null}
-  </div>
+    <div className='post-list space-y-4'>
+      {(items as any[]).map((item: Post) => renderItem(item))}
+      {isAdmin ? (
+        <div className="mt-6 fixed bottom-6 right-6 md:right-auto md:left-6">
+          <Link
+            href="/admin/post/new"
+            legacyBehavior
+            className="inline-flex items-center gap-2 bg-primary text-on-primary font-body text-sm font-medium px-5 py-2.5 rounded-md hover:bg-primary-active transition-colors duration-200"
+          >
+            + New Post
+          </Link>
+        </div>
+      ) : null}
+    </div>
   )
 }
 
