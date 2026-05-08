@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Head from "next/head";
-import { Cormorant_Garamond, Inter, JetBrains_Mono } from '@next/font/google';
+import { Cormorant_Garamond, Inter } from '@next/font/google';
 
 import config from 'config';
 import Sidebar from "components/Sidebar";
@@ -20,13 +20,6 @@ const bodyFont = Inter({
   variable: '--font-body',
 });
 
-const monoFont = JetBrains_Mono({
-  weight: ['400'],
-  display: 'swap',
-  subsets: ['latin'],
-  variable: '--font-mono',
-});
-
 const Layout = ({ children, isPost }: { children: ReactNode, isPost: boolean }) => {
   return (
     <>
@@ -39,7 +32,7 @@ const Layout = ({ children, isPost }: { children: ReactNode, isPost: boolean }) 
         <meta name="og:image" content={config.avatar}/>
         <meta name="og:description" content={config.description}/>
       </Head> : ""}
-      <div className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+      <div className={`${displayFont.variable} ${bodyFont.variable}`}>
         <Sidebar />
         <MainContent>
           {children}

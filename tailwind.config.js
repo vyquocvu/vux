@@ -13,7 +13,7 @@ module.exports = {
     fontFamily: {
       display: ['var(--font-display)', 'Cormorant Garamond', 'Tiempos Headline', 'Garamond', 'Times New Roman', 'serif'],
       body: ['var(--font-body)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-      mono: ['var(--font-mono)', 'JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+      mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
     },
     borderRadius: {
       'none': '0',
