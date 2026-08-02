@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 import Head from "next/head";
-import { Cormorant_Garamond, Inter } from '@next/font/google';
+import { Inter } from '@next/font/google';
 
 import config from 'config';
 import Sidebar from "components/Sidebar";
 import MainContent from "components/MainContent";
 
-const displayFont = Cormorant_Garamond({
+const displayFont = Inter({
   weight: ['400', '500'],
   display: 'swap',
   subsets: ['latin'],
