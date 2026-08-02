@@ -11,7 +11,7 @@ module.exports = {
       xl: '1280px',
     },
     fontFamily: {
-      display: ['var(--font-display)', 'Cormorant Garamond', 'Tiempos Headline', 'Garamond', 'Times New Roman', 'serif'],
+      display: ['var(--font-display)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       body: ['var(--font-body)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
     },
