@@ -1,12 +1,13 @@
 export interface Post {
   uid: string;
   url: string;
+  slug: string;
   title: string;
   tags: string[];
   label?: string;
-  createdAt: any;
+  createdAt: number;
   author: string;
-  updatedAt: any;
+  updatedAt: number;
   thumbText: string;
   thumbImage: string;
   draftContent: string;
@@ -17,5 +18,5 @@ export interface Post {
 export interface PostLite {
   uid: string;
   thumbText: string;
-  updatedAt: any;
+  updatedAt: number;
 }

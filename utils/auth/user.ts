@@ -1,43 +1,37 @@
-import { get, has } from 'utils/common';
+import { get } from "utils/common";
+import type { PublicUser } from "utils/auth/d1";
+export type { PublicUser } from "utils/auth/d1";
+export type AuthUser = PublicUser;
+
+export interface AuthInterface {
+  AuthUser: AuthUser | null;
+  token: string; // empty string when not signed in (kept for back-compat)
+}
+
 /**
- * Take the user object from Firebase (from either the Firebase admin SDK or
- * or the client-side Firebase JS SDK) and return a consistent AuthUser object.
- * @param {Object} firebaseUser - A decoded Firebase user token or JS SDK
- *   Firebase user object.
- * @return {Object|null} AuthUser - The user object.
- * @return {String} AuthUser.id - The user's ID
- * @return {String} AuthUser.email - The user's email
- * @return {Boolean} AuthUser.emailVerified - Whether the user has verified their email
+ * Build a normalized AuthInterface for a D1 user row.
  */
-export const createAuthUser = (firebaseUser: firebase.User | null) => {
-  if (!firebaseUser || !firebaseUser.uid) {
-    return null;
-  }
+export const createAuthUser = (user: AuthUser | null): AuthUser | null => {
+  if (!user || !user.id) return null;
   return {
-    id: get(firebaseUser, "uid"),
-    email: get(firebaseUser, "email"),
-    emailVerified: has(firebaseUser, "emailVerified")
-      ? get(firebaseUser, "emailVerified") // client SDK
-      : get(firebaseUser, "email_verified"), // admin SDK
-    displayName: has(firebaseUser, "displayName")
-      ? get(firebaseUser, "displayName") // client SDK
-      : get(firebaseUser, "display_name") // admin SDK
+    id: user.id,
+    email: user.email,
+    displayName: user.displayName,
+    isAdmin: !!user.isAdmin,
   };
 };
 
+export const createAuthUserInfo = ({
+  user = null,
+  token = "",
+} = {}): AuthInterface => ({
+  AuthUser: createAuthUser(user),
+  token,
+});
+
 /**
- * Create an object with an AuthUser object and AuthUserToken value.
- * @param {Object} firebaseUser - A decoded Firebase user token or JS SDK
- *   Firebase user object.
- * @param {String} firebaseToken - A Firebase auth token string.
- * @return {Object|null} AuthUserInfo - The auth user info object.
- * @return {String} AuthUserInfo.AuthUser - An AuthUser object (see
- *   `createAuthUser` above).
- * @return {String} AuthUser.token - The user's encoded Firebase token.
+ * Read the typed row out of a Vercel/Next getServerSideProps context.
  */
-export const createAuthUserInfo = ({ firebaseUser = null, token = '' } = {}) => {
-  return {
-    AuthUser: createAuthUser(firebaseUser),
-    token
-  };
-};
+export const getAuthUserInfoFromContext = (ctx: any): AuthInterface =>
+  (get(ctx, "myCustomData.AuthUserInfo") as AuthInterface | undefined) ??
+  createAuthUserInfo();

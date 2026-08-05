@@ -1,94 +1,73 @@
-import { get } from "utils/common";
 import { NextPageContext } from "next";
-import { createAuthUser, createAuthUserInfo } from "utils/auth/user";
-import { AuthUserInfoContext, useFirebaseAuth } from "utils/auth/hooks";
-import { AuthInterface } from 'interfaces/User';
-
-// Gets the authenticated user from the Firebase JS SDK, when client-side,
-// or from the request object, when server-side. Add the AuthUserInfo to
-// context.
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { createAuthUserInfo, type AuthInterface } from "utils/auth/user";
+import { getSession } from "utils/auth/session";
+import { AuthUserInfoContext, AuthUserInfoProvider } from "utils/auth/hooks";
 
 type Props = {
-  AuthUserInfo: AuthInterface,
-}
+  AuthUserInfo: AuthInterface;
+};
+
 const withAuthUser = (ComposedComponent: any) => {
   const WithAuthUserComp = (props: Props) => {
-    const { AuthUserInfo, ...otherProps } = props;
-
-    // We'll use the authed user from client-side auth (Firebase JS SDK)
-    // when available. On the server side, we'll use the authed user from
-    // the session. This allows us to server-render while also using Firebase's
-    // client-side auth functionality.
-    const { user: firebaseUser } = useFirebaseAuth();
-    const AuthUserFromClient = createAuthUser(firebaseUser);
-    const { AuthUser: AuthUserFromSession, token = '' } = AuthUserInfo;
-    const AuthUser = AuthUserFromClient || AuthUserFromSession;
+    const { AuthUserInfo, ...rest } = props;
     return (
-      <AuthUserInfoContext.Provider value={{ AuthUser, token }}>
-        <ComposedComponent {...otherProps} />
-      </AuthUserInfoContext.Provider>
+      <AuthUserInfoProvider initial={AuthUserInfo}>
+        <AuthUserInfoContext.Consumer>
+          {(ctxAuth) => {
+            const effective = ctxAuth ?? AuthUserInfo;
+            return (
+              <AuthUserInfoContext.Provider value={effective}>
+                <ComposedComponent {...rest} AuthUserInfo={effective} />
+              </AuthUserInfoContext.Provider>
+            );
+          }}
+        </AuthUserInfoContext.Consumer>
+      </AuthUserInfoProvider>
     );
   };
 
-  WithAuthUserComp.getInitialProps = async (ctx: NextPageContext & { myCustomData: {
-    AuthUserInfo: AuthInterface
-  } }) => {
-    const { req, res } = ctx;
-    // Get the AuthUserInfo object.
-    let AuthUserInfo;
+  WithAuthUserComp.getInitialProps = async (ctx: NextPageContext & { myCustomData: { AuthUserInfo?: AuthInterface } }) => {
+    let AuthUserInfo: AuthInterface;
+    // Auth-gated pages must never be CDN-cached: the session cookie is
+    // private and we want every request to round-trip through the Worker so
+    // server-side gating in getInitialProps actually runs.
+    try {
+      ctx.res?.setHeader?.("Cache-Control", "private, no-store");
+    } catch {}
     if (typeof window === "undefined") {
-      // If server-side, get AuthUserInfo from the session in the request.
-      // Don't include server middleware in the client JS bundle. See:
-      // https://arunoda.me/blog/ssr-and-server-only-modules
-      const { addSession } = require("../middleware/cookieSession");
-      addSession(req, res);
-      AuthUserInfo = createAuthUserInfo({
-        firebaseUser: get(req, "session.decodedToken", null),
-        token: get(req, "session.token", '')
-      });
-    } else {
-      // If client-side, get AuthUserInfo from stored data. We store it
-      // in _document.js. See:
-      // https://github.com/zeit/next.js/issues/2252#issuecomment-353992669
+      const { req, res } = ctx;
       try {
-        let jsonData = null;
-        const document = window?.document;
-        const textContent = document?.getElementById("__MY_AUTH_USER_INFO")?.textContent;
-        if (textContent) {
-          jsonData = JSON.parse(textContent);
-        }
-        if (jsonData) {
-          AuthUserInfo = jsonData;
-        } else {
-          // Use the default (unauthed) user info if there's no data.
-          AuthUserInfo = createAuthUserInfo();
-        }
-      } catch (e) {
-        console.log('E', e)
-        // If there's some error, use the default (unauthed) user info.
+        const { env } = await getCloudflareContext({ async: true });
+        const session = await getSession(req as any, res as any, env);
+        AuthUserInfo = session.userId
+          ? {
+              AuthUser: {
+                id: session.userId,
+                email: session.email ?? "",
+                displayName: session.displayName ?? null,
+                isAdmin: !!session.isAdmin,
+              },
+              token: "session",
+            }
+          : createAuthUserInfo();
+      } catch {
         AuthUserInfo = createAuthUserInfo();
       }
+    } else {
+      AuthUserInfo = createAuthUserInfo();
     }
 
-    // Explicitly add the user to a custom prop in the getInitialProps
-    // context for ease of use in child components.
-    ctx.myCustomData = {
-      AuthUserInfo
-    }
+    ctx.myCustomData = { AuthUserInfo };
 
-    // Evaluate the composed component's getInitialProps().
-    let composedInitialProps = {};
+    let composedInitialProps: any = {};
     if (ComposedComponent.getInitialProps) {
       composedInitialProps = await ComposedComponent.getInitialProps(ctx);
     }
-
-    return {
-      ...composedInitialProps,
-      AuthUserInfo
-    };
+    return { ...composedInitialProps, AuthUserInfo };
   };
 
-  WithAuthUserComp.displayName = `WithAuthUser(${ComposedComponent.displayName})`;
+  WithAuthUserComp.displayName = `WithAuthUser(${ComposedComponent.displayName ?? "Component"})`;
 
   return WithAuthUserComp;
 };

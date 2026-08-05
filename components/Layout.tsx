@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import Head from "next/head";
-import { Inter } from '@next/font/google';
+import { Inter } from "next/font/google";
 
-import config from 'config';
+import config from "config";
 import Sidebar from "components/Sidebar";
 import MainContent from "components/MainContent";
 

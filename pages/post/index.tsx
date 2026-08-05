@@ -16,12 +16,12 @@ const Index = (props: Props) => {
 };
 
 Index.getInitialProps = async (context: NextPageContext) => {
-  const tag = context?.query?.tag;
+  const tag = context?.query?.tag as string | undefined;
   try {
     const posts = await getPublishedPosts();
-    const filteredPosts = posts.filter((post) => {
-      return post.tags.includes(tag);
-    });
+    const filteredPosts = tag
+      ? posts.filter((post) => post.tags.includes(tag))
+      : posts;
     const shapedPosts = filteredPosts.map((post) => {
       return {
         uid: post.uid,

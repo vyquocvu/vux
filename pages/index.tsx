@@ -21,9 +21,9 @@ export const getStaticProps = async () => {
       return {
         uid: post.uid,
         title: post.title,
-        updatedAt: post.updatedAt.toJSON(),
+        updatedAt: post.updatedAt,
         thumbText: post.thumbText,
-        createdAt: post.createdAt.toJSON(),
+        createdAt: post.createdAt,
         thumbImage: post.thumbImage,
         isPublished: post.isPublished,
       }
@@ -31,9 +31,12 @@ export const getStaticProps = async () => {
 
     return {
       props: {
-        posts: shapePosts 
+        posts: shapePosts
       },
-      revalidate: 60,
+      // Cache the homepage at the CDN edge for 2 min; serve stale for up
+      // to 24 h while revalidating. Re-renders fetch D1 fresh and refresh
+      // the edge entry.
+      revalidate: 120,
     };
   } catch (error) {
     return {

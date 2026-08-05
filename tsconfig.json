@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es6",
+    "target": "es2022",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "webworker"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -19,32 +20,19 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
-      "~components/*": [
-        "components/*"
-      ],
-      "~collections/*": [
-        "collections/*"
-      ],
-      "~utils/*": [
-        "utils/*"
-      ]
+      "~components/*": ["components/*"],
+      "~collections/*": ["collections/*"],
+      "~utils/*": ["utils/*"]
     },
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "types": ["@cloudflare/workers-types"],
+    "plugins": [{ "name": "next" }]
   },
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules", ".next", ".open-next", "wrangler", "scripts", "seeds"],
   "include": [
     "next-env.d.ts",
+    "cloudflare-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "utils/auth/initFirebase.ts",
-    "utils/auth/user.ts",
-    ".next/types/**/*.ts"
+    "**/*.tsx"
   ]
 }

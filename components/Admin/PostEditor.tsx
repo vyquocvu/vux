@@ -145,10 +145,11 @@ const formats = QUILL_FORMATS;
 const delimiters = [KEY_CODES.COMMA, KEY_CODES.ENTER];
 
 const PostEditor = (props: PostEditorProps) => {
+  const nowSeconds = Math.floor(Date.now() / 1000);
   const [post, setPost] = useState<Partial<Post>>({
     ...DEFAULT_POST_METADATA,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: nowSeconds,
+    updatedAt: nowSeconds,
   });
   const [isLoadQuill, setIsLoadQuill] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -314,7 +315,7 @@ const PostEditor = (props: PostEditorProps) => {
       />
       <div className="mb-3">
         {isLoadQuill && isLoadImageResize ? "" : <Loading />}
-        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
+        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
         </div>
       </div>
       Tags

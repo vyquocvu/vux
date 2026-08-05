@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "vux",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "vux-media"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "vux",
+      "database_id": "7fb70293-e4e6-419e-b350-b2ae0c886624",
+      "migrations_dir": "./migrations"
+    }
+  ],
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://vyquocvu.com",
+    "OWNER_EMAIL": "vyquocvu@gmail.com"
+  },
+  "placement": { "mode": "smart" },
+  "observability": {
+    "enabled": true
+  }
+}

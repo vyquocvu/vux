@@ -23,6 +23,10 @@ const withAuthUserInfo = (ComposedComponent: any) => {
   };
 
   WithAuthUserInfoComp.getInitialProps = async (ctx: NextPageContext) => {
+    // Same as withAuthUser: ensure auth-gated pages are never CDN-cached.
+    try {
+      ctx.res?.setHeader?.("Cache-Control", "private, no-store");
+    } catch {}
     const AuthUserInfo = get(ctx, "myCustomData.AuthUserInfo", null);
 
     // Evaluate the composed component's getInitialProps().
