@@ -43,11 +43,15 @@
     "autoprefixer": "^10.4.7",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.35",
-    "postcss": "^8.4.14",
+    "postcss": "^8.5.3",
     "tailwindcss": "^3.1.4",
     "typescript": "^5.4.5",
     "wrangler": "^4.86.0",
     "@cloudflare/workers-types": "^5.20240821.0"
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "yarn@1.22.22",
+  "overrides": {
+    "fast-xml-parser": "^5.7.0",
+    "glob": "^11.0.0"
+  }
 }
