@@ -9,7 +9,7 @@ declare global {
 
 import Script from "next/script";
 import dynamic from "next/dynamic";
-import { ReactTagsProps, Tag } from 'react-tag-input';
+import { ReactTagsWrapperProps as ReactTagsProps, Tag } from 'react-tag-input';
 import { useEffect, useState, FormEvent, useRef } from "react";
 
 import upload from 'utils/upload';
@@ -105,12 +105,11 @@ const audioHandler = function (this: any) {
   }
 }
 
-const suggestions = TAGS.map(tag => {
-  return {
-    id: tag,
-    text: tag
-  };
-});
+const suggestions = TAGS.map((tag) => ({
+  id: tag,
+  className: "",
+  text: tag,
+}));
 
 const modules = {
   toolbar: {
@@ -168,12 +167,11 @@ const PostEditor = (props: PostEditorProps) => {
 
   useEffect(() => {
     if (post.tags && Array.isArray(post.tags)) {
-      setTags(post.tags.map((tag: string) => {
-        return {
-          id: tag,
-          text: tag
-        };
-      }));
+      setTags(post.tags.map((tag: string) => ({
+        id: tag,
+        className: "",
+        text: tag,
+      })));
     }
   }, [post.tags]);
 
