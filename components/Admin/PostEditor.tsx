@@ -9,7 +9,7 @@ declare global {
 
 import Script from "next/script";
 import dynamic from "next/dynamic";
-import { ReactTagsProps, Tag } from 'react-tag-input';
+import { ReactTagsWrapperProps as ReactTagsProps, Tag } from 'react-tag-input';
 import { useEffect, useState, FormEvent, useRef } from "react";
 
 import upload from 'utils/upload';
@@ -105,12 +105,11 @@ const audioHandler = function (this: any) {
   }
 }
 
-const suggestions = TAGS.map(tag => {
-  return {
-    id: tag,
-    text: tag
-  };
-});
+const suggestions = TAGS.map((tag) => ({
+  id: tag,
+  className: "",
+  text: tag,
+}));
 
 const modules = {
   toolbar: {
@@ -145,10 +144,11 @@ const formats = QUILL_FORMATS;
 const delimiters = [KEY_CODES.COMMA, KEY_CODES.ENTER];
 
 const PostEditor = (props: PostEditorProps) => {
+  const nowSeconds = Math.floor(Date.now() / 1000);
   const [post, setPost] = useState<Partial<Post>>({
     ...DEFAULT_POST_METADATA,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: nowSeconds,
+    updatedAt: nowSeconds,
   });
   const [isLoadQuill, setIsLoadQuill] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -167,12 +167,11 @@ const PostEditor = (props: PostEditorProps) => {
 
   useEffect(() => {
     if (post.tags && Array.isArray(post.tags)) {
-      setTags(post.tags.map((tag: string) => {
-        return {
-          id: tag,
-          text: tag
-        };
-      }));
+      setTags(post.tags.map((tag: string) => ({
+        id: tag,
+        className: "",
+        text: tag,
+      })));
     }
   }, [post.tags]);
 
@@ -314,7 +313,7 @@ const PostEditor = (props: PostEditorProps) => {
       />
       <div className="mb-3">
         {isLoadQuill && isLoadImageResize ? "" : <Loading />}
-        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} placeholder={'Tell your story…'} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
+        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
         </div>
       </div>
       Tags

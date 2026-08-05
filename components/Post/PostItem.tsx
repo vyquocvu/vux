@@ -51,7 +51,7 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
         }
         <div className="mt-2 mb-3">
           <span className="font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium">
-            {timeFromNow(data.updatedAt.seconds)}
+            {timeFromNow(data.updatedAt)}
           </span>
         </div>
         <p className="font-body text-sm text-body dark:text-on-dark-soft leading-relaxed mb-4">

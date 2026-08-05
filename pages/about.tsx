@@ -29,4 +29,5 @@ const About = () => {
   );
 };
 
+export const getStaticProps = async () => ({ props: {}, revalidate: 3600 });
 export default About;

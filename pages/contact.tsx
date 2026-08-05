@@ -67,4 +67,5 @@ const Contact = () => {
   );
 };
 
+export const getStaticProps = async () => ({ props: {}, revalidate: 3600 });
 export default Contact;

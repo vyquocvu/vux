@@ -83,7 +83,7 @@ const PostPage = (props: { post: Post, host: string}) => {
             {post.title}
           </h1>
           <p className="pl-1.5 font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-6">
-            {timeFromNow(post.updatedAt.seconds)}
+            {timeFromNow(post.updatedAt)}
           </p>
           <div className="pb-5 post-content ql-editor pl-1.5 font-body text-body dark:text-on-dark-soft leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>
@@ -127,13 +127,14 @@ export const getStaticProps = async ({ params }: any) => {
     if (typeof params.slug != 'string') return {};
     const id = params.slug.split(".").pop() || "";
     const post = await getPostById(id);
-    post.createdAt = post.createdAt.toJSON();
-    post.updatedAt = post.updatedAt.toJSON();
     return {
       props: {
         post,
       },
-      revalidate: 60,
+      // Post pages are read-mostly; cache at the edge for 10 minutes,
+      // serve stale up to 24 h. Edits made via /admin will land within
+      // the 10-min revalidation window.
+      revalidate: 600,
     };
   } catch (error) {
     return {

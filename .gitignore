@@ -9,9 +9,14 @@
 # next.js
 /.next/
 /out/
+# opennext
+/.open-next
+/seeds/images
 
 # production
 /build
+
+.wrangler
 
 # misc
 .DS_Store
@@ -47,3 +52,6 @@ serviceAccount*
 .firebaserc
 .vscode
 tsconfig.tsbuildinfo
+
+# Cloudflare local dev vars
+.dev.vars

@@ -1,102 +1,107 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { get } from 'utils/common';
-import initFirebase from "utils/auth/initFirebase";
-
-import { AuthInterface } from 'interfaces/User';
+import { useRouter } from "next/router";
+import Link from "next/link";
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
-import { useRouter } from "next/router";
+import { get } from "utils/common";
+import logout from "utils/auth/logout";
 
-const firebase = initFirebase();
-
-type Inputs = {
-  email: string;
-  password: string;
-};
-
-type Props = {
-  AuthUserInfo: AuthInterface,
-}
-function Login(props: Props) {
-  const initial: Inputs = {
-    email: "",
-    password: ""
-  };
+function Login() {
   const router = useRouter();
-
-  var firstInput: (HTMLInputElement | null) = null;
-  const [inputs, setInputs] = useState(initial);
+  const [inputs, setInputs] = useState({ email: "", password: "" });
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    firstInput?.focus();
-  }, [firstInput]);
+    (document.getElementById("email") as HTMLInputElement | null)?.focus();
+  }, []);
 
-
-  if (typeof window !== 'undefined' && props?.AuthUserInfo?.token) {
-    return router.push("/admin");
-  }
-
-  const handleSubmit = async (e: ChangeEvent<any>) => {
+  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    setSubmitting(true);
     try {
-      await firebase.auth().signInWithEmailAndPassword(inputs.email, inputs.password);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(inputs),
+      });
+      const data = (await res.json()) as { error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Login failed");
       router.push("/admin");
-    } catch (error) {
-      alert(error);
+    } catch (err: any) {
+      setError(err.message ?? "Login failed");
+      setSubmitting(false);
     }
   };
 
-  const handleInputChange = (e: ChangeEvent<any>) => {
-    e.persist();
-    setInputs({
-      ...inputs,
-      [e.target.name]: e.target.value
-    });
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/login");
   };
 
   return (
-    <>
-      <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-medium border border-neutral-200">
-        <h1 className="text-3xl font-bold text-neutral-900 mb-6 text-center">Log In</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 mb-1">Email: </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              onChange={handleInputChange}
-              value={inputs.email}
-              ref={r => (firstInput = r)}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 mb-1">Password: </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={handleInputChange}
-              value={inputs.password}
-              className="w-full"
-            />
-          </div>
-          <div className="pt-4">
-            <button type="submit" className="w-full">Log In</button>
-          </div>
-        </form>
-      </div>
-    </>
+    <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-medium border border-neutral-200">
+      <h1 className="text-3xl font-bold text-neutral-900 mb-6 text-center">Log In</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 mb-1">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={inputs.email}
+            onChange={handleInputChange}
+            required
+            className="w-full"
+          />
+        </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 mb-1">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={inputs.password}
+            onChange={handleInputChange}
+            required
+            className="w-full"
+          />
+        </div>
+        {error && (
+          <p className="text-sm text-error font-medium" role="alert">{error}</p>
+        )}
+        <div className="pt-4 flex items-center gap-3">
+          <button type="submit" disabled={submitting} className="w-full">
+            {submitting ? "Logging in…" : "Log In"}
+          </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="text-sm font-medium text-neutral-500 hover:text-neutral-700"
+          >
+            Sign out
+          </button>
+        </div>
+      </form>
+      <p className="text-center text-sm text-neutral-500 mt-6">
+        No account? <Link href="/signup" className="text-primary hover:underline">Sign up</Link>
+      </p>
+    </div>
   );
 }
 
 Login.getInitialProps = (ctx: any) => {
-  const token = get(ctx, 'myCustomData.AuthUserInfo.token');
+  const token = get(ctx, "myCustomData.AuthUserInfo.token");
   if (token && ctx.res) {
-    ctx.res.writeHead(302, { Location: '/admin' }).end();
+    ctx.res.writeHead(302, { Location: "/admin" }).end();
   }
   return {};
-}
+};
 
 export default withAuthUser(withAuthUserInfo(Login));
