@@ -28,8 +28,20 @@
     "NEXT_PUBLIC_SITE_URL": "https://vyquocvu.com",
     "OWNER_EMAIL": "vyquocvu@gmail.com"
   },
-  "placement": { "mode": "smart" },
+  "placement": {
+    "mode": "smart"
+  },
   "observability": {
     "enabled": true
-  }
+  },
+  "routes": [
+    {
+      "pattern": "vyquocvu.com/*",
+      "zone_name": "vyquocvu.com"
+    },
+    {
+      "pattern": "www.vyquocvu.com/*",
+      "zone_name": "vyquocvu.com"
+    }
+  ]
 }
