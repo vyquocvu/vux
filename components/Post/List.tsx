@@ -1,11 +1,11 @@
 import type { FunctionComponent } from 'react';
 import Link from 'next/link';
 import PostItem from './PostItem';
-import { Post, PostLite } from 'interfaces/Post';
+import { Post } from 'interfaces/Post';
 
 
 type Props = {
-  items: Post[] | PostLite[],
+  items: Post[],
   isAdmin?: boolean,
 }
 

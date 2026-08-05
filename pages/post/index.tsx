@@ -1,12 +1,10 @@
 
 import { Post } from 'interfaces/Post';
 import PostList from "components/Post/List";
-import { AuthInterface } from 'interfaces/User'
 import { getPublishedPosts } from 'fetcher/post';
 import { NextPageContext } from 'next';
 
 type Props = {
-  AuthUserInfo: AuthInterface,
   posts: Post[]
 }
 

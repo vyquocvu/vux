@@ -19,41 +19,6 @@ export const AuthUserInfoContext = createContext<AuthInterface>(createAuthUserIn
 
 export const useAuthUserInfo = () => useContext(AuthUserInfoContext);
 
-export interface AuthClientState {
-  initializing: boolean;
-}
-
-export function useAuthClient(): AuthClientState {
-  const [state, setState] = useState<AuthClientState>({ initializing: true });
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/auth/me", { credentials: "same-origin" });
-        if (!res.ok) {
-          if (!cancelled) setState({ initializing: false });
-          return;
-        }
-        const data = (await res.json()) as { authUser: any };
-        if (!cancelled) {
-          // Hydrate the context, but only via the wrapper component below.
-          (window as any).__VUX_AUTH_USER__ = data.authUser;
-          setState({ initializing: false });
-          window.dispatchEvent(new CustomEvent("vux:auth", { detail: data.authUser }));
-        }
-      } catch {
-        if (!cancelled) setState({ initializing: false });
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return state;
-}
-
 export const AuthUserInfoProvider = ({
   children,
   initial,

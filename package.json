@@ -24,7 +24,6 @@
     "@types/nprogress": "^0.2.0",
     "@types/react-tag-input": "^6.6.1",
     "@types/react-toast-notifications": "^2.4.0",
-    "bcrypt-ts": "^5.0.2",
     "dayjs": "^1.8.32",
     "iron-session": "^8.0.4",
     "next": "14.2.35",

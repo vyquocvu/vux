@@ -1,7 +1,7 @@
-import { get } from "utils/common";
 import type { PublicUser } from "utils/auth/d1";
 export type { PublicUser } from "utils/auth/d1";
 export type AuthUser = PublicUser;
+
 
 export interface AuthInterface {
   AuthUser: AuthUser | null;
@@ -28,10 +28,3 @@ export const createAuthUserInfo = ({
   AuthUser: createAuthUser(user),
   token,
 });
-
-/**
- * Read the typed row out of a Vercel/Next getServerSideProps context.
- */
-export const getAuthUserInfoFromContext = (ctx: any): AuthInterface =>
-  (get(ctx, "myCustomData.AuthUserInfo") as AuthInterface | undefined) ??
-  createAuthUserInfo();

@@ -28,16 +28,6 @@ export const get = <T = any>(obj: any, path: string, defaultValue?: T): T | unde
   return result === undefined || result === obj ? defaultValue : result;
 };
 
-export const has = (obj: any, key: string): boolean => {
-  const keyParts = key.split('.');
-
-  return !!obj && (
-    keyParts.length > 1
-      ? has(obj[key.split('.')[0]], keyParts.slice(1).join('.'))
-      : Object.hasOwnProperty.call(obj, key)
-  );
-};
-
 export const highlight = (): void => {
   document.querySelectorAll('pre').forEach((el: HTMLPreElement) => {
     (window as any).hljs.highlightElement(el);

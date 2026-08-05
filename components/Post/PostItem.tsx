@@ -1,14 +1,11 @@
 import type { FunctionComponent } from 'react'
 import Link from 'next/link';
-import Image from 'next/image';
 
 import { timeFromNow, friendlyStr } from 'utils/common';
 import { Post } from 'interfaces/Post';
-import { deletePost } from 'fetcher/post';
 
 type Props = {
   data: Post,
-  id?: string;
   isAdmin: boolean
 }
 
@@ -27,7 +24,11 @@ const PostItem: FunctionComponent<Props> = ({ data, isAdmin }) => {
     let text = "Press OK to make sure you want to delete this post";
     if (confirm(text) == true) {
       try {
-        await deletePost(data.uid);
+        const res = await fetch(`/api/admin/posts/${data.uid}`, {
+          method: "DELETE",
+          credentials: "same-origin",
+        });
+        if (!res.ok) throw new Error("Delete failed");
         location.reload();
       } catch (error) {
         console.log(error);

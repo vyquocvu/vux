@@ -23,5 +23,5 @@ export default {
     { "url": "https://github.com/vyquocvu", "label": "Github", "icon": "/icons/github.svg" }
   ],
   "repo": "https://github.com/vyquocvu/vux",
-  "host": "https://vyquocvu.co/",
+  "host": "https://vyquocvu.com/",
 }
