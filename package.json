@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development next dev",
     "build": "next build",
+    "build:opennext": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "next lint",
     "db:migrate:local": "wrangler d1 execute vux --local --file=./seeds/schema.sql",
