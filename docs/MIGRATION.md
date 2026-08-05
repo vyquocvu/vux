@@ -92,9 +92,8 @@ This doc captures everything that changed and how to ship it.
 # 1. Install deps
 npm install --legacy-peer-deps
 
-# 2. Build (Next + OpenNext)
-npm run build         # alias for `next build`
-npm run cf-build      # alias for `opennextjs-cloudflare build`
+# 2. Build and adapt for Cloudflare
+npm run build:opennext
 
 # 3. Apply D1 schema + seed posts + upload images to remote
 npm run db:migrate:remote

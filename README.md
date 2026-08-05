@@ -65,7 +65,8 @@ which produces a single Workers bundle from this directory.
 
 | Script | Purpose |
 |---|---|
-| `npm run build` | `next build` — produces the OpenNext-readable output |
+| `npm run build` | `next build` — Next.js production build (output read by `deploy`) |
+| `npm run build:opennext` | `opennextjs-cloudflare build` — wraps `next build` and adapts the output for Cloudflare Workers |
 | `npm run dev` | Local Next dev server (no D1, no R2) |
 | `npm run preview` | Build for Workers and serve via `wrangler dev` (real bindings) |
 | `npm run deploy` | Build + `wrangler deploy` |
