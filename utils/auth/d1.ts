@@ -23,13 +23,6 @@ export interface PublicUser {
   isAdmin: boolean;
 }
 
-const publicShape = (u: User): PublicUser => ({
-  id: u.id,
-  email: u.email,
-  displayName: u.display_name,
-  isAdmin: u.is_admin === 1,
-});
-
 export async function getUserByEmail(env: CloudflareEnv, email: string): Promise<User | null> {
   const row = await env.DB
     .prepare("SELECT * FROM users WHERE email = ?1 COLLATE NOCASE LIMIT 1")
@@ -70,5 +63,3 @@ export async function createUser(
   if (!created) throw new Error("createUser: insert succeeded but row not found");
   return created;
 }
-
-export { publicShape as toPublicUser };

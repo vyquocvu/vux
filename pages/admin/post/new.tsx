@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { useToasts } from 'react-toast-notifications';
 
 import { get } from 'utils/common';
-import { addPost } from "fetcher/post";
 import { Post } from "interfaces/Post";
-import { AuthInterface } from "interfaces/User";
+import { AuthInterface } from "utils/auth/user";
 
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
@@ -38,7 +37,14 @@ const PostPage = (props: PostPageProps) => {
   const onSubmit = async (postData: Post) => {
     delete (postData as any).uid;
     try {
-      const newPost = await addPost(postData);
+      const res = await fetch("/api/admin/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(postData),
+      });
+      if (!res.ok) throw new Error("Create failed");
+      const { post: newPost } = (await res.json()) as { post: Post };
       addToast('Create post successfully!', { appearance: 'success', autoDismiss: true });
       router.push(`/admin/post/${newPost.uid}`);
     } catch (error) {

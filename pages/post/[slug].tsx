@@ -20,7 +20,7 @@ declare global {
   }
 }
 
-const PostPage = (props: { post: Post, host: string}) => {
+const PostPage = (props: { post: Post }) => {
   const { post } = props;
   const [pathname, setPathname] = useState<string>('');
   const router = useRouter();

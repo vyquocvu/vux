@@ -9,8 +9,7 @@ import { useRouter } from 'next/router';
 import { useToasts } from 'react-toast-notifications';
 
 import { Post } from "interfaces/Post";
-import { AuthInterface } from "interfaces/User";
-import { getPostById, setPostById } from "fetcher/post";
+import { AuthInterface } from "utils/auth/user";
 
 import Loading from 'components/shared/Loading';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
@@ -38,7 +37,11 @@ const PostPage = (props: PostPageProps) => {
 
   const fetchingPost = useCallback(async (id: string) => {
     try {
-      const postDoc : Post = await getPostById(id, true) as Post;
+      const res = await fetch(`/api/admin/posts/${id}`, {
+        credentials: "same-origin",
+      });
+      if (!res.ok) throw new Error("Fetch failed");
+      const postDoc: Post = (await res.json()) as Post;
       if (postDoc.uid) setPost({ ...postDoc });
       setIsLoaded(true);
     } catch (error) {};
@@ -50,7 +53,13 @@ const PostPage = (props: PostPageProps) => {
       if (postData.isPublished) {
         postData.publishContent = postData.draftContent;
       }
-      await setPostById(postData.uid, postData);
+      const res = await fetch(`/api/admin/posts/${postData.uid}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(postData),
+      });
+      if (!res.ok) throw new Error("Save failed");
       addToast('Save post successfully!', { appearance: 'success', autoDismiss: true });
       setPost({ ...post, ...postData });
       if (postData.isPublished) {

@@ -4,7 +4,6 @@ export interface Post {
   slug: string;
   title: string;
   tags: string[];
-  label?: string;
   createdAt: number;
   author: string;
   updatedAt: number;
@@ -13,10 +12,4 @@ export interface Post {
   draftContent: string;
   isPublished: boolean;
   publishContent: string;
-}
-
-export interface PostLite {
-  uid: string;
-  thumbText: string;
-  updatedAt: number;
 }

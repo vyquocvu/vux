@@ -5,7 +5,7 @@ import PostList from 'components/Post/List';
 import Loading from 'components/shared/Loading';
 
 import { Post } from "interfaces/Post";
-import { AuthInterface } from "interfaces/User";
+import { AuthInterface } from "utils/auth/user";
 import { getPostsByUserId } from 'fetcher/post';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
