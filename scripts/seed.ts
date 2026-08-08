@@ -139,8 +139,31 @@ const seedLocal = () => {
     "vux",
     "--local",
     `--file=${seedFile}`,
-  ]);
+    ]);
   console.log(`[seed] inserted ${posts.length} posts (local)`);
+
+  // Insert tags
+  const tagSql: string[] = [];
+  for (const p of posts) {
+    for (const tag of p.tags || []) {
+      tagSql.push(
+        `INSERT OR IGNORE INTO tags (post_uid, tag) VALUES ('${p.uid}', '${escape(tag)}');`,
+      );
+    }
+  }
+  if (tagSql.length > 0) {
+    const tagFile = resolve(SEEDS, "tags.insert.sql");
+    writeFileSync(tagFile, tagSql.join("\n"), "utf8");
+    run("npx", [
+      "wrangler",
+      "d1",
+      "execute",
+      "vux",
+      "--local",
+      `--file=${tagFile}`,
+    ]);
+    console.log(`[seed] inserted ${tagSql.length} tags (local)`);
+  }
 
   // Upload images via wrangler R2. We upload each images/<key> file.
   const images = loadImages();
@@ -197,8 +220,31 @@ const seedRemote = async () => {
     "vux",
     "--remote",
     `--file=${seedFile}`,
-  ]);
+    ]);
   console.log(`[seed] inserted ${posts.length} posts (remote)`);
+
+  // Insert tags
+  const tagSql: string[] = [];
+  for (const p of posts) {
+    for (const tag of p.tags || []) {
+      tagSql.push(
+        `INSERT OR IGNORE INTO tags (post_uid, tag) VALUES ('${p.uid}', '${escape(tag)}');`,
+      );
+    }
+  }
+  if (tagSql.length > 0) {
+    const tagFile = resolve(SEEDS, "tags.insert.sql");
+    writeFileSync(tagFile, tagSql.join("\n"), "utf8");
+    run("npx", [
+      "wrangler",
+      "d1",
+      "execute",
+      "vux",
+      "--remote",
+      `--file=${tagFile}`,
+    ]);
+    console.log(`[seed] inserted ${tagSql.length} tags (remote)`);
+  }
 
   // Upload images
   const images = loadImages();

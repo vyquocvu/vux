@@ -12,6 +12,7 @@
 # opennext
 /.open-next
 /seeds/images
+/seeds/*.insert.sql
 
 # production
 /build

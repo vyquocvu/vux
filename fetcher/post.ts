@@ -74,7 +74,7 @@ export const setPostById = async (uid: string, postData: Post): Promise<void> =>
   await env.DB
     .prepare(
       `INSERT INTO posts (uid, slug, title, thumb_text, thumb_image, publish_content, draft_content, is_published, author_id, created_at, updated_at)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
        ON CONFLICT(uid) DO UPDATE SET
          slug = excluded.slug,
          title = excluded.title,
@@ -97,6 +97,7 @@ export const setPostById = async (uid: string, postData: Post): Promise<void> =>
       postData.isPublished ? 1 : 0,
       postData.author ?? null,
       Math.floor(postData.createdAt ?? Date.now() / 1000),
+      Math.floor(Date.now() / 1000),
     )
     .run();
 
