@@ -1,6 +1,6 @@
 
 import { Post } from 'interfaces/Post';
-import PostList from "components/Post/List";
+import Feed from 'components/Post/Feed';
 import { getPublishedPosts } from 'fetcher/post';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 
 const Index = (props: Props) => {
   const { posts } = props;
-  return <PostList items={posts} />;
+  return <Feed items={posts} />;
 };
 
 export const getStaticProps = async () => {
@@ -24,6 +24,7 @@ export const getStaticProps = async () => {
         createdAt: post.createdAt,
         thumbImage: post.thumbImage,
         isPublished: post.isPublished,
+        tags: post.tags || [],
       }
     });
 
