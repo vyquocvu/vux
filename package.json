@@ -28,10 +28,10 @@
     "iron-session": "^8.0.4",
     "next": "15.5.21",
     "nprogress": "^0.2.0",
-    "react": "^18.3.1",
+    "react": "^19.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.0",
     "react-tag-input": "^6.8.1",
     "react-toast-notifications": "^2.4.0",
     "sass": "^1.56.1"
