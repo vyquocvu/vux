@@ -17,7 +17,7 @@ const PostRow: FC<Props> = ({ data, onTagClick }) => {
   return (
     <article
       className={
-        'group py-8 border-b border-hairline dark:border-surface-dark-elevated ' +
+        'group py-5 sm:py-6 border-b border-hairline dark:border-surface-dark-elevated ' +
         'last:border-b-0 transition-colors duration-200'
       }
     >
