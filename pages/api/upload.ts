@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getSession } from "utils/auth/session";
+import { readDimensions } from "utils/images/dims.ts";
 
 
 const MAX_SIZE = 25 * 1024 * 1024; // 25 MiB
@@ -81,11 +82,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       httpMetadata: { contentType: mime },
     });
 
+    const dims = readDimensions(body);
     const host = (req.headers.host as string | undefined) ?? env.NEXT_PUBLIC_SITE_URL.replace(/^https?:\/\//, "");
     return res.status(200).json({
       url: `${req.headers["x-forwarded-proto"] ?? "https"}://${host}/${key}`,
       key,
       size: file.size,
+      width: dims?.width ?? null,
+      height: dims?.height ?? null,
     });
   } catch (error) {
     console.error("upload error", error);

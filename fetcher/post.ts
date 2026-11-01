@@ -12,6 +12,8 @@
  */
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Post } from "interfaces/Post";
+import { annotateContentImages, collectImageSrcs } from "utils/images/content.ts";
+import { prefetchDimensions, resolverFromMap } from "utils/images/prefetch.ts";
 
 interface PostRow {
   uid: string;
@@ -71,6 +73,17 @@ export const getPostById = async (uid: string, isEdit = false): Promise<Post | R
 
 export const setPostById = async (uid: string, postData: Post): Promise<void> => {
   const { env } = await getCloudflareContext({ async: true });
+
+  // Quill emits bare `<img src>` tags, so dimensions are stamped here on the
+  // way to storage rather than inferred at render time.
+  const srcs = new Set([
+    ...collectImageSrcs(postData.publishContent ?? ""),
+    ...collectImageSrcs(postData.draftContent ?? ""),
+  ]);
+  const resolve = resolverFromMap(await prefetchDimensions(env.MEDIA, srcs));
+  const publishContent = annotateContentImages(postData.publishContent ?? "", resolve);
+  const draftContent = annotateContentImages(postData.draftContent ?? "", resolve);
+
   await env.DB
     .prepare(
       `INSERT INTO posts (uid, slug, title, thumb_text, thumb_image, publish_content, draft_content, is_published, author_id, created_at, updated_at)
@@ -92,8 +105,8 @@ export const setPostById = async (uid: string, postData: Post): Promise<void> =>
       postData.title,
       postData.thumbText ?? "",
       postData.thumbImage ?? "",
-      postData.publishContent ?? "",
-      postData.draftContent ?? "",
+      publishContent,
+      draftContent,
       postData.isPublished ? 1 : 0,
       postData.author ?? null,
       Math.floor(postData.createdAt ?? Date.now() / 1000),

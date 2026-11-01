@@ -35,29 +35,107 @@ const contentTypeForExt = (key: string): string => {
   }
 };
 
+const IMMUTABLE_CACHE = "public, max-age=31536000, immutable";
+
+const baseHeaders = (ct: string, etag?: string | null) => {
+  const headers = new Headers({
+    "Content-Type": ct,
+    "Cache-Control": IMMUTABLE_CACHE,
+    "Accept-Ranges": "bytes",
+  });
+  if (etag) headers.set("ETag", etag);
+  return headers;
+};
+
+/** `bytes=a-b`, `bytes=a-`, `bytes=-n`. `null` means "not a single byte range
+ *  we understand" — RFC 7233 requires ignoring those with a full 200 body. A
+ *  `{ ok: false }` result is a well-formed but unsatisfiable range, which must
+ *  be answered with 416. */
+type ByteRange = { ok: true; offset: number; length: number } | { ok: false };
+
+const parseRange = (header: string, size: number): ByteRange | null => {
+  const m = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!m) return null;
+  const [, rawStart, rawEnd] = m;
+  if (rawStart === "" && rawEnd === "") return null;
+  if (rawStart === "") {
+    const suffix = Number(rawEnd);
+    if (suffix < 1) return { ok: false };
+    return { ok: true, offset: Math.max(0, size - suffix), length: Math.min(suffix, size) };
+  }
+  const offset = Number(rawStart);
+  if (offset >= size) return { ok: false };
+  const end = rawEnd === "" ? size - 1 : Math.min(Number(rawEnd), size - 1);
+  if (end < offset) return { ok: false };
+  return { ok: true, offset, length: end - offset + 1 };
+};
+
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/^\//, "");
 
-  // Media: read from R2 and return a fully-formed response. We bypass the
-  // Worker entirely from the next request onward (HTTP cache replay).
+  // Media: serve from R2 without buffering the object into the isolate. A
+  // buffered body costs memory proportional to the asset and delays first
+  // byte; it also silently disabled the conditional and range requests that
+  // repeat visits and any byte-range client depend on.
   if (ALLOWED_PREFIXES.some((p) => path.startsWith(p))) {
     try {
       const { env } = getCloudflareContext();
-      const object = await env.MEDIA.get(path);
+      const rangeHeader = request.headers.get("range");
+      const ifNoneMatch = request.headers.get("if-none-match");
+
+      let object: R2ObjectBody | null;
+      let partial: { offset: number; length: number } | null = null;
+      let totalSize = 0;
+
+      if (rangeHeader) {
+        const head = await env.MEDIA.head(path);
+        if (!head) return new NextResponse("Not found", { status: 404 });
+        totalSize = head.size;
+        const parsed = parseRange(rangeHeader, head.size);
+        if (parsed && !parsed.ok) {
+          const headers = new Headers({ "Content-Range": `bytes */${totalSize}` });
+          if (head.httpEtag) headers.set("ETag", head.httpEtag);
+          return new NextResponse(null, { status: 416, headers });
+        }
+        if (parsed) {
+          partial = parsed;
+          object = await env.MEDIA.get(path, {
+            range: { offset: parsed.offset, length: parsed.length },
+          });
+        } else {
+          object = await env.MEDIA.get(path);
+        }
+      } else {
+        object = await env.MEDIA.get(path);
+      }
+
       if (!object) return new NextResponse("Not found", { status: 404 });
 
       const ct = object.httpMetadata?.contentType ?? contentTypeForExt(path);
-      const headers = new Headers({
-        "Content-Type": ct,
-        // Long immutable cache — Cloudflare will dedupe identical bytes
-        // across POPs at the edge for the whole TTL.
-        "Cache-Control": "public, max-age=31536000, immutable",
-      });
-      if (object.httpEtag) headers.set("ETag", object.httpEtag);
+      const etag = object.httpEtag;
+      const size = partial ? totalSize : object.size;
 
-      const buf = await object.arrayBuffer();
-      return new NextResponse(buf, { status: 200, headers });
+      if (etag && ifNoneMatch && ifNoneMatch === etag) {
+        await object.body?.cancel();
+        return new NextResponse(null, {
+          status: 304,
+          headers: baseHeaders(ct, etag),
+        });
+      }
+
+      const headers = baseHeaders(ct, etag);
+      if (partial) {
+        headers.set(
+          "Content-Range",
+          `bytes ${partial.offset}-${partial.offset + partial.length - 1}/${size}`,
+        );
+        headers.set("Content-Length", String(partial.length));
+        return new NextResponse(object.body, { status: 206, headers });
+      }
+
+      headers.set("Content-Length", String(size));
+      return new NextResponse(object.body, { status: 200, headers });
     } catch (error) {
       console.error("media error", error);
       return new NextResponse("Internal error", { status: 500 });

@@ -49,10 +49,10 @@ const imageHandler = function (this: any) {
     const range = quill.getSelection(true);
     quill.insertEmbed(range.index, 'image', `${ window.location.origin }${PLACEHOLDER_IMAGE}`);
     quill.setSelection(range.index + 1);
-    const url = await upload(file, 'images');
-    if (!url) return false;
+    const uploaded = await upload(file, 'images');
+    if (!uploaded) return false;
     quill.deleteText(range.index, 1);
-    quill.insertEmbed(range.index, 'image', url);
+    quill.insertEmbed(range.index, 'image', uploaded.url);
   }
 }
 
@@ -81,13 +81,13 @@ const audioHandler = function (this: any) {
       const file = input.files[0];
       const range = quill.getSelection(true);
       try {
-        const url = await upload(file, 'audios');
-        if (!url) {
+        const uploaded = await upload(file, 'audios');
+        if (!uploaded) {
           alert('Failed to upload audio file. Please try again.');
           return;
         }
         // Insert audio HTML
-        quill.insertEmbed(range.index, 'audio', url);
+        quill.insertEmbed(range.index, 'audio', uploaded.url);
         quill.setSelection(range.index + 1);
       } catch (error) {
         alert('Failed to upload audio file. Please try again.');
