@@ -11,7 +11,7 @@
  * We always ask for `{ async: true }` so the same code path works in all three.
  */
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import type { Post } from "interfaces/Post";
+import type { LatestPost, Post } from "interfaces/Post";
 import { annotateContentImages, collectImageSrcs } from "utils/images/content.ts";
 import { prefetchDimensions, resolverFromMap } from "utils/images/prefetch.ts";
 
@@ -181,4 +181,37 @@ export const deletePost = async (uid: string): Promise<void> => {
   const { env } = await getCloudflareContext({ async: true });
   await env.DB.prepare("DELETE FROM posts WHERE uid = ?1").bind(uid).run();
   await env.DB.prepare("DELETE FROM tags WHERE post_uid = ?1").bind(uid).run();
+};
+
+/**
+ * Rail-only "đọc tiếp" list. Deliberately not `getPublishedPosts`: that runs
+ * `loadTags` per row (47 round-trips), which inside every post page's
+ * `getStaticProps` would be ~2.2k queries per full build. The rail needs no
+ * tags, so this is one bounded query.
+ */
+export const getLatestPosts = async (
+  limit = 3,
+  excludeUid = "",
+): Promise<LatestPost[]> => {
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    const { results } = await env.DB
+      .prepare(
+        `SELECT uid, slug, title, updated_at FROM posts
+         WHERE is_published = 1 AND uid != ?1
+         ORDER BY updated_at DESC, position ASC
+         LIMIT ?2`,
+      )
+      .bind(excludeUid, limit)
+      .all<PostRow>();
+    return (results ?? []).map((row: PostRow) => ({
+      uid: row.uid,
+      slug: row.slug,
+      title: row.title,
+      updatedAt: row.updated_at,
+    }));
+  } catch (error) {
+    console.error("getLatestPosts failed", error);
+    return [];
+  }
 };
