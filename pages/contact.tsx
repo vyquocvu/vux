@@ -2,6 +2,22 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+const field =
+  'w-full mb-5 px-3.5 py-2.5 rounded-md bg-canvas dark:bg-surface-dark-soft ' +
+  'border border-hairline dark:border-surface-dark-elevated ' +
+  'font-body text-sm text-ink dark:text-on-dark placeholder:text-muted-soft ' +
+  'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ' +
+  'transition-shadow duration-200';
+
+const label =
+  'block font-body text-[11px] uppercase tracking-widest text-muted dark:text-on-dark-soft font-medium mb-1.5';
+
+const channels = [
+  { label: 'Email', value: 'vyquocvu@gmail.com', href: 'mailto:vyquocvu@gmail.com' },
+  { label: 'GitHub', value: '@vyquocvu', href: 'https://github.com/vyquocvu' },
+  { label: 'LinkedIn', value: 'in/vyquocvu', href: 'https://linkedin.com/in/vyquocvu' },
+];
+
 const Contact = () => {
   const [status, setStatus] = useState('');
 
@@ -23,46 +39,62 @@ const Contact = () => {
     };
     xhr.send(data);
   }
+
   return (
-    <div className='post-page-view'>
-      <div className="w-full pb-6 h-16">
+    <div className="mx-auto max-w-3xl lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,16rem)] lg:gap-12">
+      <div className="post-page-view">
         <Link href="/" legacyBehavior>
-          <span className="border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors duration-200 bg-canvas dark:bg-surface-dark">
+          <span className="mb-6 border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors duration-200 bg-canvas dark:bg-surface-dark">
             <Image priority width={36} height={36} src="/icons/left_arrow.svg" alt="left" />
           </span>
         </Link>
-      </div>
-      <div className="m-auto py-6 px-4 w-128">
-        {status === "SUCCESS" ? (
-          <div className="bg-surface-card dark:bg-surface-dark-elevated border border-hairline dark:border-surface-dark-elevated rounded-lg p-8 text-center">
+
+        {status === 'SUCCESS' ? (
+          <div className="mt-2 rounded-lg border border-hairline dark:border-surface-dark-elevated bg-surface-soft dark:bg-surface-dark-soft p-8">
             <h3 className="font-display text-2xl font-normal text-ink dark:text-on-dark">
-              Submission has been successful! ✓
+              Đã gửi. Cảm ơn bạn!
             </h3>
+            <p className="mt-2 font-body text-sm text-muted dark:text-on-dark-soft">
+              Tôi sẽ trả lời qua email bạn vừa nhập.
+            </p>
           </div>
         ) : (
-          <form
-            onSubmit={submitForm}
-            action="https://formspree.io/f/xvovgjzr"
-            method="POST"
-          >
-            <h3 className="font-display text-3xl font-normal text-ink dark:text-on-dark mb-6 tracking-tight">Leave me a message</h3>
-            <label htmlFor="name" className="block font-body text-sm font-medium text-body dark:text-on-dark-soft mb-1">Your Name:</label>
-            <input type="text" id="name" name="name" placeholder="Your name.." className="mb-4" />
-            <label htmlFor="email" className="block font-body text-sm font-medium text-body dark:text-on-dark-soft mb-1">Email:</label>
-            <input type="email" id="email" name="email" className="mb-4" />
-            <label htmlFor="message" className="block font-body text-sm font-medium text-body dark:text-on-dark-soft mb-1">Message:</label>
-            <textarea id="message" name="message" placeholder="Write something.." style={{height: '100px'}} className="mb-4"></textarea>
-            {status === "SUCCESS" ? (
-              <p className="font-body text-sm font-medium text-success">Thanks!</p>
-            ) : (
-              <button type="submit">Submit</button>
+          <form onSubmit={submitForm} action="https://formspree.io/f/xvovgjzr" method="POST" className="mt-2">
+            <h3 className="font-display text-3xl font-normal text-ink dark:text-on-dark mb-6 tracking-tight">
+              Để lại lời nhắn
+            </h3>
+            <label htmlFor="name" className={label}>Tên</label>
+            <input type="text" id="name" name="name" required placeholder="Tên của bạn" className={field} />
+            <label htmlFor="email" className={label}>Email</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com" className={field} />
+            <label htmlFor="message" className={label}>Nội dung</label>
+            <textarea id="message" name="message" required placeholder="Viết gì đó…" className={`${field} h-28 resize-y`} />
+            {status === 'ERROR' && (
+              <p className="font-body text-sm font-medium text-error -mt-2 mb-3">Gửi thất bại, thử lại sau nhé.</p>
             )}
-            {status === "ERROR" && (
-              <p className="font-body text-sm font-medium text-error mt-3">Ooops! There was an error.</p>
-            )}
+            <button
+              type="submit"
+              className="px-5 py-2.5 rounded-md bg-primary text-on-primary font-body text-sm font-medium hover:bg-primary-active transition-colors duration-200"
+            >
+              Gửi
+            </button>
           </form>
         )}
       </div>
+
+      <aside className="mt-12 lg:mt-0">
+        <p className="font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium mb-4">Hoặc liên hệ trực tiếp</p>
+        <ul className="space-y-3">
+          {channels.map((c) => (
+            <li key={c.label}>
+              <a href={c.href} className="block font-body text-sm text-ink dark:text-on-dark hover:text-primary">
+                {c.label}
+                <span className="block text-muted-soft text-xs">{c.value}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </aside>
     </div>
   );
 };
