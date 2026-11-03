@@ -2,23 +2,27 @@ import Link from "next/link";
 import { getPublishedPosts } from "fetcher/post";
 
 const TagsPage = ({ tags }: { tags: { [key: string]: number } }) => {
+  const entries = Object.entries(tags).sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+  );
+
   return (
-    <div>
-      <h1 className="font-display text-5xl font-normal text-ink dark:text-on-dark tracking-tight mb-8">Tags</h1>
-      <div className="flex flex-wrap gap-3">
-        {Object.keys(tags)
-          .sort((l, r) => tags[r] - tags[l])
-          .map((tag) => {
-            const postCount = tags[tag];
-            return (
-              <Link key={tag} href={`/post?tag=${tag}`} legacyBehavior>
-                <a className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600 rounded-lg transition-all duration-200 hover:shadow-soft">
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200">{tag}</span>
-                  <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 rounded-full">{postCount}</span>
-                </a>
-              </Link>
-            );
-          })}
+    <div className="mx-auto max-w-3xl">
+      <h1 className="font-display text-5xl font-normal text-ink dark:text-on-dark mb-3 tracking-tight">
+        Tags
+      </h1>
+      <p className="font-body text-sm text-muted dark:text-on-dark-soft mb-8">
+        {entries.length} chủ đề · {entries.reduce((n, [, c]) => n + c, 0)} lượt gán
+      </p>
+      <div className="flex flex-wrap gap-2.5">
+        {entries.map(([tag, count]) => (
+          <Link key={tag} href={`/post?tag=${encodeURIComponent(tag)}`} legacyBehavior>
+            <a className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-pill border border-hairline dark:border-surface-dark-elevated bg-canvas dark:bg-surface-dark-soft hover:border-primary dark:hover:border-primary transition-colors duration-200">
+              <span className="font-body text-sm text-ink dark:text-on-dark">{tag}</span>
+              <span className="font-mono text-[11px] text-muted dark:text-muted-soft">{count}</span>
+            </a>
+          </Link>
+        ))}
       </div>
     </div>
   );
