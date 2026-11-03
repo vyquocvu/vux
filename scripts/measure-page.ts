@@ -151,11 +151,15 @@ window.__vux = {
     });
     const shell = document.querySelector('[data-shell="content"]');
     const box = (shell || document.body).getBoundingClientRect();
+    const area = (shell ? shell.parentElement : document.body).getBoundingClientRect();
     window.__vux.gutter = {
-      left: Math.round(box.left),
-      right: Math.round(window.innerWidth - box.right),
+      left: Math.round(box.left - area.left),
+      right: Math.round(area.right - box.right),
       contentWidth: Math.round(box.width),
-      rail: !!document.querySelector("aside"),
+      rail: (() => {
+        const a = document.querySelector("aside");
+        return !!a && getComputedStyle(a).display !== "none";
+      })(),
     };
     window.__vux.docHeight = Math.round(document.documentElement.scrollHeight);
   });
@@ -268,6 +272,13 @@ const main = async () => {
     deviceScaleFactor: VIEWPORT.dsf,
     mobile: VIEWPORT.dsf !== 1,
   });
+  // ThemeProvider falls back to prefers-color-scheme when nothing is stored,
+  // so emulating the media query is how dark mode gets captured headlessly.
+  if (process.env.DARK === "1") {
+    await t("Emulation.setEmulatedMedia", {
+      features: [{ name: "prefers-color-scheme", value: "dark" }],
+    });
+  }
   await t("Page.addScriptToEvaluateOnNewDocument", { source: INSTRUMENT });
 
   const loaded = new Promise<void>((r) => {
