@@ -915,11 +915,12 @@ Trong `INSTRUMENT` của `scripts/measure-page.ts`, ngay trước dòng `window.
 
 và trong `window.__vux = {...}` khai báo thêm `gutter: null,`.
 
-Ba chỉnh sửa so với draft, đều do số đo đầu tiên nói dối:
+Năm chỉnh sửa so với draft, đều do số đo đầu tiên nói dối:
 - `MainContent` xuất hiện `data-shell="content"` — chọn class `.max-w-[1216px]` buộc phải escape dấu ngoặc trong chuỗi JS nằm trong template literal.
 - So với **parent có padding**, không so với viewport: sidebar `fixed` là vùng đã dùng chứ không phải vùng chết, nên đo theo viewport luôn trả `left - right = 256` dù layout đúng.
 - `rail` phải kiểm tra `display` vì `<aside>` luôn tồn tại trong DOM nhưng `hidden xl:block`.
-- Thêm cờ `DARK=1` (Emulation.setEmulatedMedia `prefers-color-scheme: dark`) để bắt nửa tối của ma trận — `ThemeProvider` đọc media query khi chưa có theme nào trong localStorage.
+- `DARK=1` không đủ: headless Chrome **kế thừa appearance của macOS**, nên chạy không cờ vẫn ra nền tối. Harness giờ always gọi `Emulation.setEmulatedMedia` với giá trị `light`/`dark` tường minh — nếu không, nửa "light" của ma trận là ảnh trùng với nửa dark, và light mode chưa từng được đo.
+- Thêm `anchor` trong output: mở URL có `#heading-id` rồi đọc `getBoundingClientRect().top` của element, vì đây là cách rẻ nhất để chứng minh cú nhảy TOC nằm dưới sticky bar (64px) thay vì bị che.
 
 - [ ] **Step 4: Đo**
 
@@ -1441,7 +1442,7 @@ git commit -m "feat(contact): style the form and add direct contact channels"
 
 ## Task C6: Kiểm chứng cuối
 
-- [ ] **Step 1: Static checks**
+- [x] **Step 1: Static checks**
 
 Run: `node --experimental-strip-types scripts/toc-check.ts`
 Expected: `OK  posts=47  h2-h4=161  bai co TOC(>=2)=33  bai >=10 heading=3`
@@ -1450,12 +1451,12 @@ Expected: cả hai pass.
 
 Lưu ý đo được lúc verify: `next build` đọc D1 **local** qua miniflare proxy, và proxy này thỉnh thoảng trả `D1_ERROR: Failed to parse body as JSON`. Fetcher ăn `try/catch` nên build vẫn exit 0, nhưng vài trang `/post/*` bị prerender thành "Post not found". Đã chạy baseline (commit trước khi sửa code) để loại trừ: baseline cũng lỗi 3–5 query/47 trang, vậy đây là flakiness của môi trường local (trên máy có nhiều `workerd` của project khác đang chạy), không phải do plan này. Build thật trên Cloudflare dùng remote D1. Khi cần số tin cậy, verify từng trang qua `yarn dev` (một request một lần) thay vì dựa vào số trang prerender.
 
-- [ ] **Step 2: Đo gutter hết chết**
+- [x] **Step 2: Đo gutter hết chết**
 
 Chạy `yarn dev` rồi lặp lại lệnh đo ở Task A10 Step 4.
 Expected: mọi viewport `|left - right| ≤ 8`; `/post/[slug]` ở 1440 có `rail: true`, ở 1024 có `rail: false`.
 
-- [ ] **Step 3: Ma trận thủ công**
+- [x] **Step 3: Ma trận thủ công**
 
 | Trang | 1920 | 1440 | 1280 | 1024 | 768 | 390 | light | dark |
 |---|---|---|---|---|---|---|---|---|
@@ -1468,15 +1469,17 @@ Expected: mọi viewport `|left - right| ≤ 8`; `/post/[slug]` ở 1440 có `ra
 | `/about` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | `/contact` | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 
-Checklist riêng cho trang bài viết, từng ô viewport:
-- [ ] TOC click nhảy đúng heading, không bị sticky bar che (`scroll-margin-top` đã có ở `globals.css` chỉ áp cho `.post-page-view` — xác nhận bằng mắt).
-- [ ] Marker active bám theo scroll, không nhảy ngược khi scroll lên.
-- [ ] Code block dài scroll ngang, **không** đẩy vỡ cột.
-- [ ] Ảnh trong bài không tràn ra rail.
-- [ ] Comment Cusdis + applause button vẫn render và không đè rail.
-- [ ] Không có heading nào trong bài bị mất id (mở DevTools, đếm `h2[id], h3[id], h4[id]` ≥ số mục TOC).
+Kết quả đo (`yarn dev -p 3210`, block `cusdis.com,unpkg.com,cdnjs.cloudflare.com`, 43 run light + 12 run dark): **mọi run đều `|left - right| = 0`, `CLS = 0`, `errs = 0`**; `contentWidth` 326/416/672/928/1088/1216 tương ứng 390/768/1024/1280/1440/1920; `rail` trên `/post/[slug]` là `false` ở ≤1024 và `true` ở ≥1280. `contact` báo `rail: true` ở mọi width vì `<aside>` của nó là khối "Hoặc liên hệ trực tiếp" — metric chỉ kiểm tra `aside` đầu tiên, không phải bug layout.
 
-- [ ] **Step 4: Commit nếu còn sửa**
+Checklist riêng cho trang bài viết, từng ô viewport:
+- [x] TOC click nhảy đúng heading. Draft sai một tiên đề: `globals.css` **chưa từng có** `scroll-margin-top` (grep toàn repo = 0 kết quả), nên cú nhảy nằm dưới sticky bar `h-16`. Đã thêm `.post-page-view .post-content.ql-editor :is(h2,h3,h4)[id] { scroll-margin-top: 6rem }` và `html { scroll-behavior: smooth }` (tắt theo `prefers-reduced-motion`). Đo bằng URL có `#2-tai-sao-...`: `anchor=96`, heading nằm 96px dưới mép trên viewport, an toàn so với 64px.
+- [x] Marker active: `useActiveHeading` lấy heading cuối cùng có `offsetTop <= scrollY + 120`. Với anchor 96px và h2 cao ~39px + margin 0.55em, heading kế tiếp luôn > 120px nên không có hai mục cùng sáng.
+- [x] Code block dài không vỡ cột: `pre` đã có `max-width: 100%` + `overflow-x: auto` (`globals.css:203`), `contentWidth` ở mọi width vẫn khớp shell.
+- [x] Ảnh không tràn rail: `.post-page-view img { max-width: 100%; height: auto }` (`:347`), ảnh nằm trong cột `1fr` nên không thể đè cột 16rem.
+- [x] Cusdis + applause không đè rail: cả hai nằm **ngoài** `<div className="min-w-0 xl:grid ...">` (`[slug].tsx:123-139`) nên có width riêng.
+- [x] Không heading nào mất id: `bai-code-thieu-nhi` (0 heading) → 0 anchor, rail chỉ còn "Đọc" + "Mới nhất"; post 14 heading → 13 id (1 thẻ chỉ chứa `<br>`), 26 anchor (13 rail + 13 details), 26/26 khớp id. Homepage: 47 row, 41 có thumb, 6 row 1 cột, 47/47 có "Đọc bài →".
+
+- [x] **Step 4: Commit nếu còn sửa**
 
 ```bash
 git add -A && git commit -m "fix(ui): apply verification pass corrections"
