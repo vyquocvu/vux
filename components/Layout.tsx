@@ -1,15 +1,15 @@
 import { ReactNode } from 'react';
 import Head from "next/head";
-import { Inter } from "next/font/google";
+import { EB_Garamond, Inter } from "next/font/google";
 
 import config from "config";
 import Sidebar from "components/Sidebar";
 import MainContent from "components/MainContent";
 
-const displayFont = Inter({
+const displayFont = EB_Garamond({
   weight: ['400', '500'],
   display: 'swap',
-  subsets: ['latin'],
+  subsets: ['latin', 'vietnamese'],
   variable: '--font-display',
 });
 

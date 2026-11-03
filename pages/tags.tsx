@@ -4,7 +4,7 @@ import { getPublishedPosts } from "fetcher/post";
 const TagsPage = ({ tags }: { tags: { [key: string]: number } }) => {
   return (
     <div>
-      <h1 className="text-5xl font-bold text-neutral-900 dark:text-neutral-100 mb-8">Tags</h1>
+      <h1 className="font-display text-5xl font-normal text-ink dark:text-on-dark tracking-tight mb-8">Tags</h1>
       <div className="flex flex-wrap gap-3">
         {Object.keys(tags)
           .sort((l, r) => tags[r] - tags[l])
