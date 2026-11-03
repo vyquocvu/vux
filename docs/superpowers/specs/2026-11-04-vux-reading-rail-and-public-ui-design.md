@@ -30,7 +30,11 @@ ngang thay vì wrap (`:266`).
 
 ## 3. Đơn vị & interface
 
-### 3.1 `utils/toc.ts` (mới, thuần, không DOM)
+### 3.1 `utils/html.ts` + `utils/toc.ts` (mới, thuần, không DOM)
+
+`utils/html.ts`: export lại `parseAttrs(tag)` và `escapeAttr(v)` nguyên văn từ
+`utils/images/content.ts`, cùng `stripTags(html)` và `textOf(html)`; `content.ts` đổi sang import
+từ đây.
 
 ```
 type TocEntry = { id: string; label: string; level: 2 | 3 | 4 }
@@ -41,12 +45,18 @@ buildToc(html: string): { html: string; toc: TocEntry[]; minutes: number }
 - `headingSlug`: bỏ dấu tiếng Việt (NFD + strip combining, `đ → d`), **giữ chữ số**, thay
   khoảng trắng bằng `-`, xoá ký tự ngoài `[a-zA-Z0-9-]`, viết thường. Không dùng `friendlyStr`
   (`utils/common.ts:10`) vì nó xoá hết `[0-9]`.
-- `buildToc`: regex `/<(h[2-4])([^>]*)>([\s\S]*?)<\/\1>/g`, gắn `id` nếu chưa có; heading đã có
-  `id` thì giữ nguyên (deep-link đã lưu trong content không bị đổi). `seen` suffix `-2`, `-3`
-  khi trùng. `minutes = max(1, ceil(wordCount / 200))` trên text đã strip tag.
-- Đầu vào là HTML do Quill sinh ra (phẳng, well-formed), không phải HTML tuỳ ý — regex đủ an
-  toàn và tránh thêm parser dependency. Chuỗi `<h2>` nằm trong code sample không match vì nó đã
-  được escape thành `&lt;h2&gt;` nên không tồn tại cặp tag thật.
+- `buildToc`: duyệt tag `<h2>`/`<h3>`/`<h4>` và gắn `id` nếu chưa có; heading đã có `id` thì giữ
+  nguyên (deep-link đã lưu trong content không bị đổi). `seen` suffix `-2`, `-3` khi trùng.
+  `minutes = max(1, ceil(wordCount / 200))` trên text đã strip tag.
+- **Không regex thô.** `utils/images/content.ts` đã có sẵn `parseAttrs` (giữ thứ tự và các
+  attribute lạ) + `escapeAttr` cho đúng bài toán "sửa 1 tag trong HTML Quill". Hai hàm này tách
+  sang `utils/html.ts`, `content.ts` import lại — DRY, và `buildToc` đi cùng khuôn với code đã
+  được kiểm chứng trong repo.
+- Khác biệt chủ đích: `annotateContentImages` chạy lúc **ghi** (`setPostById`) và kết quả được
+  lưu vĩnh viễn; `buildToc` chạy lúc **đọc** trong `getStaticProps`. Vì vậy không phải migrate
+  47 bài, và nếu thuật toán slug đổi thì chỉ cần revalidate.
+- Chuỗi `<h2>` trong code sample không bị match vì nó đã escape thành `&lt;h2&gt;`, không tồn tại
+  tag thật.
 - `level: 4` được gom vào nhóm của `h3` khi render để rail không quá 2 cấp thụt đầu dòng.
 
 ### 3.2 `components/Post/PostToc.tsx` (mới)
@@ -60,35 +70,55 @@ buildToc(html: string): { html: string; toc: TocEntry[]; minutes: number }
 { toc: TocEntry[]; minutes: number; updatedAt: number; tags: string[];
   latest: { title: string; slug: string; updatedAt: number }[] }
 ```
-Progress ring + `PostToc variant="rail"` + meta + tag chips + latest. Scrollspy và progress dùng
-`IntersectionObserver` / `scroll` trong `useEffect` (chỉ chạy phía client, `aria-hidden` cho
-ring). Cả block ẩn nếu không có nội dung tương ứng — rail không bao giờ rỗng vì meta luôn có.
+Progress ring + `PostToc variant="rail"` + meta + tag chips + latest. Scrollspy đặt trong hook
+`useActiveHeading(toc)` (`components/Post/useActiveHeading.ts`, scroll listener `passive`, chỉ
+chạy client) để cả rail lẫn biến thể `<details>` dùng chung một cơ chế. Ring là `<div role="img"
+aria-label="Tiến trình đọc">` với `aria-valuenow` cập nhật phía client — nó không chứa link nên
+không cần focus semantics. Block nào thiếu dữ liệu thì ẩn; rail không bao giờ rỗng vì meta luôn có.
 
 ### 3.4 `components/MainContent.tsx` (sửa)
+Chỉ còn trách nhiệm một container giữa:
 
+```tsx
+type Props = { children: ReactNode }
+<div className="min-h-screen md:ml-64 p-8 md:p-12 bg-canvas dark:bg-surface-dark">
+  <div className="mx-auto w-full max-w-[1216px]">{children}</div>
+</div>
 ```
-{ children: ReactNode; rail?: ReactNode }
-```
-`md:ml-64`, **bỏ** `sm:mr-0 lg:mr-64`, `mx-auto max-w-[1216px]`, `xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-12`. `rail` render trong `<aside class="hidden xl:block">`.
 
-### 3.5 `components/Layout.tsx` (sửa) · `pages/_app.tsx` (sửa)
-`Layout` nhận thêm `rail?: ReactNode` và truyền xuống `MainContent`. `isPost` giữ nguyên.
-`_app.tsx`: bỏ `<GitHubCorner />`.
+Bỏ `sm:mr-0 lg:mr-64` (nguồn gốc vùng chết), bỏ `max-w-4xl` không center. 1216px = 76rem, khớp
+`Design.md:106` "~1200px centered". `min-w-0` do trang bài viết tự đặt trên cột của nó.
+
+### 3.5 Vì sao KHÔNG có `rail` prop
+`pages/_app.tsx:29` render `<Layout>` cho mọi page, nên page **không có đường** truyền một node
+ngược lên `MainContent`. Luồng `page → Layout.rail → MainContent.rail` sẽ phải thêm context
+tương tự `AuthUserInfoContext` chỉ để đặt 1 component — không đáng.
+Quyết định: **trang bài viết tự owns grid 2 cột của nó**, `MainContent` không biết gì về rail.
+`components/Layout.tsx` không đổi (chỉ đổi font subset, D8); `pages/_app.tsx` chỉ bỏ
+`<GitHubCorner />` (D6). Trang nào cần bề rộng nhỏ hơn thì tự đặt `max-w-*` + `mx-auto` bên
+trong — `/about`, `/contact`, `/tags` làm vậy.
 
 ### 3.6 `pages/post/[slug].tsx` (sửa)
+Wrapper: `<div className="min-w-0 xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-12">`, cột 1
+là bài viết như hiện tại, cột 2 `<aside className="hidden xl:block"><div className="sticky top-12">…`
+chứa `<ReadingRail/>`. Dưới `xl` rail ẩn và `<PostToc variant="details">` hiện ở đầu bài (D3).
+
 `getStaticProps`: `const { html, toc, minutes } = buildToc(post.publishContent)` → props `toc`,
-`minutes`, `publishContent = html`. `latest` = 3 bài có `updatedAt` lớn nhất khác bài hiện tại,
-lấy từ `getPublishedPosts()` gọi **ngay trong `getStaticProps`** (`getStaticPaths` là một lần chạy
-riêng nên không chia sẻ dữ liệu được) — một lần đọc D1 thêm chỉ xảy ra lúc build/revalidate,
-không phải mỗi request.
+`minutes`, `publishContent = html`.
+`latest` dùng fetcher **mới** `getLatestPosts(limit, excludeUid)` trong `fetcher/post.ts`:
+`SELECT uid, slug, title, updated_at ... ORDER BY updated_at DESC LIMIT ?` — **không** join tag.
+Lý do: `getPublishedPosts()` chạy `loadTags()` cho từng bài (N+1, 47 round-trip); gọi nó trong
+`getStaticProps` của 47 trang bài viết ≈ 2.209 query cho một lần build full. `getLatestPosts` là
+1 query, và rail không cần tag của bài khác.
 Nút back: bỏ `fixed ... w-full` (sẽ đè rail), đổi thành `sticky top-0` trong cột bài viết.
 
-### 3.7 `components/Post/PostRow.tsx` + `Feed.tsx` (sửa — S3) · `List.tsx` (xoá)
+### 3.7 `components/Post/PostRow.tsx` + `Feed.tsx` (sửa — S3)
 Bỏ hack `max-h-12 → max-h-40` trên excerpt (dùng `line-clamp-2` tĩnh), ngày absolute
 `dd/MM/yyyy` kèm relative, thumbnail `16:10` bên phải ở `md+` khi `thumbImage` tồn tại và
 **không** đổi bề rộng cột text khi bài thiếu ảnh, `Read →` luôn hiện (bỏ `opacity-0`).
-`/post` (dùng `List`) và `/` (dùng `Feed`) nhập về một archetype: `pages/post/index.tsx` chuyển
-sang `Feed`, xoá `components/Post/List.tsx`.
+`pages/post/index.tsx` chuyển từ `List` sang `Feed` để hai trang list dùng một archetype.
+`components/Post/List.tsx` **giữ nguyên** — nó không phải bản trùng: admin dùng nó qua
+`pages/admin/index.tsx:4` với `isAdmin` và FAB "+ New Post". Chỉ đổi chỗ dùng, không xoá file.
 
 ### 3.8 `pages/tags.tsx` (sửa — S3)
 `bg-neutral-100 dark:bg-neutral-800` và `primary-50` / `primary-900/30` **không tồn tại** trong
