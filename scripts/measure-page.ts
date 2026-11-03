@@ -39,7 +39,7 @@ const SETTLE_MS = Number(process.env.SETTLE_MS ?? 4000);
 const INSTRUMENT = `
 window.__vux = {
   cls: 0, shifts: [], lcp: 0, lcpEl: "", inp: 0, fcp: 0, ttfb: 0,
-  imgs: [], images: [], longTasks: [], scripts: [], errs: [], gutter: null
+  imgs: [], images: [], longTasks: [], scripts: [], errs: [], gutter: null, anchor: null
 };
 (() => {
   try {
@@ -162,6 +162,12 @@ window.__vux = {
       })(),
     };
     window.__vux.docHeight = Math.round(document.documentElement.scrollHeight);
+    // A fragment URL is the cheapest way to prove the anchor lands below the
+    // sticky bar: Chrome honours scroll-margin-top when it scrolls to the hash.
+    const target = location.hash
+      ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
+      : null;
+    window.__vux.anchor = target ? Math.round(target.getBoundingClientRect().top) : null;
   });
 })();
 `;
@@ -272,13 +278,17 @@ const main = async () => {
     deviceScaleFactor: VIEWPORT.dsf,
     mobile: VIEWPORT.dsf !== 1,
   });
-  // ThemeProvider falls back to prefers-color-scheme when nothing is stored,
-  // so emulating the media query is how dark mode gets captured headlessly.
-  if (process.env.DARK === "1") {
-    await t("Emulation.setEmulatedMedia", {
-      features: [{ name: "prefers-color-scheme", value: "dark" }],
-    });
-  }
+  // ThemeProvider falls back to prefers-color-scheme when nothing is stored.
+  // Headless Chrome inherits the host appearance, so the value must be pinned
+  // for both modes — leaving it unset silently captured light runs as dark.
+  await t("Emulation.setEmulatedMedia", {
+    features: [
+      {
+        name: "prefers-color-scheme",
+        value: process.env.DARK === "1" ? "dark" : "light",
+      },
+    ],
+  });
   await t("Page.addScriptToEvaluateOnNewDocument", { source: INSTRUMENT });
 
   const loaded = new Promise<void>((r) => {
@@ -332,7 +342,7 @@ const main = async () => {
   console.log(`CLS   ${metrics.cls}   (${(metrics.shifts || []).length} shifts)`);
   console.log(`LCP   ${metrics.lcp}ms  element=${metrics.lcpEl}  size=${metrics.lcpBreakdown?.size}  breakdown=${JSON.stringify(metrics.lcpBreakdown)}`);
   console.log(`FCP   ${metrics.fcp}ms  TTFB=${metrics.ttfb}ms  docHeight=${metrics.docHeight}`);
-  console.log(`gutter ${JSON.stringify(metrics.gutter)}`);
+  console.log(`gutter ${JSON.stringify(metrics.gutter)}  anchor=${metrics.anchor}`);
   console.log(`media ${metrics.images.length} requests, ${(metrics.mediaBytes / 1024).toFixed(1)} KiB, last done ${metrics.lastImageDone}ms`);
   console.log(`      below-fold fetched: ${metrics.belowFoldRequests} (${(metrics.belowFoldBytes / 1024).toFixed(1)} KiB wasted if unread), max grey band ${metrics.greyBandMax}px`);
   for (const s of metrics.shifts || []) console.log(`  shift ${s.v} @${s.t}ms  ${s.nodes.join(",")}`);
