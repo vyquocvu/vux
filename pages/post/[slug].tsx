@@ -7,7 +7,12 @@ import { useEffect, useState } from 'react';
 
 
 import { Post } from 'interfaces/Post';
-import { getPostById, getPublishedPosts } from "fetcher/post";
+import type { LatestPost } from 'interfaces/Post';
+import type { TocEntry } from 'utils/toc';
+import { buildToc } from 'utils/toc';
+import ReadingRail from 'components/Post/ReadingRail';
+import PostToc from 'components/Post/PostToc';
+import { getLatestPosts, getPostById, getPublishedPosts } from "fetcher/post";
 import { friendlyStr, highlight, timeFromNow } from 'utils/common';
 import config from 'config';
 import Link from 'next/link';
@@ -28,8 +33,14 @@ declare module 'react' {
   }
 }
 
-const PostPage = (props: { post: Post }) => {
-  const { post } = props;
+type PostProps = {
+  post: Post;
+  toc: TocEntry[];
+  minutes: number;
+  latest: LatestPost[];
+}
+
+const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
   const [pathname, setPathname] = useState<string>('');
   const router = useRouter();
 
@@ -77,23 +88,37 @@ const PostPage = (props: { post: Post }) => {
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onLoad={highlight}
       />
-      <div className={'post-page-view h-full md:w-full flex flex-col'}>
-        <div className="post-reading-column ql-snow">
-          <div className="w-full py-3 h-16 -ml-6 fixed bg-canvas dark:bg-surface-dark top-0 z-0 border-b border-hairline dark:border-surface-dark-elevated">
-            <Link
-              href="/"
-              className="border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors duration-200"
-            >
-              <Image priority width={36} height={36} src="/icons/left_arrow.svg" alt="left" />
-            </Link>
+      <div className={'post-page-view h-full flex flex-col'}>
+        <div className="min-w-0 xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-12">
+          <div className="post-reading-column ql-snow min-w-0">
+            <div className="w-full py-3 h-16 sticky top-0 z-20 -ml-6 bg-canvas dark:bg-surface-dark border-b border-hairline dark:border-surface-dark-elevated">
+              <Link
+                href="/"
+                className="border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors duration-200"
+              >
+                <Image priority width={36} height={36} src="/icons/left_arrow.svg" alt="left" />
+              </Link>
+            </div>
+            <h1 className="post-title font-display flex text-[2rem] md:text-[2.75rem] font-normal -ml-2 pb-2 text-ink dark:text-on-dark leading-[1.15] tracking-tight">
+              {post.title}
+            </h1>
+            <p className="pl-1.5 font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-3">
+              {timeFromNow(post.updatedAt)} · {minutes} phút đọc
+            </p>
+            <PostToc toc={toc} variant="details" />
+            <article className="pb-5 post-content ql-editor font-body text-body dark:text-on-dark-soft leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
           </div>
-          <h1 className="post-title font-display flex text-3xl md:text-4xl font-normal -ml-2 pb-2 text-ink dark:text-on-dark leading-tight tracking-tight">
-            {post.title}
-          </h1>
-          <p className="pl-1.5 font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-3">
-            {timeFromNow(post.updatedAt)}
-          </p>
-          <article className="pb-5 post-content ql-editor font-body text-body dark:text-on-dark-soft leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+          {toc.length + post.tags.length + latest.length > 0 && (
+            <aside className="hidden xl:block">
+              <ReadingRail
+                toc={toc}
+                minutes={minutes}
+                updatedAt={post.updatedAt}
+                tags={post.tags || []}
+                latest={latest}
+              />
+            </aside>
+          )}
         </div>
         <div className="post-applause flex justify-end max-w-4xl w-full mx-auto px-8 py-2">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
@@ -132,12 +157,17 @@ export async function getStaticPaths() {
 // Run on server side
 export const getStaticProps = async ({ params }: any) => {
   try {
-    if (typeof params.slug != 'string') return {};
+    if (typeof params.slug != 'string') return { props: {} };
     const id = params.slug.split(".").pop() || "";
     const post = await getPostById(id);
+    const { html, toc, minutes } = buildToc((post as Post).publishContent || '');
+    const latest = await getLatestPosts(3, (post as Post).uid ?? '');
     return {
       props: {
-        post,
+        post: { ...post, publishContent: html },
+        toc,
+        minutes,
+        latest,
       },
       // Post pages are read-mostly; cache at the edge for 10 minutes,
       // serve stale up to 24 h. Edits made via /admin will land within
