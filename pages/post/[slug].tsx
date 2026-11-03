@@ -15,7 +15,15 @@ import Link from 'next/link';
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'applause-button': any
+      'applause-button': any;
+    }
+  }
+}
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'applause-button': any;
     }
   }
 }
@@ -70,7 +78,7 @@ const PostPage = (props: { post: Post }) => {
         onLoad={highlight}
       />
       <div className={'post-page-view h-full md:w-full flex flex-col'}>
-        <div className="md:mx-4 w-full pt-12 ql-snow">
+        <div className="post-reading-column ql-snow">
           <div className="w-full py-3 h-16 -ml-6 fixed bg-canvas dark:bg-surface-dark top-0 z-0 border-b border-hairline dark:border-surface-dark-elevated">
             <Link
               href="/"
@@ -79,15 +87,15 @@ const PostPage = (props: { post: Post }) => {
               <Image priority width={36} height={36} src="/icons/left_arrow.svg" alt="left" />
             </Link>
           </div>
-          <h1 className="post-title font-display flex text-4xl font-normal -ml-2 pb-2 text-ink dark:text-on-dark leading-tight tracking-tight">
+          <h1 className="post-title font-display flex text-3xl md:text-4xl font-normal -ml-2 pb-2 text-ink dark:text-on-dark leading-tight tracking-tight">
             {post.title}
           </h1>
-          <p className="pl-1.5 font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-6">
+          <p className="pl-1.5 font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-3">
             {timeFromNow(post.updatedAt)}
           </p>
-          <div className="pb-5 post-content ql-editor pl-1.5 font-body text-body dark:text-on-dark-soft leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
+          <article className="pb-5 post-content ql-editor font-body text-body dark:text-on-dark-soft leading-relaxed" dangerouslySetInnerHTML={{ __html: post.publishContent || '' }} />
         </div>
-        <div className="fixed w-13 h-13 right-2 bottom-2 bg-canvas dark:bg-surface-dark-elevated rounded-full border border-hairline dark:border-surface-dark-elevated">
+        <div className="post-applause flex justify-end max-w-4xl w-full mx-auto px-8 py-2">
           <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
         </div>
         <hr className='mt-12 ml-4 w-full border-hairline dark:border-surface-dark-elevated'/>

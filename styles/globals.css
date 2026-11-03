@@ -83,6 +83,161 @@ h1, h2, h3, h4 {
   overflow-y: visible;
 }
 
+.post-page-view .post-reading-column {
+  box-sizing: border-box;
+  width: min(100%, 56rem);
+  margin-inline: auto;
+  padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 0;
+}
+
+.post-page-view .post-title {
+  align-items: flex-start;
+  gap: 0;
+}
+
+.post-page-view .post-title::before {
+  flex: 0 0 auto;
+  margin-left: 0;
+  margin-right: 0.55rem;
+}
+
+.post-page-view .post-content.ql-editor {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 50rem;
+  margin-inline: auto;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.post-page-view .post-content.ql-editor p:not(.post-dialogue):not(.post-image-caption) {
+  margin: 0 0 0.35rem !important;
+}
+
+.post-page-view .post-content.ql-editor p:has(> br:only-child) {
+  display: none;
+}
+
+.post-page-view .post-content.ql-editor .post-dialogue {
+  margin: 0.4em 0 !important;
+  padding: 0.4rem 0.65rem;
+  border-left: 3px solid #cc785c;
+  border-radius: 0 0.65rem 0.65rem 0;
+  background: #f3eee7;
+  color: #252523;
+}
+
+.dark .post-page-view .post-content.ql-editor .post-dialogue {
+  background: #252320;
+  color: #e7e3dc;
+}
+
+.post-page-view .post-content.ql-editor h2 {
+  margin: 0.55em 0 0.18em !important;
+  font-size: clamp(1.55rem, 3vw, 1.9rem);
+  line-height: 1.28;
+}
+
+.post-page-view .post-content.ql-editor h3 {
+  margin: 0.4em 0 0.1em !important;
+  font-size: clamp(1.2rem, 2.5vw, 1.45rem);
+  line-height: 1.35;
+}
+
+.post-page-view .post-content.ql-editor ul,
+.post-page-view .post-content.ql-editor ol {
+  margin: 0.15em 0 0.35em;
+  padding-left: 1.5em;
+}
+
+.post-page-view .post-content.ql-editor li {
+  margin: 0.05em 0;
+  padding-left: 0.2em;
+}
+
+.post-page-view .post-content.ql-editor blockquote {
+  margin: 0.8em 0;
+  padding: 0.1em 0 0.1em 0.8em;
+  border-left: 3px solid #cc785c;
+  color: #6c6a64;
+}
+
+.dark .post-page-view .post-content.ql-editor blockquote {
+  color: #c4c0b8;
+}
+
+.post-page-view .post-content.ql-editor .post-image-caption {
+  margin-top: -0.4em;
+  margin-bottom: 0.7em;
+  color: #6c6a64;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.dark .post-page-view .post-content.ql-editor .post-image-caption {
+  color: #a09d96;
+}
+
+.post-page-view .post-content.ql-editor p code,
+.post-page-view .post-content.ql-editor li code {
+  padding: 0.12em 0.38em;
+  border: 1px solid #e6dfd8;
+  border-radius: 0.35em;
+  background: #f3eee7;
+  color: #8c4934;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+.dark .post-page-view .post-content.ql-editor p code,
+.dark .post-page-view .post-content.ql-editor li code {
+  border-color: #383631;
+  background: #252320;
+  color: #f0b097;
+}
+
+.post-page-view .post-content.ql-editor pre {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0.5em 0;
+  padding: 0.5rem 0.7rem;
+  overflow-x: auto;
+  border: 1px solid #3a3933;
+  border-radius: 0.85rem;
+  background: #23241f !important;
+  color: #f8f8f2 !important;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+
+.post-page-view .post-content.ql-editor pre code,
+.post-page-view .post-content.ql-editor pre code.hljs {
+  display: block;
+  min-width: max-content;
+  padding: 0;
+  background: transparent !important;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: inherit;
+}
+
+.post-page-view .post-content.ql-editor img {
+  border-radius: 0.8rem;
+}
+
+.post-page-view .post-applause {
+  box-sizing: border-box;
+  min-height: 4rem;
+  align-items: center;
+}
+
 .post-content h1,
 .post-content h2,
 .post-content h3,

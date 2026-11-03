@@ -1,0 +1,245 @@
+<!-- Tiêu đề: Dùng AI để scraping data: workflow thực tế, cách làm và giới hạn -->
+
+<p class="post-dialogue"><strong>Sếp:</strong> "Em lấy giúp anh cái bảng giá bên site X nhé, chiều nay họp cần số liệu."<br><strong>Mình:</strong> "Dạ, 30 phút."</p>
+
+<p>Ba tiếng sau, mình vẫn ngồi trước màn hình F12, lẩm bẩm: "Ủa, sao cái class nó đổi rồi?"</p>
+
+<p>Anh em làm scraping chắc không lạ gì cảnh này. Từ ngày đưa AI vào workflow, công việc đỡ đau hơn — nhưng không phải theo kiểu "một dòng lệnh lấy hết data" như mấy video trên mạng. AI giúp mình rút ngắn những đoạn lặp lại; còn việc lấy đúng dữ liệu, kiểm chứng kết quả và chịu trách nhiệm vẫn là phần của mình.</p>
+
+<p><picture><source media="(max-width: 700px)" srcset="/images/ai-scraping-workflow-mobile-v2.svg"><img src="/images/ai-scraping-workflow-v2.svg" alt="Sơ đồ workflow scraping có AI hỗ trợ: lấy dữ liệu, nhờ AI đề xuất, kiểm chứng bằng test và theo dõi kết quả" width="1440" height="760"></picture></p>
+<p class="post-image-caption"><em>Workflow mình dùng: AI đề xuất, test xác nhận, người làm chịu trách nhiệm.</em></p>
+
+<p>Bài này đi từ cách dùng AI cho selector và parser đến việc kiểm thử, giám sát scraper đang chạy; cuối cùng là những giới hạn cần cân nhắc trước khi tự động hóa.</p>
+
+<h2>🛑 Vấn đề: selector là bản hợp đồng không ai ký</h2>
+
+<p>Selector trong scraping có một đặc điểm rất "đau": nó phụ thuộc vào thứ mà chủ site không hề cam kết giữ nguyên.</p>
+
+<ul>
+  <li><strong>Class bị hash:</strong> Tailwind, CSS Modules, styled-components... build mới cái là selector cũ tạch.</li>
+  <li><strong>DOM đổi cấu trúc:</strong> Thêm một wrapper, đổi thứ tự cột, hoặc chuyển sang render client-side.</li>
+  <li><strong>Data bẩn:</strong> Giá mỗi nơi một kiểu, ngày tháng mỗi nơi một format, tên sản phẩm dính ký tự ẩn.</li>
+  <li><strong>Bảo trì:</strong> Chạy đúng một lần thì dễ. Chạy đúng 365 ngày mới là cực hình.</li>
+</ul>
+
+<p>Luồng cũ của mình ngày trước gói gọn trong một câu: mở DevTools -&gt; copy selector -&gt; chạy -&gt; site đổi -&gt; sửa -&gt; lặp lại. Một trang thì không sao. Mười trang, mỗi trang một kiểu, mỗi tuần vỡ một lần... đó là lúc mình nhận ra: scraping không khó ở chỗ viết code, nó khó ở chỗ giữ code chạy mãi.</p>
+
+<h2>🛠 AI giúp gì? (The Fix)</h2>
+
+<h3>1. Đọc DOM và sinh selector</h3>
+
+<p>Thay vì tự dò từng node, mình lấy HTML đã rút gọn rồi quăng cho AI cùng một yêu cầu rõ ràng: ưu tiên <code>data-*</code>, <code>itemprop</code>, cấu trúc ngữ nghĩa; tránh class hash; và luôn kèm selector dự phòng.</p>
+
+<pre><code>Bạn là kỹ sư scraping. Dưới đây là HTML đã rút gọn của một trang danh sách sản phẩm.
+Hãy trả về JSON gồm:
+- selector CSS ổn định nhất cho: tên, giá, link, ngày đăng
+- một selector dự phòng cho mỗi trường
+- lý do chọn (ưu tiên data-*, itemprop, cấu trúc ngữ nghĩa; tránh class hash)
+Không bịa trường không tồn tại trong HTML.
+
+HTML:
+&lt;dán HTML đã rút gọn&gt;</code></pre>
+
+<p>Nhưng nói thẳng: <strong>AI chỉ thấy đúng HTML mà bạn đưa</strong>. Nó không thấy trang đã render, không tự bấm nút "Xem thêm", không biết data nào được nạp bằng JavaScript. Bước lấy HTML đúng vẫn là việc của con người.</p>
+
+<h3>2. Viết parser và chuẩn hóa data</h3>
+
+<p>Đây là chỗ mình thấy AI đáng tiền nhất. Thay vì ngồi viết từng hàm xử lý giá, ngày, khoảng trắng, ký tự ẩn... mình mô tả schema mong muốn và để AI sinh parser kèm các case biên.</p>
+
+<p>Ví dụ, yêu cầu AI viết schema Zod cho sản phẩm, kèm logic đổi <code>"1.299.000₫"</code> thành <code>1299000</code>, và bỏ qua bản ghi thiếu trường bắt buộc. Mình không cần AI viết nhanh hơn mình. Mình cần nó ép mình nói rõ: đầu ra trông như thế nào, trường nào bắt buộc, data bẩn thì xử lý sao.</p>
+
+<h3>3. Đề xuất bản vá khi site đổi</h3>
+
+<p>Khi scraper toang, mình lưu HTML mới làm fixture, chạy test để biết trường nào chết, rồi đưa HTML + test fail cho AI. Nó thường đề xuất selector mới hoặc chỉnh parser khá nhanh. Nhưng đề xuất vẫn phải qua review và test. <strong>AI sửa đúng syntax không có nghĩa là sửa đúng data.</strong></p>
+
+<h2>📋 Workflow thực chiến của mình</h2>
+
+<h3>Bước 1: Check quyền và tìm API trước</h3>
+
+<p>Đừng thấy data là lao vào. Mình đọc <code>robots.txt</code> như một tín hiệu về chính sách crawl của site, kiểm tra điều khoản sử dụng và quyền sử dụng dữ liệu, rồi tìm API công khai hoặc kênh truy cập được cho phép. Có API phù hợp thì ưu tiên dùng API. Chỉ scrape HTML khi việc đó được phép và thực sự cần thiết. <code>robots.txt</code> tự nó không phải giấy phép sử dụng nội dung.</p>
+
+<h3>Bước 2: Lấy HTML và rút gọn</h3>
+
+<p>Site render client thì dùng Playwright thay vì <code>fetch</code> thuần. Lấy xong thì bỏ <code>script</code>, <code>style</code>, <code>svg</code>, mấy thuộc tính không cần thiết. HTML càng gọn, token càng rẻ, AI càng tập trung.</p>
+
+<h3>Bước 3: Nhờ AI đề xuất selector</h3>
+
+<p>Dùng prompt ở trên, nhưng giữ lại HTML mẫu trong repo để lần sau còn đối chiếu. Mẹo nhỏ: bắt AI trả JSON thay vì văn xuôi, để dán thẳng vào code hoặc so sánh giữa các lần chạy.</p>
+
+<h3>Bước 4: Code và validate</h3>
+
+<p>Đây là đoạn code tối giản mình hay dùng: Playwright lấy data, Zod check đầu ra. Selector trong ví dụ là giả định, anh em thay bằng selector AI đề xuất và đã kiểm chứng nhé.</p>
+
+<pre><code class="language-ts">import { chromium } from "playwright";
+import { z } from "zod";
+
+const ProductSchema = z.object({
+  name: z.string().min(1),
+  price: z.number().int().nonnegative(),
+  url: z.string().url(),
+});
+
+type Product = z.infer&lt;typeof ProductSchema&gt;;
+
+const toPrice = (raw: string): number | null =&gt; {
+  const digits = raw.replace(/[^\d]/g, "");
+  return digits ? Number(digits) : null;
+};
+
+export async function scrape(url: string): Promise&lt;Product[]&gt; {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+
+  try {
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+
+    const raw = await page
+      .locator("[data-testid='product-card']")
+      .evaluateAll((nodes) =&gt;
+        nodes.map((node) =&gt; {
+          const el = node as HTMLElement;
+          const link = el.querySelector&lt;HTMLAnchorElement&gt;("a[href]");
+
+          return {
+            name:
+              el.querySelector("[data-testid='product-name']")
+                ?.textContent?.trim() ?? "",
+            price:
+              el.querySelector("[data-testid='product-price']")
+                ?.textContent ?? "",
+            url: link
+              ? new URL(link.getAttribute("href") ?? "", location.href).href
+              : "",
+          };
+        })
+      );
+
+    return raw.map((item) =&gt; {
+      const price = toPrice(item.price);
+      return ProductSchema.parse({ ...item, price });
+    });
+  } finally {
+    await browser.close();
+  }
+}</code></pre>
+
+<p>Đoạn trên cố tình không có retry, cache hay xoay user-agent. Mấy thứ đó chỉ thêm khi có lý do rõ ràng, và phải nằm trong giới hạn site cho phép. Đừng biến scraper thành công cụ spam.</p>
+
+<h3>Bước 5: Giám sát và bảo trì</h3>
+
+<p>Scraper không giám sát là scraper sẽ âm thầm trả về 0 record. Mình lưu số bản ghi mỗi lần chạy, so với lần trước, và cảnh báo khi số lượng giảm bất thường. Có cảnh báo thì quay lại bước 3 với HTML mới. Vòng lặp này giờ ngắn hơn nhiều.</p>
+
+<h2>🧰 Cách dùng: 4 kiểu mình hay áp dụng</h2>
+
+<p>Nếu chỉ nói "dùng AI đi" thì chung quá. Mình chia thành 4 kiểu theo mức độ giao việc cho AI, từ nhẹ đến nặng. Anh em chọn kiểu nào cũng được, miễn là biết mình đang đánh đổi cái gì.</p>
+
+<h3>Kiểu 1: Hỏi selector (nhẹ nhất)</h3>
+
+<p>Mở ChatGPT/Claude/Gemini, dán đoạn HTML đã rút gọn, hỏi selector cho từng trường. Xong thì tự chạy thử, tự kiểm tra. Kiểu này phù hợp với site ít thay đổi, hoặc khi mình cần một scraper dùng một lần.</p>
+
+<p>Ưu điểm là nhanh, không cần setup gì. Nhược điểm là mình vẫn phải tự verify từng selector, và HTML càng dài thì token càng tốn. Đừng dán cả trang 2MB vào prompt rồi hỏi "sao nó chậm".</p>
+
+<h3>Kiểu 2: Sinh scraper và test</h3>
+
+<p>Đưa AI HTML mẫu, schema đầu ra, và yêu cầu cụ thể: viết scraper bằng Playwright hoặc Cheerio, kèm test với fixture có sẵn. Mình thường bắt đầu bằng câu: "Viết test trước, rồi viết code cho pass test." Nghe hơi ngược đời nhưng hiệu quả, vì nó buộc AI phải bám vào dữ liệu thật thay vì đoán.</p>
+
+<p>Kiểu này dùng cho scraper chạy định kỳ. Một lần setup hơi lâu, nhưng sau đó sửa chữa nhàn hơn nhiều. Và quan trọng: test là lưới an toàn khi AI đề xuất bản vá sai.</p>
+
+<h3>Kiểu 3: Dùng LLM như parser cho HTML "khó"</h3>
+
+<p>Có những trang mà selector không cứu nổi: data nằm trong text tự do, cấu trúc mỗi record một kiểu, hoặc HTML rối như canh hẹ. Lúc đó mình dùng LLM để trích xuất thẳng ra JSON theo schema, thay vì cố viết selector.</p>
+
+<pre><code>Trích xuất danh sách sản phẩm từ HTML dưới đây.
+Trả về JSON đúng schema:
+[{ "name": string, "price": number, "currency": "VND", "url": string }]
+
+Quy tắc:
+- Giá "1.299.000₫" -&gt; 1299000
+- Thiếu giá hoặc thiếu tên thì bỏ record
+- Không suy diễn dữ liệu không có trong HTML
+- Giữ nguyên tên sản phẩm, chỉ trim khoảng trắng
+
+HTML:
+&lt;dán đoạn HTML cần trích xuất&gt;</code></pre>
+
+<p>Cách này rất tiện cho volume nhỏ hoặc dữ liệu bán cấu trúc. Nhưng đừng mơ dùng nó cho 100.000 record mỗi ngày: chậm, tốn tiền, và không deterministic. Cùng một input, lần sau có thể ra kết quả hơi khác. Volume lớn thì selector + parser vẫn là vua.</p>
+
+<h3>Kiểu 4: Viết test, monitor và vá lỗi</h3>
+
+<p>Đây là kiểu mình dùng nhiều nhất sau khi scraper đã chạy ổn. AI viết test cho fixture, viết script so sánh số record giữa các lần chạy, và khi có cảnh báo thì đề xuất bản vá. Mình chỉ việc review, chạy test, rồi merge.</p>
+
+<p>Nhưng nhớ: AI không biết site của mình quan trọng ở đâu. Nó không biết trường <code>price</code> mà sai thì cả dashboard sai. Business logic vẫn phải do mình viết test.</p>
+
+<h3>Chọn kiểu nào?</h3>
+
+<ul>
+  <li><strong>Trang ổn định, chạy một lần:</strong> Kiểu 1.</li>
+  <li><strong>Chạy định kỳ, cần bảo trì:</strong> Kiểu 2 + 4.</li>
+  <li><strong>HTML rối, volume nhỏ:</strong> Kiểu 3.</li>
+  <li><strong>Scraper đang chạy và site vừa đổi:</strong> Kiểu 4.</li>
+</ul>
+
+<h2>⚖️ Pros/Cons: AI không phải cây đũa thần</h2>
+
+<p>Nói có sách, mách có chứng. Dưới đây là những gì mình thấy sau một thời gian dùng AI trong công việc scraping.</p>
+
+<h3>✅ Pros</h3>
+
+<ul>
+  <li><strong>Tốc độ:</strong> dựng scraper mới nhanh hơn rõ rệt, nhất là phần boilerplate và parse data bẩn.</li>
+  <li><strong>Giảm đau bảo trì:</strong> site đổi thì có ngay phương án selector/parser mới để thử, thay vì ngồi mò cả buổi.</li>
+  <li><strong>Xử lý data bẩn tốt:</strong> format giá, ngày, text đa ngôn ngữ, ký tự ẩn... AI xử lý mềm dẻo hơn regex thuần.</li>
+  <li><strong>Học nhanh:</strong> không rành Playwright hay Cheerio vẫn có code mẫu để chạy thử và hiểu luồng.</li>
+  <li><strong>Ép mình rõ ràng:</strong> muốn AI viết parser ổn, mình phải định nghĩa schema và edge case trước. Điều này tốt cho code.</li>
+  <li><strong>Tiết kiệm thời gian chết:</strong> những việc lặp lại như viết test, đổi tên trường, format output... giao được hết.</li>
+</ul>
+
+<h3>❌ Cons</h3>
+
+<ul>
+  <li><strong>Bịa selector:</strong> AI có thể đưa selector không tồn tại, hoặc đúng với HTML mẫu nhưng sai với trang thật. Luôn test.</li>
+  <li><strong>Không thấy trang rendered:</strong> nó không biết lazy-load, iframe, JS challenge hay nút "Xem thêm" nằm ở đâu.</li>
+  <li><strong>Không deterministic:</strong> cùng prompt có thể ra kết quả khác nhau. Cần test, log và version prompt nếu dùng trong pipeline.</li>
+  <li><strong>Chi phí và latency:</strong> LLM extract tốn token và chậm hơn selector thuần. Volume lớn là bài toán hoàn toàn khác.</li>
+  <li><strong>Phụ thuộc dịch vụ:</strong> model đổi, API đổi, giá đổi, policy đổi. Pipeline của mình có thể gãy vì thứ ngoài tầm kiểm soát.</li>
+  <li><strong>Rủi ro dữ liệu:</strong> dán HTML chứa thông tin khách hàng, token hay nội dung nội bộ lên prompt là tự mang rủi ro về mình.</li>
+  <li><strong>Không giải quyết pháp lý hay anti-bot:</strong> captcha, ToS, robots.txt vẫn là việc của con người. AI không ký hộ mình cái hợp đồng trách nhiệm nào.</li>
+  <li><strong>Debug khó hơn:</strong> output sai mà không biết do selector, parser hay model. Không có log và test rõ ràng là dễ mất phương hướng.</li>
+</ul>
+
+<h3>Khi nào nên / không nên</h3>
+
+<ul>
+  <li><strong>Nên:</strong> prototype nhanh, site bán cấu trúc, volume vừa phải, cần xử lý text bẩn, hoặc cần bảo trì scraper trong thời gian dài.</li>
+  <li><strong>Không nên:</strong> volume cực lớn cần chi phí thấp, dữ liệu nhạy cảm, yêu cầu deterministic tuyệt đối, hoặc site cấm scraping.</li>
+</ul>
+
+<p>Chốt một câu: AI giúp mình viết scraper nhanh hơn, nhưng không giúp mình trốn trách nhiệm. Chỗ nào cần độ chính xác tuyệt đối thì vẫn phải có test, log và người review.</p>
+
+<h2>⚠️ Ranh giới: đừng biến tool thành phá hoại</h2>
+
+<ul>
+  <li><strong>Captcha hay anti-bot:</strong> site chủ động chặn thì dừng. Đây là ranh giới, không phải thử thách.</li>
+  <li><strong>robots.txt và điều khoản:</strong> data công khai không đồng nghĩa với việc được phép thu thập và tái sử dụng tùy ý.</li>
+  <li><strong>Dữ liệu sau đăng nhập:</strong> không scrape dữ liệu riêng tư, hộp thư, thông tin thanh toán... của người khác.</li>
+  <li><strong>Bản quyền nội dung:</strong> lấy data để phân tích khác với copy nguyên nội dung rồi đăng lại.</li>
+  <li><strong>Dữ liệu cá nhân:</strong> đừng dán token, thông tin khách hàng, nội dung nội bộ lên prompt gửi ra ngoài.</li>
+</ul>
+
+<p>Tool xịn đến đâu cũng không cứu được người dùng sai. Câu này mình nói thật.</p>
+
+<h2>📈 Kết luận</h2>
+
+<p>Với mình, scraping giờ bớt "đau" hơn rất nhiều. Những việc từng ngốn cả buổi — dò selector, viết parser, sửa khi site đổi — giờ gói lại trong vài vòng chat. Nhưng AI không thay mình hiểu dữ liệu, không thay mình kiểm tra kết quả, và càng không thay mình chịu trách nhiệm về cách thu thập dữ liệu.</p>
+
+<p>Công thức của mình vẫn là: <strong>hiểu bài toán trước, để AI lo phần lặp lại, và luôn verify bằng data thật.</strong> AI là copilot. Người lái vẫn là anh em.</p>
+
+<p>Nếu phải tóm gọn trong 3 gạch đầu dòng:</p>
+
+<ul>
+  <li>Dùng AI để nghĩ và viết phần lặp lại, không dùng để thay mình kiểm chứng.</li>
+  <li>Selector + test cho volume lớn; LLM extract cho dữ liệu khó và volume nhỏ.</li>
+  <li>Luật và đạo đức vẫn là phần con người phải tự chịu.</li>
+</ul>
+
+<p>Anh em đang dùng AI để scrape theo cách nào? Có mẹo nào hay hơn không? Để lại comment cho mình biết nhé.</p>

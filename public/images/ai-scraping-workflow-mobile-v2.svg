@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="690" viewBox="0 0 720 690" fill="none">
+  <defs>
+    <linearGradient id="wash" x1="20" y1="16" x2="700" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5EEE4"/>
+      <stop offset="1" stop-color="#EFE7DB"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#28241F" flood-opacity=".08"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="m2 2 6 4-6 4" stroke="#CC785C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="720" height="690" rx="28" fill="url(#wash)"/>
+  <circle cx="650" cy="80" r="100" fill="#E8D7C7" opacity=".46"/>
+  <circle cx="48" cy="660" r="125" fill="#E8D7C7" opacity=".35"/>
+  <g font-family="Inter,Arial,sans-serif">
+    <text x="56" y="72" fill="#9A553D" font-size="17" font-weight="700" letter-spacing="2.5">SCRAPING WORKFLOW</text>
+    <text x="56" y="126" fill="#24221F" font-size="32" font-weight="650">AI hỗ trợ — người làm kiểm chứng</text>
+    <text x="56" y="164" fill="#716B63" font-size="19">Bốn bước để scraper chạy ổn định và có thể bảo trì.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="48" y="175" width="296" height="190" rx="20" fill="#FFFEFC"/>
+    <rect x="376" y="175" width="296" height="190" rx="20" fill="#FFFEFC"/>
+    <rect x="48" y="380" width="296" height="190" rx="20" fill="#FFFEFC"/>
+    <rect x="376" y="380" width="296" height="190" rx="20" fill="#FFFEFC"/>
+  </g>
+
+  <path d="M345 270h25" stroke="#CC785C" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M524 367v9" stroke="#CC785C" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M345 475h25" stroke="#CC785C" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <g font-family="Inter,Arial,sans-serif">
+    <circle cx="91" cy="215" r="22" fill="#F3E5DB"/><text x="91" y="222" text-anchor="middle" fill="#9A553D" font-size="19" font-weight="700">1</text>
+    <text x="78" y="255" fill="#24221F" font-size="27" font-weight="650">Lấy dữ liệu</text>
+    <text x="78" y="288" fill="#716B63" font-size="20"><tspan x="78" dy="0">Kiểm tra quyền, tìm API,</tspan><tspan x="78" dy="24">lưu HTML mẫu.</tspan></text>
+    <rect x="78" y="330" width="142" height="28" rx="14" fill="#F5EEE4"/><text x="149" y="350" text-anchor="middle" fill="#6D6257" font-size="15" font-weight="600">API / HTML</text>
+
+    <circle cx="419" cy="215" r="22" fill="#F3E5DB"/><text x="419" y="222" text-anchor="middle" fill="#9A553D" font-size="19" font-weight="700">2</text>
+    <text x="406" y="255" fill="#24221F" font-size="27" font-weight="650">Nhờ AI đề xuất</text>
+    <text x="406" y="288" fill="#716B63" font-size="20"><tspan x="406" dy="0">Tạo selector, parser</tspan><tspan x="406" dy="24">và test từ dữ liệu mẫu.</tspan></text>
+    <rect x="406" y="330" width="126" height="28" rx="14" fill="#F5EEE4"/><text x="469" y="350" text-anchor="middle" fill="#6D6257" font-size="15" font-weight="600">AI DRAFT</text>
+
+    <circle cx="91" cy="420" r="22" fill="#F3E5DB"/><text x="91" y="427" text-anchor="middle" fill="#9A553D" font-size="19" font-weight="700">3</text>
+    <text x="78" y="460" fill="#24221F" font-size="27" font-weight="650">Kiểm chứng</text>
+    <text x="78" y="493" fill="#716B63" font-size="20"><tspan x="78" dy="0">Chạy test, validate schema,</tspan><tspan x="78" dy="24">review dữ liệu bất thường.</tspan></text>
+    <rect x="78" y="535" width="150" height="28" rx="14" fill="#F5EEE4"/><text x="153" y="555" text-anchor="middle" fill="#6D6257" font-size="15" font-weight="600">TEST + REVIEW</text>
+
+    <circle cx="419" cy="420" r="22" fill="#F3E5DB"/><text x="419" y="427" text-anchor="middle" fill="#9A553D" font-size="19" font-weight="700">4</text>
+    <text x="406" y="460" fill="#24221F" font-size="27" font-weight="650">Theo dõi</text>
+    <text x="406" y="493" fill="#716B63" font-size="20"><tspan x="406" dy="0">Ghi số bản ghi, đặt cảnh</tspan><tspan x="406" dy="24">báo khi kết quả thay đổi.</tspan></text>
+    <rect x="406" y="535" width="126" height="28" rx="14" fill="#F5EEE4"/><text x="469" y="555" text-anchor="middle" fill="#6D6257" font-size="15" font-weight="600">MONITOR</text>
+  </g>
+
+  <rect x="48" y="590" width="624" height="1" fill="#D9CCBD"/>
+  <text x="48" y="620" fill="#716B63" font-family="Inter,Arial,sans-serif" font-size="18">Quy tắc xuyên suốt</text>
+  <text x="48" y="655" fill="#24221F" font-family="Inter,Arial,sans-serif" font-size="19" font-weight="650">AI đề xuất → test xác nhận → người làm chịu trách nhiệm</text>
+</svg>
