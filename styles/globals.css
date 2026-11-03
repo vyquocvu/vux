@@ -147,6 +147,21 @@ h1, h2, h3, h4 {
   line-height: 1.35;
 }
 
+/* buildToc ids every h2-h4, so anchor jumps must clear the 64px sticky bar. */
+.post-page-view .post-content.ql-editor :is(h2, h3, h4)[id] {
+  scroll-margin-top: 6rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 .post-page-view .post-content.ql-editor ul,
 .post-page-view .post-content.ql-editor ol {
   margin: 0.15em 0 0.35em;
@@ -336,10 +351,6 @@ button[type=submit]:active {
   height: auto;
 }
 
-.github-corner:hover .octo-arm{
-  animation: octocat-wave 560ms ease-in-out
-}
-
 .ql-toolbar {
   position: sticky;
   top: 0;
@@ -350,15 +361,6 @@ button[type=submit]:active {
 
 .dark .ql-toolbar {
   background-color: #252320;
-}
-
-@keyframes octocat-wave {
-  0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}
-}
-@media (max-width:500px){
-  .github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{
-    animation:octocat-wave 560ms ease-in-out
-  }
 }
 
 /* Example Styles for React Tags*/
