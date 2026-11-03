@@ -134,15 +134,35 @@ export function serializeTag(name: string, attrs: AttrMap): string {
   return body ? `<${name} ${body}>` : `<${name}>`;
 }
 
-/** Text content only — entities are intentionally left as-is (labels are re-rendered by React). */
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00A0",
+};
+
+/** The few named entities Quill emits. Decoded only after tags are stripped. */
+export function decodeEntities(text: string): string {
+  return text.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body: string) => {
+    if (body[0] === "#") {
+      const hex = body[1].toLowerCase() === "x";
+      const code = parseInt(hex ? body.slice(2) : body.slice(1), hex ? 16 : 10);
+      return Number.isFinite(code) && code > 0 && code < 0x10ffff
+        ? String.fromCodePoint(code)
+        : whole;
+    }
+    return NAMED_ENTITIES[body.toLowerCase()] ?? whole;
+  });
+}
+
+/** Text content only, entities decoded — callers render the result as plain text. */
 export function stripTags(html: string): string {
-  return html
-    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return decodeEntities(
+    html
+      .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<[^>]+>/g, " "),
+  ).replace(/\s+/g, " ").trim();
 }
 ```
+
+`decodeEntities` không có trong bản draft: 5 heading trong corpus chứa `&amp;`/`&nbsp;`, mà label TOC được React render dưới dạng text thuần nên entity sẽ hiện nguyên văn (`A &amp; B`). Giải mã **sau khi** đã cắt tag để `&lt;` không thể biến thành markup.
 
 - [ ] **Step 2: Sửa `utils/images/content.ts` dùng lại**
 
@@ -301,19 +321,20 @@ export function buildToc(html: string): TocResult {
   const withIds = html.replace(
     /<(h[2-4])\b([^>]*)>([\s\S]*?)<\/\1>/gi,
     (whole, name: string, rawAttrs: string, inner: string) => {
+      const tag = name.toLowerCase();
       const label = stripTags(inner);
       // An empty heading is a Quill artifact; leaving it alone keeps the body
       // byte-identical and the rail's `>= 2` filter never sees it.
       if (!label) return whole;
 
-      const attrs = parseAttrs(`<${name}${rawAttrs}>`);
+      const attrs = parseAttrs(`<${tag}${rawAttrs}>`);
       const existing = attrs.get("id")?.value;
       const id = existing || headingSlug(label, seen);
       if (existing) seen.add(existing);
       else attrs.set("id", { value: id, quote: '"' });
 
       toc.push({ id, label, level: Number(name[1]) as 2 | 3 | 4 });
-      return serializeTag(name.toLowerCase(), attrs);
+      return `${serializeTag(tag, attrs)}${inner}</${tag}>`;
     },
   );
 
@@ -329,7 +350,7 @@ export function buildToc(html: string): TocResult {
 - [ ] **Step 4: Chạy check**
 
 Run: `node --experimental-strip-types scripts/toc-check.ts`
-Expected: `OK  posts=47  h2-h4=168  bai co TOC(>=2)=35  bai >=10 heading=3` — các con số phải khớp dữ liệu đã khảo sát (87 h2 + 57 h3 + 24 h4 = 168; 7 bài 0 heading + 5 bài 1 heading = 12 bài dưới ngưỡng).
+Expected (đo lại lúc execute): `OK  posts=47  h2-h4=161  bai co TOC(>=2)=33  bai >=10 heading=3`. Khảo sát ban đầu đếm 168 thẻ mở `h2..h4`, nhưng 7 thẻ chỉ chứa `<br>` (artifact của Quill) bị bỏ qua vì label rỗng → 161 heading thực sự vào TOC.
 
 - [ ] **Step 5: Kiểm tra thủ công 2 ca cực đoan**
 
@@ -878,28 +899,42 @@ Lý do: repo đã có trong sidebar (`config.js:19`); `fixed top-0 right-0` sẽ
 Trong `INSTRUMENT` của `scripts/measure-page.ts`, ngay trước dòng `window.__vux.docHeight = ...`, chèn:
 
 ```js
-    const side = document.querySelector('.max-w-\\[1216px\\]');
-    const box = (side || document.body).getBoundingClientRect();
+    const shell = document.querySelector('[data-shell="content"]');
+    const box = (shell || document.body).getBoundingClientRect();
+    const area = (shell ? shell.parentElement : document.body).getBoundingClientRect();
     window.__vux.gutter = {
-      left: Math.round(box.left),
-      right: Math.round(window.innerWidth - box.right),
+      left: Math.round(box.left - area.left),
+      right: Math.round(area.right - box.right),
       contentWidth: Math.round(box.width),
-      rail: !!document.querySelector('aside'),
+      rail: (() => {
+        const a = document.querySelector("aside");
+        return !!a && getComputedStyle(a).display !== "none";
+      })(),
     };
 ```
 
 và trong `window.__vux = {...}` khai báo thêm `gutter: null,`.
 
+Ba chỉnh sửa so với draft, đều do số đo đầu tiên nói dối:
+- `MainContent` xuất hiện `data-shell="content"` — chọn class `.max-w-[1216px]` buộc phải escape dấu ngoặc trong chuỗi JS nằm trong template literal.
+- So với **parent có padding**, không so với viewport: sidebar `fixed` là vùng đã dùng chứ không phải vùng chết, nên đo theo viewport luôn trả `left - right = 256` dù layout đúng.
+- `rail` phải kiểm tra `display` vì `<aside>` luôn tồn tại trong DOM nhưng `hidden xl:block`.
+- Thêm cờ `DARK=1` (Emulation.setEmulatedMedia `prefers-color-scheme: dark`) để bắt nửa tối của ma trận — `ThemeProvider` đọc media query khi chưa có theme nào trong localStorage.
+
 - [ ] **Step 4: Đo**
 
-Run (dev server đang chạy):
+Run (dev server đang chạy — xem ghi chú port bên dưới):
 ```bash
 for w in 1024 1280 1440 1920; do
-  VW=$w node --experimental-strip-types scripts/measure-page.ts http://localhost:3000/ /tmp/g-$w.json >/dev/null
-  node -e "const j=require('/tmp/g-$w.json');const g=j.gutter||j.metrics?.gutter;console.log('$w', JSON.stringify(g))"
+  VW=$w node --experimental-strip-types scripts/measure-page.ts http://localhost:3210/ /tmp/g-$w.json >/dev/null
+  node -e "const j=require('/tmp/g-$w.json');console.log('$w', JSON.stringify(j.gutter))"
 done
 ```
-Expected: `left` và `right` chênh nhau ≤ 8px ở mọi viewport, `contentWidth` không vượt 1216. Nếu `right > left + 8` thì `mx-auto` chưa ăn (kiểm tra lại A7).
+Expected: `left` và `right` bằng nhau (≤ 8px), `contentWidth` không vượt 1216.
+
+Kết quả đo được: `/` và `/post/[slug]` đều `imbalance = 0` ở 1024/1280/1440/1920; `contentWidth` = 672 / 928 / 1088 / 1216. Rail: `false` ở 1024, `true` từ 1280 — đúng D2.
+
+Cẩn thận port: `:3000` có thể đã bị project khác giữ. `next dev` vẫn in ra "Local: http://localhost:3000" trong khi `curl` trả HTML của app khác → mọi số đo đều vô nghĩa. Kiểm chứng bằng `curl -s <url> | grep data-shell` trước khi đo, hoặc chạy `yarn dev -p 3210`.
 
 - [ ] **Step 5: Commit**
 
@@ -1409,9 +1444,11 @@ git commit -m "feat(contact): style the form and add direct contact channels"
 - [ ] **Step 1: Static checks**
 
 Run: `node --experimental-strip-types scripts/toc-check.ts`
-Expected: `OK  posts=47  h2-h4=168  bai co TOC(>=2)=35  bai >=10 heading=3`
+Expected: `OK  posts=47  h2-h4=161  bai co TOC(>=2)=33  bai >=10 heading=3`
 Run: `yarn lint && yarn build`
-Expected: cả hai pass, 47 post page prerender không lỗi.
+Expected: cả hai pass.
+
+Lưu ý đo được lúc verify: `next build` đọc D1 **local** qua miniflare proxy, và proxy này thỉnh thoảng trả `D1_ERROR: Failed to parse body as JSON`. Fetcher ăn `try/catch` nên build vẫn exit 0, nhưng vài trang `/post/*` bị prerender thành "Post not found". Đã chạy baseline (commit trước khi sửa code) để loại trừ: baseline cũng lỗi 3–5 query/47 trang, vậy đây là flakiness của môi trường local (trên máy có nhiều `workerd` của project khác đang chạy), không phải do plan này. Build thật trên Cloudflare dùng remote D1. Khi cần số tin cậy, verify từng trang qua `yarn dev` (một request một lần) thay vì dựa vào số trang prerender.
 
 - [ ] **Step 2: Đo gutter hết chết**
 
