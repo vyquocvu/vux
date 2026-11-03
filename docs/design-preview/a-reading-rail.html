@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi" data-variant="a-reading-rail">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A · Reading rail — vux mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="tw.js"></script>
+<link rel="stylesheet" href="preview.css" />
+</head>
+<body class="bg-canvas dark:bg-surface-dark font-body antialiased">
+
+<div class="fixed top-0 left-0 right-0 h-[2px] origin-left bg-primary z-50" data-progress-bar style="transform:scaleX(0)"></div>
+
+<!-- Sidebar giữ nguyên như site thật -->
+<div class="fixed h-screen bg-canvas dark:bg-surface-dark xs:w-0 xs:overflow-hidden xs:p-0 md:w-64 md:pl-7 md:pt-10 border-r border-hairline dark:border-surface-dark-elevated overflow-y-auto">
+  <div>
+    <a class="group block">
+      <div class="pr-8"><img src="https://avatars.githubusercontent.com/u/13213996?v=4" class="w-[72px] h-[72px] rounded-full ring-2 ring-hairline dark:ring-surface-dark-elevated" alt="avatar" /></div>
+      <p class="mt-4 font-display text-2xl font-normal text-ink dark:text-on-dark tracking-tight">Vy Quốc Vũ</p>
+    </a>
+    <nav class="pt-1">
+      <p class="block font-body text-sm my-5 leading-6 text-muted dark:text-on-dark-soft">
+        My name is Vy Quốc Vũ (aka Vu.Vy)<br />
+        <a class="underline text-primary" href="#">Bachelor of Computer Science</a><br />
+        Fullstack developer from 🇻🇳<br />
+        Anyway Ruby, JS builder with ♥
+      </p>
+      <div class="w-3/4 my-5 border-b border-hairline dark:border-surface-dark-elevated"></div>
+      <a class="font-body text-sm py-1.5 text-ink dark:text-on-dark font-medium block hover:text-primary" href="#">Home</a>
+      <a class="font-body text-sm py-1.5 text-ink dark:text-on-dark font-medium block hover:text-primary" href="#">Tags</a>
+      <a class="font-body text-sm py-1.5 text-ink dark:text-on-dark font-medium block hover:text-primary" href="#">About Me</a>
+      <a class="font-body text-sm py-1.5 text-ink dark:text-on-dark font-medium block hover:text-primary" href="#">Contact</a>
+      <div class="w-3/4 my-5 border-b border-hairline dark:border-surface-dark-elevated"></div>
+      <div class="flex gap-3 items-center">
+        <span class="w-6 h-6 grid place-items-center rounded-md bg-surface-card dark:bg-surface-dark-elevated text-[10px] font-medium text-muted dark:text-on-dark-soft">f</span>
+        <span class="w-6 h-6 grid place-items-center rounded-md bg-surface-card dark:bg-surface-dark-elevated text-[10px] font-medium text-muted dark:text-on-dark-soft">in</span>
+        <span class="w-6 h-6 grid place-items-center rounded-md bg-surface-card dark:bg-surface-dark-elevated text-[10px] font-medium text-muted dark:text-on-dark-soft">gh</span>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- A: bỏ lg:mr-64, thay bằng 1 grid có rail thật -->
+<main class="min-h-screen md:ml-64 p-8 md:p-12 bg-canvas dark:bg-surface-dark">
+  <div class="mx-auto max-w-[76rem] lg:grid lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
+
+    <!-- Cột bài viết -->
+    <div class="min-w-0 post-page-view">
+      <div class="w-full py-3 h-16 -ml-6 fixed bg-canvas dark:bg-surface-dark top-0 z-0 lg:w-[calc(100%-22rem)] border-b border-hairline dark:border-surface-dark-elevated">
+        <a href="#" class="border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors">
+          <span class="text-muted dark:text-on-dark-soft text-sm">←</span>
+        </a>
+      </div>
+
+      <h1 class="post-title font-display flex text-3xl md:text-4xl font-normal pb-2 text-ink dark:text-on-dark leading-tight tracking-tight pt-10">
+        Vấn đề debug: Talk is cheap, Show me the number
+      </h1>
+      <p class="font-body text-xs uppercase tracking-widest text-muted dark:text-muted-soft font-medium mb-3">
+        2 NGÀY TRƯỚC · 11 PHÚT ĐỌC · 4 LẦN CẬP NHẬT
+      </p>
+
+      <article class="pb-5 post-content ql-editor font-body text-body dark:text-on-dark-soft leading-relaxed">
+        <p>Sir Linus Torvalds có câu nói kinh điển <em>"Talk is cheap, show me the code"</em>, thì trong bối cảnh phát triển phần mềm hiện đại, câu nói đó nên được sửa thành <strong>"Talk is cheap, show me the number"</strong>.</p>
+        <p>Khi một hệ thống chậm, cảm giác của chúng ta thường đi trước dữ liệu. Ta "thấy" API có vẻ chậm, ta "đoán" database đang quá tải. Nhưng <code>p95</code> thì không biết đoán.</p>
+
+        <h2 id="why-metric">Tại sao metric, không phải log</h2>
+        <p>Log trả lời câu hỏi <em>"chuyện gì xảy ra"</em>. Metric trả lời <em>"nó tệ đến đâu và có đang tệ hơn không"</em>. Hai thứ này không thay thế nhau.</p>
+        <ul>
+          <li>Log: chi tiết, đắt để lưu, khó tổng hợp.</li>
+          <li>Metric: rẻ, agg trước, cảnh báo được.</li>
+          <li>Trace: nối hai thứ lại theo <code>request_id</code>.</li>
+        </ul>
+        <blockquote>Câu hỏi đúng không phải "có log chưa", mà là "cái gì sẽ kêu lên khi nó hỏng".</blockquote>
+
+        <figure>
+          <img src="../../public/images/backend-observability-foundation.jpg" alt="Backend observability foundation" class="w-full" />
+          <figcaption class="post-image-caption">Bốn trụ của observability và thứ tự nên triển khai.</figcaption>
+        </figure>
+
+        <h3 id="cardinality">Bẫy cardinality</h3>
+        <p>Label <code>user_id</code> trông rất hữu ích cho tới khi TSDB của bạn nổ vì 8 triệu time series. Quy tắc: label phải có số giá trị hữu hạn và nhỏ.</p>
+
+        <h2 id="red-method">Phương pháp RED cho mỗi endpoint</h2>
+        <p><strong>R</strong>ate, <strong>E</strong>rrors, <strong>D</strong>uration. Đủ để dựng dashboard đầu tiên trong 30 phút.</p>
+<pre><code>const middleware = (req, res, next) =&gt; {
+  const started = process.hrtime.bigint();
+  res.on('finish', () =&gt; {
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    metrics.observeHistogram(req.route.path, res.statusCode, ms);
+  });
+  next();
+};</code></pre>
+        <p>Sau khi có con số, cuộc tranh luận trong team đổi hẳn: không còn "em nghĩ là", chỉ còn "p95 tăng từ 180ms lên 1.2s sau deploy hôm thứ Năm".</p>
+
+        <h2 id="next-step">Việc nên làm tiếp theo</h2>
+        <h3 id="instrument-first">Instrument trước, optimize sau</h3>
+        <p>Đừng sửa gì cho tới khi bạn có thể chỉ ra đúng chỗ hỏng bằng số liệu. Reverse engineering một hệ thống không có metric tốn gấp nhiều lần chi phí gắn metric.</p>
+        <p>Và nếu phải chọn một con số duy nhất: chọn <code>p95 duration</code> của endpoint quan trọng nhất, không phải average.</p>
+      </article>
+
+      <div class="flex justify-end py-2 post-applause">
+        <div class="w-12 h-12 grid place-items-center rounded-full border border-hairline dark:border-surface-dark-elevated text-muted text-lg">👏</div>
+      </div>
+
+      <hr class="mt-12 border-hairline dark:border-surface-dark-elevated" />
+      <h2 class="font-display text-2xl font-normal mt-4 text-ink dark:text-on-dark tracking-tight">Comments</h2>
+      <div class="mt-4 rounded-lg border border-dashed border-hairline dark:border-surface-dark-elevated p-8 text-center font-body text-sm text-muted">
+        Khung Cusdis — không đổi, rail phải không đụng tới phần này.
+      </div>
+    </div>
+
+    <!-- RAIL PHẢI: nội dung thật thay cho vùng chết -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-12 pt-10 space-y-7">
+        <div class="flex items-center gap-3">
+          <svg width="34" height="34" viewBox="0 0 36 36" class="-rotate-90" data-progress-ring style="--progress:0">
+            <circle cx="18" cy="18" r="15.5" pathLength="100" fill="none" stroke-width="3" class="stroke-hairline dark:stroke-surface-dark-elevated" />
+            <circle cx="18" cy="18" r="15.5" pathLength="100" fill="none" stroke-width="3" stroke-linecap="round" class="stroke-primary ring-fg" />
+          </svg>
+          <div>
+            <p class="font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium">Đã đọc</p>
+            <p class="font-display text-lg text-ink dark:text-on-dark leading-none mt-0.5" data-progress-pct>0%</p>
+          </div>
+        </div>
+
+        <nav aria-label="Mục lục">
+          <p class="font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium mb-3">Mục lục</p>
+          <div class="space-y-1.5 font-body text-[13px] leading-snug">
+            <a data-toc-link href="#why-metric">Tại sao metric, không phải log</a>
+            <a data-toc-link class="is-nested" href="#cardinality">Bẫy cardinality</a>
+            <a data-toc-link href="#red-method">Phương pháp RED</a>
+            <a data-toc-link href="#next-step">Việc nên làm tiếp theo</a>
+            <a data-toc-link class="is-nested" href="#instrument-first">Instrument trước</a>
+          </div>
+        </nav>
+
+        <div class="border-t border-hairline dark:border-surface-dark-elevated pt-5">
+          <p class="font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium mb-3">Tag</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2 py-0.5 rounded-pill text-[11px] border border-hairline dark:border-surface-dark-elevated text-muted dark:text-on-dark-soft">observability</span>
+            <span class="px-2 py-0.5 rounded-pill text-[11px] border border-hairline dark:border-surface-dark-elevated text-muted dark:text-on-dark-soft">metrics</span>
+            <span class="px-2 py-0.5 rounded-pill text-[11px] border border-hairline dark:border-surface-dark-elevated text-muted dark:text-on-dark-soft">nodejs</span>
+          </div>
+        </div>
+
+        <div class="border-t border-hairline dark:border-surface-dark-elevated pt-5">
+          <p class="font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium mb-3">Đọc tiếp</p>
+          <a href="#" class="block font-body text-[13px] leading-snug text-ink dark:text-on-dark hover:text-primary mb-3">
+            Distributed tracing: request-id xuyên suốt
+            <span class="block text-muted-soft text-[11px] mt-0.5">8 phút</span>
+          </a>
+          <a href="#" class="block font-body text-[13px] leading-snug text-ink dark:text-on-dark hover:text-primary">
+            Frontend RUM và Core Web Vitals
+            <span class="block text-muted-soft text-[11px] mt-0.5">6 phút</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script src="preview.js"></script>
+</body>
+</html>

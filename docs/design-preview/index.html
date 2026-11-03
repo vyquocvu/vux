@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi" data-variant="index">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>vux · xem trước layout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="tw.js"></script>
+<link rel="stylesheet" href="preview.css" />
+</head>
+<body class="bg-canvas dark:bg-surface-dark font-body antialiased">
+
+<div class="mx-auto max-w-4xl px-6 py-14">
+
+  <p class="font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium">Design preview · chưa phải code ship</p>
+  <h1 class="mt-2 font-display text-4xl font-normal text-ink dark:text-on-dark tracking-tight">vux · sửa vùng trống bên phải</h1>
+  <p class="mt-3 font-body text-sm text-body dark:text-on-dark-soft leading-relaxed max-w-2xl">
+    Mockup HTML tĩnh, dùng đúng token trong <code class="font-mono text-xs">tailwind.config.js</code> và typography trong
+    <code class="font-mono text-xs">styles/globals.css</code>. Phím tắt: <kbd class="px-1.5 py-0.5 rounded border border-hairline dark:border-surface-dark-elevated text-xs font-mono">T</kbd> dark,
+    <kbd class="px-1.5 py-0.5 rounded border border-hairline dark:border-surface-dark-elevated text-xs font-mono">D</kbd> hiện vùng chết.
+  </p>
+
+  <section class="mt-10 rounded-lg border border-hairline dark:border-surface-dark-elevated bg-surface-soft dark:bg-surface-dark-soft p-6">
+    <h2 class="font-display text-lg text-ink dark:text-on-dark">Nguyên nhân</h2>
+    <ul class="mt-3 space-y-2 font-body text-sm text-body dark:text-on-dark-soft leading-relaxed list-disc pl-5">
+      <li><code class="font-mono text-xs">MainContent.tsx:9</code> — <code class="font-mono text-xs">lg:mr-64</code> chừa 256px bên phải nhưng không có component nào render ở đó.</li>
+      <li><code class="font-mono text-xs">MainContent.tsx:10</code> — <code class="font-mono text-xs">max-w-4xl</code> thiếu <code class="font-mono text-xs">mx-auto</code>, nên content bám trái, mọi khoảng trắng dư dồn sang phải.</li>
+      <li>Trang bài viết đã có <code class="font-mono text-xs">margin-inline: auto</code> (<code class="font-mono text-xs">.post-reading-column</code>) nhưng nó tự giữa <em>bên trong</em> vùng đã bị lệch trái.</li>
+      <li><code class="font-mono text-xs">GitHubCorner</code> <code class="font-mono text-xs">fixed top-0 right-0</code> nằm ngay giữa vùng trống nên càng lệch mắt.</li>
+    </ul>
+
+    <h3 class="mt-6 font-body text-[11px] uppercase tracking-widest text-muted-soft font-medium">Vùng chết bên phải của layout hiện tại</h3>
+    <div class="mt-2 overflow-hidden rounded-md border border-hairline dark:border-surface-dark-elevated">
+      <table class="w-full text-left font-body text-sm">
+        <thead class="bg-surface-card dark:bg-surface-dark-elevated text-muted dark:text-on-dark-soft">
+          <tr>
+            <th class="px-4 py-2 font-medium">Viewport</th>
+            <th class="px-4 py-2 font-medium">Cột chữ</th>
+            <th class="px-4 py-2 font-medium">Trống bên phải</th>
+            <th class="px-4 py-2 font-medium">Tỷ lệ</th>
+          </tr>
+        </thead>
+        <tbody id="dead-table" class="text-ink dark:text-on-dark"></tbody>
+      </table>
+    </div>
+    <p class="mt-2 font-body text-xs text-muted-soft">Viewport hiện tại của bạn: <span id="now" class="font-mono"></span></p>
+  </section>
+
+  <section class="mt-10 grid gap-4 sm:grid-cols-2">
+    <a href="0-baseline.html" class="group block rounded-lg border border-error/40 p-5 hover:border-error transition-colors">
+      <p class="font-mono text-xs text-error">0 · HIỆN TẠI</p>
+      <p class="mt-2 font-display text-lg text-ink dark:text-on-dark">Baseline để đối chiếu</p>
+      <p class="mt-2 font-body text-sm text-muted dark:text-on-dark-soft leading-relaxed">Copy 1:1 code cũ. Bấm <b>D</b> để thấy vùng chết co giãn theo chiều rộng cửa sổ.</p>
+    </a>
+
+    <a href="a-reading-rail.html" class="group block rounded-lg border border-hairline dark:border-surface-dark-elevated p-5 hover:border-primary transition-colors">
+      <p class="font-mono text-xs text-primary">A · TRANG BÀI VIẾT</p>
+      <p class="mt-2 font-display text-lg text-ink dark:text-on-dark">Reading rail</p>
+      <p class="mt-2 font-body text-sm text-muted dark:text-on-dark-soft leading-relaxed">256px kia trở thành rail sticky: progress ring, TOC scrollspy, tag, đọc tiếp. rail chỉ hiện ≥1024px.</p>
+      <p class="mt-3 font-body text-xs text-muted-soft">Đổi lại: phải trích <code class="font-mono">h2/h3</code> từ HTML Quill để sinh TOC.</p>
+    </a>
+
+    <a href="b-centered.html" class="group block rounded-lg border border-hairline dark:border-surface-dark-elevated p-5 hover:border-primary transition-colors">
+      <p class="font-mono text-xs text-primary">B · MỌI TRANG</p>
+      <p class="mt-2 font-display text-lg text-ink dark:text-on-dark">Centered single column</p>
+      <p class="mt-2 font-body text-sm text-muted dark:text-on-dark-soft leading-relaxed">Bỏ <code class="font-mono">lg:mr-64</code>, thêm <code class="font-mono">mx-auto</code>, <code class="font-mono">max-w-2xl</code>. Kiểu Overreacted / Julia Evans.</p>
+      <p class="mt-3 font-body text-xs text-muted-soft">Ít code nhất (~2 dòng CSS), không thêm tính năng, không thêm chi phí build.</p>
+    </a>
+
+    <a href="c-ambient-rail.html" class="group block rounded-lg border border-hairline dark:border-surface-dark-elevated p-5 hover:border-primary transition-colors">
+      <p class="font-mono text-xs text-primary">C · TRANG LIST</p>
+      <p class="mt-2 font-display text-lg text-ink dark:text-on-dark">Ambient rail</p>
+      <p class="mt-2 font-body text-sm text-muted dark:text-on-dark-soft leading-relaxed">Rail hẹp 160px chỉ chứa chrome: scroll indicator, số bài, archive theo năm, RSS, back-to-top.</p>
+      <p class="mt-3 font-body text-xs text-muted-soft">An toàn nhất về mặt content — nhưng với 47 bài thì chủ yếu vẫn là trang trí.</p>
+    </a>
+
+    <a href="d-two-col-index.html" class="group block rounded-lg border border-hairline dark:border-surface-dark-elevated p-5 hover:border-primary transition-colors sm:col-span-2">
+      <p class="font-mono text-xs text-primary">D · TRANG LIST</p>
+      <p class="mt-2 font-display text-lg text-ink dark:text-on-dark">Two-column index</p>
+      <p class="mt-2 font-body text-sm text-muted dark:text-on-dark-soft leading-relaxed max-w-3xl">Vùng chết trở thành cột thứ hai của lưới bài viết, dùng <code class="font-mono">grid</code> thật thay vì margin dự phòng. Có 1 bài featured chiếm 2 cột. Cần <code class="font-mono">thumbImage</code> đẹp cho bài nào có, bài không có vẫn ổn (khối text thuần).</p>
+    </a>
+  </section>
+
+  <section class="mt-10 rounded-lg border border-accent-teal/50 bg-surface-soft dark:bg-surface-dark-soft p-6">
+    <h2 class="font-display text-lg text-ink dark:text-on-dark">Khuyến nghị</h2>
+    <p class="mt-3 font-body text-sm text-body dark:text-on-dark-soft leading-relaxed">
+      <b class="text-ink dark:text-on-dark">B cho Home / Tags / About / Contact + A riêng cho <code class="font-mono">/post/[slug]</code>.</b><br />
+      4 trang list không có gì để nhét vào rail nên giữa đơn giản là đúng; chỉ bài viết dài có code mới cần TOC.
+      Số việc phải sửa: <code class="font-mono">MainContent.tsx</code> (2 dòng) + 1 component <code class="font-mono">ReadingRail</code> mới + 1 hàm trích heading trong <code class="font-mono">getStaticProps</code>.
+    </p>
+  </section>
+
+  <p class="mt-10 font-body text-xs text-muted-soft">Thư mục <code class="font-mono">docs/design-preview/</code> — không được Next.js phục vụ, không ảnh hưởng build.</p>
+</div>
+
+<script src="preview.js"></script>
+<script>
+  // Phản chiếu chính xác logic MainContent.tsx hiện tại.
+  function dead(vw) {
+    var sidebar = vw >= 768 ? 256 : 0;
+    var pad = vw >= 768 ? 48 : 32;
+    var mr = vw >= 1024 ? 256 : 0;
+    var avail = vw - sidebar - mr - pad * 2;
+    var col = Math.min(896, Math.max(0, avail));
+    var empty = vw - sidebar - pad - col;
+    return { col: col, empty: empty, pct: Math.round((empty / vw) * 100) };
+  }
+  var rows = [1024, 1280, 1440, 1728, 1920, 2560].map(function (vw) {
+    var d = dead(vw);
+    return '<tr class="border-t border-hairline dark:border-surface-dark-elevated">' +
+      '<td class="px-4 py-2 font-mono text-xs">' + vw + 'px</td>' +
+      '<td class="px-4 py-2 font-mono text-xs">' + d.col + 'px</td>' +
+      '<td class="px-4 py-2 font-mono text-xs text-error">' + d.empty + 'px</td>' +
+      '<td class="px-4 py-2 font-mono text-xs">' + d.pct + '%</td></tr>';
+  }).join('');
+  document.getElementById('dead-table').innerHTML = rows;
+
+  function now() {
+    var vw = window.innerWidth, d = dead(vw);
+    document.getElementById('now').textContent =
+      vw + 'px → cột chữ ' + d.col + 'px, trống ' + d.empty + 'px (' + d.pct + '%)';
+  }
+  window.addEventListener('resize', now);
+  now();
+</script>
+</body>
+</html>

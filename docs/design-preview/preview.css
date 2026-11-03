@@ -1,0 +1,219 @@
+/* Bài viết: chép typography từ styles/globals.css để mockup sát thực tế. */
+.post-content.ql-editor {
+  padding: 0;
+  overflow-y: visible;
+}
+.post-content.ql-editor {
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.55;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.post-content.ql-editor p:not(.post-dialogue):not(.post-image-caption) {
+  margin: 0 0 0.35rem;
+}
+.post-content.ql-editor .post-dialogue {
+  margin: 0.4em 0;
+  padding: 0.4rem 0.65rem;
+  border-left: 3px solid #cc785c;
+  border-radius: 0 0.65rem 0.65rem 0;
+  background: #f3eee7;
+  color: #252523;
+}
+.dark .post-content.ql-editor .post-dialogue {
+  background: #252320;
+  color: #e7e3dc;
+}
+.post-content.ql-editor h2 {
+  margin: 0.55em 0 0.18em;
+  font-size: clamp(1.55rem, 3vw, 1.9rem);
+  line-height: 1.28;
+  scroll-margin-top: 5rem;
+}
+.post-content.ql-editor h3 {
+  margin: 0.4em 0 0.1em;
+  font-size: clamp(1.2rem, 2.5vw, 1.45rem);
+  line-height: 1.35;
+  scroll-margin-top: 5rem;
+}
+.post-content.ql-editor ul,
+.post-content.ql-editor ol {
+  margin: 0.15em 0 0.35em;
+  padding-left: 1.5em;
+}
+.post-content.ql-editor li { margin: 0.05em 0; padding-left: 0.2em; }
+.post-content.ql-editor blockquote {
+  margin: 0.8em 0;
+  padding: 0.1em 0 0.1em 0.8em;
+  border-left: 3px solid #cc785c;
+  color: #6c6a64;
+}
+.dark .post-content.ql-editor blockquote { color: #c4c0b8; }
+.post-content.ql-editor .post-image-caption {
+  margin-top: -0.4em;
+  margin-bottom: 0.7em;
+  color: #6c6a64;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+.dark .post-content.ql-editor .post-image-caption { color: #a09d96; }
+.post-content.ql-editor p code,
+.post-content.ql-editor li code {
+  padding: 0.12em 0.38em;
+  border: 1px solid #e6dfd8;
+  border-radius: 0.35em;
+  background: #f3eee7;
+  color: #8c4934;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+.dark .post-content.ql-editor p code,
+.dark .post-content.ql-editor li code {
+  border-color: #383631;
+  background: #252320;
+  color: #f0b097;
+}
+.post-content.ql-editor pre {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0.5em 0;
+  padding: 0.5rem 0.7rem;
+  overflow-x: auto;
+  border: 1px solid #3a3933;
+  border-radius: 0.85rem;
+  background: #23241f !important;
+  color: #f8f8f2 !important;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: pre;
+}
+.post-content.ql-editor img { border-radius: 0.8rem; }
+
+.post-title::before {
+  content: "#";
+  color: #e6dfd8;
+  margin-right: 0.55rem;
+}
+.dark .post-title::before { color: #252320; }
+
+/* ------------------------------------------------------------------
+   Mockup-only helpers
+   ------------------------------------------------------------------ */
+
+/* Vùng chết bên phải, chỉ hiện khi bật overlay (.show-deadzone) */
+.deadzone {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--deadzone-w, 256px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 60;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(198, 69, 69, 0.13),
+    rgba(198, 69, 69, 0.13) 10px,
+    rgba(198, 69, 69, 0.03) 10px,
+    rgba(198, 69, 69, 0.03) 20px
+  );
+  border-left: 2px dashed rgba(198, 69, 69, 0.55);
+}
+.deadzone::after {
+  content: "vùng chết " attr(data-width);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  white-space: nowrap;
+  font: 500 11px/1 Inter, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #c64545;
+  background: rgba(250, 249, 245, 0.85);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.show-deadzone .deadzone { opacity: 1; }
+
+/* thanh measure: cho thấy bề rộng cột chữ thực tế */
+.measure {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #5db8a6, #e8a55a);
+  z-index: 61;
+  pointer-events: none;
+  opacity: 0;
+}
+.show-deadzone .measure { opacity: 1; }
+
+/* TOC scrollspy */
+[data-toc-link] {
+  display: block;
+  border-left: 2px solid transparent;
+  padding-left: 0.7rem;
+  color: #6c6a64;
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.dark [data-toc-link] { color: #a09d96; }
+[data-toc-link]:hover { color: #cc785c; transform: translateX(2px); }
+[data-toc-link].is-active {
+  border-left-color: #cc785c;
+  color: #cc785c;
+  font-weight: 500;
+}
+.dark [data-toc-link].is-active { color: #e8906e; }
+[data-toc-link].is-nested { padding-left: 1.5rem; font-size: 0.78rem; }
+
+/* reading progress ring */
+.ring-fg {
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--progress, 0));
+  transition: stroke-dashoffset 0.12s linear;
+}
+
+/* floating switcher của trang gallery */
+.mockbar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #e6dfd8;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 25px -5px rgba(20, 20, 19, 0.18);
+  font-size: 0.75rem;
+}
+.dark .mockbar {
+  border-color: #383631;
+  background: rgba(37, 35, 32, 0.92);
+}
+.mockbar a,
+.mockbar button {
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  color: #6c6a64;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.dark .mockbar a,
+.dark .mockbar button { color: #a09d96; }
+.mockbar a:hover,
+.mockbar button:hover { background: #f5f0e8; color: #141413; }
+.dark .mockbar a:hover,
+.dark .mockbar button:hover { background: #252320; color: #faf9f5; }
+.mockbar .is-current { background: #cc785c; color: #fff; }
+.mockbar .is-current:hover { background: #a9583e; color: #fff; }
