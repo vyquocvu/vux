@@ -9,32 +9,18 @@
  * decoding.
  */
 import type { Dimensions } from "./dims.ts";
+import { parseAttrs, serializeTag } from "../html.ts";
+import type { AttrMap } from "../html.ts";
 
 export type DimensionResolver = (src: string) => Dimensions | null | undefined;
 
-const ATTR_RE = /([\w-]+)\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/g;
-
-/** Parse one `<img>` tag's attributes into a mutable map plus its raw source. */
-function parseAttrs(tag: string): Map<string, { value: string; quote: string }> {
-  const attrs = new Map<string, { value: string; quote: string }>();
-  let m: RegExpExecArray | null;
-  ATTR_RE.lastIndex = 0;
-  while ((m = ATTR_RE.exec(tag))) {
-    const quote = m[2].startsWith('"') ? '"' : m[2].startsWith("'") ? "'" : "";
-    attrs.set(m[1].toLowerCase(), { value: m[3] ?? m[4] ?? m[5] ?? "", quote });
-  }
-  return attrs;
-}
-
-const serializedWidth = (attrs: Map<string, { value: string }>): number | null => {
+const serializedWidth = (attrs: AttrMap): number | null => {
   const styleWidth = /(?:^|;)\s*width\s*:\s*(\d+(?:\.\d+)?)px/i.exec(attrs.get("style")?.value ?? "");
   if (styleWidth) return Number(styleWidth[1]);
   const w = attrs.get("width")?.value;
   if (w && /^\d+(\.\d+)?$/.test(w.trim())) return Number(w.trim());
   return null;
 };
-
-const escapeAttr = (v: string): string => v.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 
 /** Rewrite a single `<img>` tag, preserving attribute order and unknown attrs. */
 function annotateTag(tag: string, resolver: DimensionResolver, eager: boolean): string {
@@ -70,10 +56,7 @@ function annotateTag(tag: string, resolver: DimensionResolver, eager: boolean): 
     attrs.set("fetchpriority", { value: "high", quote: '"' });
   }
 
-  const rebuilt = [...attrs.entries()]
-    .map(([name, a]) => `${name}="${escapeAttr(a.value)}"`)
-    .join(" ");
-  return `<img ${rebuilt}>`;
+  return serializeTag("img", attrs);
 }
 
 /**
