@@ -6,12 +6,13 @@ import TagChip from './TagChip';
 
 type Props = {
   items: Post[];
+  initialTag?: string | null;
 };
 
 const normalize = (tag: string) => tag.trim().toLowerCase();
 
-const Feed: FC<Props> = ({ items = [] }) => {
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+const Feed: FC<Props> = ({ items = [], initialTag = null }) => {
+  const [activeTag, setActiveTag] = useState<string | null>(initialTag);
 
   const allTags = useMemo(() => {
     const seen = new Map<string, string>();

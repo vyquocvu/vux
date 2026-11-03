@@ -1,16 +1,16 @@
 
 import { Post } from 'interfaces/Post';
-import PostList from "components/Post/List";
+import Feed from 'components/Post/Feed';
 import { getPublishedPosts } from 'fetcher/post';
 import { NextPageContext } from 'next';
 
 type Props = {
   posts: Post[]
+  tag: string | null
 }
 
-const Index = (props: Props) => {
-  const { posts } = props;
-  return <PostList items={posts} />;
+const Index = ({ posts, tag }: Props) => {
+  return <Feed items={posts} initialTag={tag} />;
 };
 
 Index.getInitialProps = async (context: NextPageContext) => {
@@ -29,11 +29,12 @@ Index.getInitialProps = async (context: NextPageContext) => {
         createdAt: post.createdAt,
         thumbImage: post.thumbImage,
         isPublished: post.isPublished,
+        tags: post.tags || [],
       }
     });
-    return { posts: shapedPosts };
+    return { posts: shapedPosts, tag: tag ?? null };
   } catch (error) {
-    return {};
+    return { posts: [], tag: null };
   }
 }
 
