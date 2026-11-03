@@ -39,7 +39,7 @@ const SETTLE_MS = Number(process.env.SETTLE_MS ?? 4000);
 const INSTRUMENT = `
 window.__vux = {
   cls: 0, shifts: [], lcp: 0, lcpEl: "", inp: 0, fcp: 0, ttfb: 0,
-  imgs: [], images: [], longTasks: [], scripts: [], errs: []
+  imgs: [], images: [], longTasks: [], scripts: [], errs: [], gutter: null
 };
 (() => {
   try {
@@ -149,6 +149,14 @@ window.__vux = {
         neededW: Math.round(r.width * devicePixelRatio),
       };
     });
+    const shell = document.querySelector('[data-shell="content"]');
+    const box = (shell || document.body).getBoundingClientRect();
+    window.__vux.gutter = {
+      left: Math.round(box.left),
+      right: Math.round(window.innerWidth - box.right),
+      contentWidth: Math.round(box.width),
+      rail: !!document.querySelector("aside"),
+    };
     window.__vux.docHeight = Math.round(document.documentElement.scrollHeight);
   });
 })();
@@ -313,6 +321,7 @@ const main = async () => {
   console.log(`CLS   ${metrics.cls}   (${(metrics.shifts || []).length} shifts)`);
   console.log(`LCP   ${metrics.lcp}ms  element=${metrics.lcpEl}  size=${metrics.lcpBreakdown?.size}  breakdown=${JSON.stringify(metrics.lcpBreakdown)}`);
   console.log(`FCP   ${metrics.fcp}ms  TTFB=${metrics.ttfb}ms  docHeight=${metrics.docHeight}`);
+  console.log(`gutter ${JSON.stringify(metrics.gutter)}`);
   console.log(`media ${metrics.images.length} requests, ${(metrics.mediaBytes / 1024).toFixed(1)} KiB, last done ${metrics.lastImageDone}ms`);
   console.log(`      below-fold fetched: ${metrics.belowFoldRequests} (${(metrics.belowFoldBytes / 1024).toFixed(1)} KiB wasted if unread), max grey band ${metrics.greyBandMax}px`);
   for (const s of metrics.shifts || []) console.log(`  shift ${s.v} @${s.t}ms  ${s.nodes.join(",")}`);

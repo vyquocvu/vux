@@ -2,7 +2,6 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import Layout from 'components/Layout';
-import GitHubCorner from 'components/shared/GitHubCorner';
 import config from 'config';
 
 import { ToastProvider } from 'react-toast-notifications';
@@ -29,7 +28,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       </Head>
       <ThemeProvider>
         <div>
-          <GitHubCorner repoUrl={config.repo} />
           <ToastProvider>
             <NextNProgress />
             <Layout isPost={!!pageProps.post}>
