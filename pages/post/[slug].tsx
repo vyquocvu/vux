@@ -91,7 +91,7 @@ const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
       <div className={'post-page-view h-full flex flex-col'}>
         <div className="min-w-0 xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-12">
           <div className="post-reading-column ql-snow min-w-0">
-            <div className="w-full py-3 h-16 sticky top-0 z-20 -ml-6 bg-canvas dark:bg-surface-dark border-b border-hairline dark:border-surface-dark-elevated">
+            <div className="post-sticky-bar py-3 h-16 sticky top-0 z-20 bg-canvas dark:bg-surface-dark border-b border-hairline dark:border-surface-dark-elevated">
               <Link
                 href="/"
                 className="border border-hairline dark:border-surface-dark-elevated hover:border-primary dark:hover:border-primary rounded-full inline-flex items-center justify-center cursor-pointer w-9 h-9 transition-colors duration-200"

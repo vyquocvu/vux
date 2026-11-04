@@ -84,10 +84,20 @@ h1, h2, h3, h4 {
 }
 
 .post-page-view .post-reading-column {
+  --reading-pad: clamp(1rem, 3vw, 1.5rem);
   box-sizing: border-box;
   width: min(100%, 56rem);
   margin-inline: auto;
-  padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 0;
+  padding: 1.25rem var(--reading-pad) 0;
+}
+
+/* The bar paints a backdrop for text scrolling underneath, so it must cover
+   the column's fluid padding on both sides — a fixed -ml-6 only closed the
+   left gap and left the border-b visibly short on the right. */
+.post-page-view .post-sticky-bar {
+  box-sizing: border-box;
+  width: calc(100% + 2 * var(--reading-pad));
+  margin-left: calc(-1 * var(--reading-pad));
 }
 
 .post-page-view .post-title {

@@ -39,7 +39,7 @@ const SETTLE_MS = Number(process.env.SETTLE_MS ?? 4000);
 const INSTRUMENT = `
 window.__vux = {
   cls: 0, shifts: [], lcp: 0, lcpEl: "", inp: 0, fcp: 0, ttfb: 0,
-  imgs: [], images: [], longTasks: [], scripts: [], errs: [], gutter: null, anchor: null
+  imgs: [], images: [], longTasks: [], scripts: [], errs: [], gutter: null, anchor: null, sticky: null
 };
 (() => {
   try {
@@ -168,6 +168,18 @@ window.__vux = {
       ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
       : null;
     window.__vux.anchor = target ? Math.round(target.getBoundingClientRect().top) : null;
+    // The sticky bar has to paint across the reading column's fluid padding on
+    // both sides; a non-zero gap means its background/border stops short.
+    const bar = document.querySelector(".post-sticky-bar");
+    const col = document.querySelector(".post-reading-column");
+    if (bar && col) {
+      const b = bar.getBoundingClientRect();
+      const c = col.getBoundingClientRect();
+      window.__vux.sticky = {
+        left: Math.round(b.left - c.left),
+        right: Math.round(c.right - b.right),
+      };
+    }
   });
 })();
 `;
@@ -342,7 +354,7 @@ const main = async () => {
   console.log(`CLS   ${metrics.cls}   (${(metrics.shifts || []).length} shifts)`);
   console.log(`LCP   ${metrics.lcp}ms  element=${metrics.lcpEl}  size=${metrics.lcpBreakdown?.size}  breakdown=${JSON.stringify(metrics.lcpBreakdown)}`);
   console.log(`FCP   ${metrics.fcp}ms  TTFB=${metrics.ttfb}ms  docHeight=${metrics.docHeight}`);
-  console.log(`gutter ${JSON.stringify(metrics.gutter)}  anchor=${metrics.anchor}`);
+  console.log(`gutter ${JSON.stringify(metrics.gutter)}  anchor=${metrics.anchor}  sticky=${JSON.stringify(metrics.sticky)}`);
   console.log(`media ${metrics.images.length} requests, ${(metrics.mediaBytes / 1024).toFixed(1)} KiB, last done ${metrics.lastImageDone}ms`);
   console.log(`      below-fold fetched: ${metrics.belowFoldRequests} (${(metrics.belowFoldBytes / 1024).toFixed(1)} KiB wasted if unread), max grey band ${metrics.greyBandMax}px`);
   for (const s of metrics.shifts || []) console.log(`  shift ${s.v} @${s.t}ms  ${s.nodes.join(",")}`);
