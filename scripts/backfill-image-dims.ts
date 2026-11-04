@@ -7,7 +7,9 @@
  * Reads every post, rewrites `publish_content` and `draft_content` through
  * `utils/images/content.ts`, and writes back only the rows that actually
  * changed, so a second run is a no-op. Dimensions come from `seeds/images/`
- * when the file is tracked there and from R2 otherwise.
+ * when the file is tracked there and from R2 otherwise. A migration target
+ * that resolves nowhere is skipped, leaving the working legacy reference in
+ * place instead of rewriting it into a 404.
  */
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -79,10 +81,19 @@ const lookup = (src: string): Dimensions | null => {
   return dims;
 };
 
+// Repointing HTML at a WebP that was never uploaded rewrites a working raster
+// reference into a 404, so a pair is only honoured once its target resolves.
+const skipped: string[] = [];
+const pairs = Object.entries(migration).filter(([, to]) => {
+  if (lookup(`/images/${to}`)) return true;
+  skipped.push(to);
+  return false;
+});
+
 const remap = (html: string): { html: string; hits: number } => {
   let out = html;
   let hits = 0;
-  for (const [from, to] of Object.entries(migration)) {
+  for (const [from, to] of pairs) {
     const parts = out.split(`/images/${from}`);
     if (parts.length > 1) {
       hits += parts.length - 1;
@@ -100,6 +111,13 @@ interface Row {
 }
 
 const main = async () => {
+  if (skipped.length) {
+    console.log(
+      `[backfill] ${skipped.length}/${Object.keys(migration).length} migration ` +
+        `target(s) missing, left as-is: ${skipped.join(", ")}`,
+    );
+  }
+
   const rows = d1(
     "SELECT uid, thumb_image, publish_content, draft_content FROM posts;",
   )[0]?.results as Row[] | undefined;

@@ -14,6 +14,7 @@
     "db:migrate:remote": "wrangler d1 execute vux --remote --file=./seeds/schema.sql",
     "db:seed:remote": "node --experimental-strip-types scripts/seed.ts --remote",
     "db:verify:remote": "node --experimental-strip-types scripts/verify-remote.ts",
+    "images:verify": "node --experimental-strip-types scripts/verify-image-refs.ts",
     "r2:upload:local": "wrangler r2 object put --preview vux-media",
     "upload:images": "bash scripts/upload-images.sh",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
