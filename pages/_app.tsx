@@ -6,6 +6,7 @@ import config from 'config';
 
 import { ToastProvider } from 'react-toast-notifications';
 import { ThemeProvider } from 'contexts/ThemeContext';
+import { AuthUserInfoProvider } from 'utils/auth/hooks';
 
 import "styles/globals.css";
 import "styles/monokai-sublime.min.css";
@@ -27,14 +28,16 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <link rel="manifest" href="/site.webmanifest"></link>
       </Head>
       <ThemeProvider>
-        <div>
-          <ToastProvider>
-            <NextNProgress />
-            <Layout isPost={!!pageProps.post}>
-              <Component {...pageProps} />
-            </Layout>
-          </ToastProvider>
-        </div>
+        <AuthUserInfoProvider>
+          <div>
+            <ToastProvider>
+              <NextNProgress />
+              <Layout isPost={!!pageProps.post}>
+                <Component {...pageProps} />
+              </Layout>
+            </ToastProvider>
+          </div>
+        </AuthUserInfoProvider>
       </ThemeProvider>
     </>
   );

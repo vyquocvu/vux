@@ -12,8 +12,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { createAuthUserInfo } from "utils/auth/user";
-import type { AuthInterface } from "utils/auth/user";
+import { createAuthUser, createAuthUserInfo } from "utils/auth/user";
+import type { AuthInterface, AuthUser } from "utils/auth/user";
 
 export const AuthUserInfoContext = createContext<AuthInterface>(createAuthUserInfo());
 
@@ -24,9 +24,31 @@ export const AuthUserInfoProvider = ({
   initial,
 }: {
   children: ReactNode;
-  initial: AuthInterface;
+  initial?: AuthInterface;
 }) => {
-  const [info, setInfo] = useState<AuthInterface>(initial);
+  const [info, setInfo] = useState<AuthInterface>(() => initial ?? createAuthUserInfo());
+  useEffect(() => {
+    if (initial?.AuthUser) {
+      setInfo(initial);
+      return;
+    }
+    let cancelled = false;
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then((res) => (res.ok ? (res.json() as Promise<{ authUser?: AuthUser | null }>) : null))
+      .then((data) => {
+        if (cancelled || !data) return;
+        setInfo(
+          data.authUser
+            ? { AuthUser: createAuthUser(data.authUser), token: "session" }
+            : createAuthUserInfo(),
+        );
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [initial]);
+
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail as any;

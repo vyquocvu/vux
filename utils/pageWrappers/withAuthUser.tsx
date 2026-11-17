@@ -1,6 +1,6 @@
 import { NextPageContext } from "next";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { createAuthUserInfo, type AuthInterface } from "utils/auth/user";
+import { createAuthUser, createAuthUserInfo, type AuthInterface, type AuthUser } from "utils/auth/user";
 import { getSession } from "utils/auth/session";
 import { AuthUserInfoContext, AuthUserInfoProvider } from "utils/auth/hooks";
 
@@ -55,7 +55,19 @@ const withAuthUser = (ComposedComponent: any) => {
         AuthUserInfo = createAuthUserInfo();
       }
     } else {
-      AuthUserInfo = createAuthUserInfo();
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "same-origin" });
+        if (res.ok) {
+          const data = (await res.json()) as { authUser?: AuthUser | null };
+          AuthUserInfo = data.authUser
+            ? { AuthUser: createAuthUser(data.authUser), token: "session" }
+            : createAuthUserInfo();
+        } else {
+          AuthUserInfo = createAuthUserInfo();
+        }
+      } catch {
+        AuthUserInfo = createAuthUserInfo();
+      }
     }
 
     ctx.myCustomData = { AuthUserInfo };

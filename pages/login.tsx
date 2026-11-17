@@ -29,6 +29,7 @@ function Login() {
       });
       const data = (await res.json()) as { error?: string; authUser?: { isAdmin?: boolean } };
       if (!res.ok) throw new Error(data.error ?? "Login failed");
+      window.dispatchEvent(new CustomEvent("vux:auth", { detail: data.authUser ?? null }));
       router.push(data.authUser?.isAdmin ? "/admin" : "/");
     } catch (err: any) {
       setError(err.message ?? "Login failed");
