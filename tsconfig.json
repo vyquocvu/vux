@@ -29,7 +29,7 @@
     "types": ["@cloudflare/workers-types"],
     "plugins": [{ "name": "next" }]
   },
-  "exclude": ["node_modules", ".next", ".open-next", "wrangler", "scripts", "seeds"],
+  "exclude": ["node_modules", ".next", ".open-next", "wrangler", "scripts", "seeds", "tests", "playwright.config.ts"],
   "include": [
     "next-env.d.ts",
     "cloudflare-env.d.ts",

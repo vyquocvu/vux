@@ -43,6 +43,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20240821.0",
     "@opennextjs/cloudflare": "1.20.16",
+    "@playwright/test": "^1.65.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.7",
