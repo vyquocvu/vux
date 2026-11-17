@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPublishedPosts } from "fetcher/post";
+import { isNextProductionBuild } from "utils/common";
 
 const TagsPage = ({ tags }: { tags: { [key: string]: number } }) => {
   const entries = Object.entries(tags).sort(
@@ -29,6 +30,9 @@ const TagsPage = ({ tags }: { tags: { [key: string]: number } }) => {
 };
 
 export const getStaticProps = async () => {
+  if (isNextProductionBuild()) {
+    return { props: { tags: {} }, revalidate: 300 };
+  }
   const posts = await getPublishedPosts();
   const tags = {} as { [key: string]: number };
   posts.forEach((post) => {

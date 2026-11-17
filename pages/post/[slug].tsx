@@ -12,7 +12,7 @@ import PostToc from 'components/Post/PostToc';
 import ClapButton from 'components/Post/ClapButton';
 import CommentSection from 'components/Post/CommentSection';
 import { getLatestPosts, getPostById, getPublishedPosts } from "fetcher/post";
-import { friendlyStr, highlight, timeFromNow } from 'utils/common';
+import { friendlyStr, highlight, isNextProductionBuild, timeFromNow } from 'utils/common';
 import config from 'config';
 import Link from 'next/link';
 
@@ -104,6 +104,11 @@ const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
 }
 
 export async function getStaticPaths() {
+  if (isNextProductionBuild()) {
+    // CI has no seeded D1 at build time; blocking fallback prerenders each
+    // post on the Worker on first request.
+    return { paths: [], fallback: 'blocking' as const };
+  }
   const posts = await getPublishedPosts();
   const paths = posts.map((post) => {
     const slug = `${friendlyStr(post.title)}.${post.uid}`;

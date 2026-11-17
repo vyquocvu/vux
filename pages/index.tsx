@@ -2,6 +2,7 @@
 import { Post } from 'interfaces/Post';
 import Feed from 'components/Post/Feed';
 import { getPublishedPosts } from 'fetcher/post';
+import { isNextProductionBuild } from 'utils/common';
 
 type Props = {
   posts: Post[]
@@ -13,6 +14,10 @@ const Index = (props: Props) => {
 };
 
 export const getStaticProps = async () => {
+  if (isNextProductionBuild()) {
+    // Build-time D1 is empty in CI; ISR regenerates the feed on the Worker.
+    return { props: { posts: [] }, revalidate: 120 };
+  }
   const posts = await getPublishedPosts();
   const shapePosts = posts.map((post) => {
     return {

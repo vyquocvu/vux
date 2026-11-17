@@ -3,6 +3,12 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
+// During `next build`, page-data collection runs against the local (empty)
+// D1, not production data. SSG collectors must skip queries in this phase
+// and let ISR/blocking-fallback render on the Worker instead.
+export const isNextProductionBuild = (): boolean =>
+  process.env.NEXT_PHASE === 'phase-production-build';
+
 export const timeFromNow = (second: number): string =>
   (typeof second !== 'number') ? '' : dayjs.unix(second).fromNow();
 
