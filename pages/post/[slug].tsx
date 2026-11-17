@@ -11,7 +11,7 @@ import ReadingRail from 'components/Post/ReadingRail';
 import PostToc from 'components/Post/PostToc';
 import ClapButton from 'components/Post/ClapButton';
 import CommentSection from 'components/Post/CommentSection';
-import { getLatestPosts, getPostById, getPublishedPosts } from "fetcher/post";
+import { getLatestPosts, getPostById, getPublishedPostPaths } from "fetcher/post";
 import { friendlyStr, highlight, isNextProductionBuild, timeFromNow } from 'utils/common';
 import config from 'config';
 import Link from 'next/link';
@@ -109,7 +109,7 @@ export async function getStaticPaths() {
     // post on the Worker on first request.
     return { paths: [], fallback: 'blocking' as const };
   }
-  const posts = await getPublishedPosts();
+  const posts = await getPublishedPostPaths();
   const paths = posts.map((post) => {
     const slug = `${friendlyStr(post.title)}.${post.uid}`;
     return { params: { slug } };

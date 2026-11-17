@@ -2,7 +2,7 @@
 import { Post } from 'interfaces/Post';
 import Feed from 'components/Post/Feed';
 import { getPublishedPosts } from 'fetcher/post';
-import { NextPageContext } from 'next';
+import type { GetServerSideProps } from 'next';
 
 type Props = {
   posts: Post[]
@@ -13,8 +13,10 @@ const Index = ({ posts, tag }: Props) => {
   return <Feed items={posts} initialTag={tag} />;
 };
 
-Index.getInitialProps = async (context: NextPageContext) => {
-  const tag = context?.query?.tag as string | undefined;
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader("Cache-Control", "private, no-cache, no-store");
+  const rawTag = query?.tag;
+  const tag = Array.isArray(rawTag) ? rawTag[0] : rawTag;
   const posts = await getPublishedPosts();
   const filteredPosts = tag
     ? posts.filter((post) => post.tags.includes(tag))
@@ -31,7 +33,7 @@ Index.getInitialProps = async (context: NextPageContext) => {
       tags: post.tags || [],
     }
   });
-  return { posts: shapedPosts, tag: tag ?? null };
-}
+  return { props: { posts: shapedPosts, tag: tag ?? null } };
+};
 
 export default Index;
