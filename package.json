@@ -13,6 +13,8 @@
     "db:seed:local": "node --experimental-strip-types scripts/seed.ts",
     "db:migrate:remote": "wrangler d1 execute vux --remote --file=./seeds/schema.sql",
     "db:seed:remote": "node --experimental-strip-types scripts/seed.ts --remote",
+    "db:admin:local": "node --experimental-strip-types scripts/seed-admin.ts",
+    "db:admin:remote": "node --experimental-strip-types scripts/seed-admin.ts --remote",
     "db:verify:remote": "node --experimental-strip-types scripts/verify-remote.ts",
     "images:verify": "node --experimental-strip-types scripts/verify-image-refs.ts",
     "r2:upload:local": "wrangler r2 object put --preview vux-media",
@@ -39,6 +41,7 @@
     "sass": "^1.56.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20240821.0",
     "@opennextjs/cloudflare": "1.20.16",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -48,8 +51,7 @@
     "postcss": "^8.5.32",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.4.5",
-    "wrangler": "^4.157.0",
-    "@cloudflare/workers-types": "^5.20240821.0"
+    "wrangler": "^4.157.0"
   },
   "packageManager": "yarn@1.22.22",
   "resolutions": {
