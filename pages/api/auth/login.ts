@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const user = await getUserByEmail(env, email);
     // Always run PBKDF2 so a missing account is not faster than a wrong password.
-    const dummy = "pbkdf2$600000$00112233445566778899aabbccddeeff$00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    const dummy = "pbkdf2$100000$00112233445566778899aabbccddeeff$00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
     const ok = await verifyPassword(password, user?.password_hash ?? dummy);
     if (!user || !ok) return res.status(401).json({ error: "Invalid credentials" });
 

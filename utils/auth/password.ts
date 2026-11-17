@@ -2,12 +2,16 @@
  * Password hashing on top of Web Crypto PBKDF2.
  *
  * Why not bcrypt? `bcrypt-ts` is pure JS but pulls in `bcrypt` as a peer dep
- * in some setups. PBKDF2 with 600k iterations of HMAC-SHA-256 meets OWASP's
- * 2024 recommendation and works everywhere.
+ * in some setups. PBKDF2 with HMAC-SHA-256 works everywhere.
+ *
+ * Iteration count is capped at 100k because that is the hard ceiling in
+ * Cloudflare Workers' WebCrypto (`deriveBits` throws NotSupportedError above
+ * it), which would break every login.
  *
  * Stored format: `pbkdf2$<iterations>$<saltHex>$<hashHex>`.
  */
-const ITERATIONS = 600_000;
+const ITERATIONS = 100_000;
+const MAX_SUPPORTED_ITERATIONS = 100_000;
 const KEY_BITS = 256;
 
 const enc = new TextEncoder();
@@ -54,7 +58,9 @@ export async function verifyPassword(password: string, stored: string): Promise<
   const parts = stored.split("$");
   if (parts.length !== 4 || parts[0] !== "pbkdf2") return false;
   const iterations = parseInt(parts[1], 10);
-  if (!Number.isFinite(iterations) || iterations < 100_000) return false;
+  // Legacy 600k hashes cannot be verified on Workers (WebCrypto throws above
+  // 100k); reject them cleanly so the caller sees "Invalid credentials".
+  if (!Number.isFinite(iterations) || iterations < 100_000 || iterations > MAX_SUPPORTED_ITERATIONS) return false;
   const salt = fromHex(parts[2]);
   const expected = fromHex(parts[3]);
   const bits = new Uint8Array(await deriveBits(password, salt, iterations));
