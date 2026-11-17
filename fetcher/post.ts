@@ -55,20 +55,15 @@ async function loadTags(env: any, postUid: string): Promise<string[]> {
 }
 
 export const getPostById = async (uid: string, isEdit = false): Promise<Post | Record<string, never>> => {
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    const row = await env.DB
-      .prepare("SELECT * FROM posts WHERE uid = ?1 LIMIT 1")
-      .bind(uid)
-      .first<PostRow>();
-    if (!row) return {};
-    const post = rowToPost(row, { includeDrafts: isEdit });
-    post.tags = await loadTags(env, row.uid);
-    return post;
-  } catch (error) {
-    console.error("getPostById failed", error);
-    return {};
-  }
+  const { env } = await getCloudflareContext({ async: true });
+  const row = await env.DB
+    .prepare("SELECT * FROM posts WHERE uid = ?1 LIMIT 1")
+    .bind(uid)
+    .first<PostRow>();
+  if (!row) return {};
+  const post = rowToPost(row, { includeDrafts: isEdit });
+  post.tags = await loadTags(env, row.uid);
+  return post;
 };
 
 export const setPostById = async (uid: string, postData: Post): Promise<void> => {
@@ -125,25 +120,35 @@ export const setPostById = async (uid: string, postData: Post): Promise<void> =>
 };
 
 export const getPublishedPosts = async (): Promise<Post[]> => {
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    const res = await env.DB
-      .prepare(
-        "SELECT * FROM posts WHERE is_published = 1 ORDER BY created_at DESC, position ASC",
-      )
-      .all<PostRow>();
-    const rows = res.results ?? [];
-    const posts: Post[] = [];
-    for (const row of rows) {
-      const post = rowToPost(row);
-      post.tags = await loadTags(env, row.uid);
-      posts.push(post);
-    }
-    return posts;
-  } catch (error) {
-    console.error("getPublishedPosts failed", error);
-    return [];
+  const { env } = await getCloudflareContext({ async: true });
+  const res = await env.DB
+    .prepare(
+      "SELECT * FROM posts WHERE is_published = 1 ORDER BY created_at DESC, position ASC",
+    )
+    .all<PostRow>();
+  const rows = res.results ?? [];
+  const posts: Post[] = [];
+  for (const row of rows) {
+    const post = rowToPost(row);
+    post.tags = await loadTags(env, row.uid);
+    posts.push(post);
   }
+  return posts;
+};
+
+export const getAllPostsForAdmin = async (): Promise<Post[]> => {
+  const { env } = await getCloudflareContext({ async: true });
+  const res = await env.DB
+    .prepare("SELECT * FROM posts ORDER BY updated_at DESC, position ASC")
+    .all<PostRow>();
+  const rows = res.results ?? [];
+  const posts: Post[] = [];
+  for (const row of rows) {
+    const post = rowToPost(row, { includeDrafts: true });
+    post.tags = await loadTags(env, row.uid);
+    posts.push(post);
+  }
+  return posts;
 };
 
 export const getPostsByUserId = async (userId: string): Promise<Post[]> => {

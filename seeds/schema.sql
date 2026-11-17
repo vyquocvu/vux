@@ -51,3 +51,34 @@ CREATE TABLE IF NOT EXISTS tags (
 );
 
 CREATE INDEX IF NOT EXISTS tags_tag_idx ON tags(tag);
+
+CREATE TABLE IF NOT EXISTS claps (
+  post_uid TEXT PRIMARY KEY REFERENCES posts(uid) ON DELETE CASCADE,
+  count    INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+  id          TEXT PRIMARY KEY,
+  post_uid    TEXT NOT NULL REFERENCES posts(uid) ON DELETE CASCADE,
+  author_id   TEXT REFERENCES users(id) ON DELETE SET NULL,
+  author_name TEXT NOT NULL,
+  content     TEXT NOT NULL,
+  created_at  INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS comments_post_idx ON comments(post_uid, created_at);
+
+-- Per-client clap cap. ip_hash is a truncated SHA-256, not the raw address.
+CREATE TABLE IF NOT EXISTS clap_limits (
+  post_uid TEXT NOT NULL,
+  ip_hash  TEXT NOT NULL,
+  count    INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (post_uid, ip_hash)
+);
+
+-- Sliding-window counters for login and signup.
+CREATE TABLE IF NOT EXISTS auth_attempts (
+  bucket       TEXT PRIMARY KEY,
+  count        INTEGER NOT NULL,
+  window_start INTEGER NOT NULL
+);

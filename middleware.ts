@@ -13,6 +13,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { normalizeMediaKey } from "utils/mediaKey";
 
 const ALLOWED_PREFIXES = ["images/", "audios/"];
 
@@ -42,6 +43,7 @@ const baseHeaders = (ct: string, etag?: string | null) => {
     "Content-Type": ct,
     "Cache-Control": IMMUTABLE_CACHE,
     "Accept-Ranges": "bytes",
+    "X-Content-Type-Options": "nosniff",
   });
   if (etag) headers.set("ETag", etag);
   return headers;
@@ -73,6 +75,9 @@ const parseRange = (header: string, size: number): ByteRange | null => {
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/^\//, "");
+  if (!normalizeMediaKey(path)) {
+    return new NextResponse("Bad request", { status: 400 });
+  }
 
   // Media: serve from R2 without buffering the object into the isolate. A
   // buffered body costs memory proportional to the asset and delays first

@@ -29,8 +29,8 @@ const PostPage = (props: PostPageProps) => {
   const { addToast } = useToasts();
 
   useEffect(() => {
-    if (!authUser) {
-      router.push("/login");
+    if (!authUser?.isAdmin) {
+      router.push(authUser ? "/" : "/login");
     }
   }, [authUser, router]);
 
@@ -62,9 +62,9 @@ const PostPage = (props: PostPageProps) => {
 }
 
 PostPage.getInitialProps = (ctx: any) => {
-  const token = get(ctx, 'myCustomData.AuthUserInfo.token');
-  if (!token && ctx.res) {
-    ctx.res.writeHead(302, { Location: '/login' }).end();
+  const info = get(ctx, "myCustomData.AuthUserInfo");
+  if (!info?.AuthUser?.isAdmin && ctx.res) {
+    ctx.res.writeHead(302, { Location: info?.token ? "/" : "/login" }).end();
   }
   return {};
 }

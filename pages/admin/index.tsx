@@ -6,7 +6,6 @@ import Loading from 'components/shared/Loading';
 
 import { Post } from "interfaces/Post";
 import { AuthInterface } from "utils/auth/user";
-import { getPostsByUserId } from 'fetcher/post';
 import withAuthUser from "utils/pageWrappers/withAuthUser";
 import withAuthUserInfo from "utils/pageWrappers/withAuthUserInfo";
 
@@ -24,15 +23,20 @@ const AdminPage = (props: Props) => {
 
   const fetchingPosts = useCallback(async () => {
     try {
-      const docs : [Post] = await getPostsByUserId(authUser?.id) as any;
-      setPosts(docs);
+      const res = await fetch("/api/admin/posts", { credentials: "same-origin" });
+      if (!res.ok) throw new Error("Fetch failed");
+      const data = (await res.json()) as { posts?: Post[] };
+      setPosts(data.posts ?? []);
       setIsLoaded(true);
-    } catch (error) {}
-  }, [authUser?.id]);
+    } catch {
+      setPosts([]);
+      setIsLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !authUser) {
-      router.push("/login");
+    if (typeof window !== 'undefined' && !authUser?.isAdmin) {
+      router.push(authUser ? "/" : "/login");
     } else {
       fetchingPosts();
     }
@@ -47,8 +51,10 @@ const AdminPage = (props: Props) => {
 }
 
 AdminPage.getInitialProps = (ctx: any) => {
-  const token = get(ctx, 'myCustomData.AuthUserInfo.token');
-  if (!token && ctx.res) ctx.res.writeHead(302, { Location: '/login' }).end();
+  const info = get(ctx, "myCustomData.AuthUserInfo");
+  if (!info?.AuthUser?.isAdmin && ctx.res) {
+    ctx.res.writeHead(302, { Location: info?.token ? "/" : "/login" }).end();
+  }
   return {};
 }
 

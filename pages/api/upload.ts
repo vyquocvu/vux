@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getSession } from "utils/auth/session";
 import { readDimensions } from "utils/images/dims.ts";
+import { normalizeMediaKey } from "utils/mediaKey";
 
 
 const MAX_SIZE = 25 * 1024 * 1024; // 25 MiB
@@ -14,7 +15,6 @@ const contentTypeForExt = (ext: string): string => {
     case "png": return "image/png";
     case "jpg":
     case "jpeg": return "image/jpeg";
-    case "svg": return "image/svg+xml";
     case "avif": return "image/avif";
     case "gif": return "image/gif";
     case "mp3": return "audio/mpeg";
@@ -45,9 +45,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const path = (req.query.path as string | string[] | undefined);
-    const key = Array.isArray(path) ? path.join("/") : (path ?? "");
-    if (!ALLOWED_PREFIXES.some((p) => key.startsWith(p))) {
-      return res.status(400).json({ error: "Invalid path prefix" });
+    const rawKey = Array.isArray(path) ? path.join("/") : (path ?? "");
+    const key = normalizeMediaKey(rawKey);
+    if (!key || !ALLOWED_PREFIXES.some((p) => key.startsWith(p))) {
+      return res.status(400).json({ error: "Invalid path" });
+    }
+    const ext = extFor(key);
+    const mime = contentTypeForExt(ext);
+    if (mime === "application/octet-stream" || ext === "svg" || ext === "html" || ext === "htm") {
+      return res.status(400).json({ error: "File type not allowed" });
     }
 
     // OpenNext gives us access to the raw Web Request via `req.request`.
@@ -60,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const file = body.file;
         if (file && file.data) {
           await env.MEDIA.put(key, file.data, {
-            httpMetadata: { contentType: contentTypeForExt(extFor(key)) },
+            httpMetadata: { contentType: mime },
           });
           return res.status(200).json({
             url: `https://${env.NEXT_PUBLIC_SITE_URL.replace(/^https?:\/\//, "")}/${key}`,
@@ -76,7 +82,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!(file instanceof File)) return res.status(400).json({ error: "Missing file" });
     if (file.size > MAX_SIZE) return res.status(413).json({ error: "File too large" });
 
-    const mime = file.type || contentTypeForExt(extFor(key));
     const body = await file.arrayBuffer();
     await env.MEDIA.put(key, body, {
       httpMetadata: { contentType: mime },

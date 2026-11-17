@@ -29,24 +29,19 @@ const TagsPage = ({ tags }: { tags: { [key: string]: number } }) => {
 };
 
 export const getStaticProps = async () => {
-  try {
-    const posts = await getPublishedPosts();
-    const tags = {} as { [key: string]: number };
-    posts.forEach((post) => {
-      post.tags.forEach((tag: string) => {
-        tags[tag] = (tags[tag] ?? 0) + 1;
-      });
+  const posts = await getPublishedPosts();
+  const tags = {} as { [key: string]: number };
+  posts.forEach((post) => {
+    post.tags.forEach((tag: string) => {
+      tags[tag] = (tags[tag] ?? 0) + 1;
     });
-    return {
-      props: { tags },
-      // The tag list is computed from D1, so cache the page for 5 min
-      // at the edge. Background refresh keeps it warm during content
-      // updates.
-      revalidate: 300,
-    };
-  } catch {
-    return { props: { tags: {} }, revalidate: 60 };
-  }
+  });
+  return {
+    props: { tags },
+    // The tag list is computed from D1, so cache the page for 5 min
+    // at the edge. A thrown error keeps the previous page.
+    revalidate: 300,
+  };
 };
 
 export default TagsPage;

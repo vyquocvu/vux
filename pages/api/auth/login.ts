@@ -3,6 +3,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getUserByEmail } from "utils/auth/d1";
 import { verifyPassword } from "utils/auth/password";
 import { login as writeSession } from "utils/auth/session";
+import { clearRateLimit, clientHash, isRateLimited, requestIp } from "utils/auth/rate";
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,18 +19,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   try {
     const { env } = await getCloudflareContext({ async: true });
+    const bucket = `login:${await clientHash(env.SESSION_PASSWORD, requestIp(req))}`;
+    if (await isRateLimited(env, bucket, 8, 15 * 60)) {
+      return res.status(429).json({ error: "Too many attempts. Try again later." });
+    }
+
     const user = await getUserByEmail(env, email);
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    // Always run PBKDF2 so a missing account is not faster than a wrong password.
+    const dummy = "pbkdf2$600000$00112233445566778899aabbccddeeff$00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    const ok = await verifyPassword(password, user?.password_hash ?? dummy);
+    if (!user || !ok) return res.status(401).json({ error: "Invalid credentials" });
 
-    const ok = await verifyPassword(password, user.password_hash);
-    if (!ok) return res.status(401).json({ error: "Invalid credentials" });
-
-    await writeSession(req, res, env, {
-      userId: user.id,
-      email: user.email,
-      isAdmin: user.is_admin === 1,
-      displayName: user.display_name,
-    });
+    await clearRateLimit(env, bucket);
+    await writeSession(req, res, env, user.id);
 
     return res.status(200).json({
       status: true,

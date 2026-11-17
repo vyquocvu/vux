@@ -2,9 +2,6 @@ import React from 'react';
 import Head from 'next/head';
 import Image from "next/image";
 import Script from 'next/script';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-
 
 import { Post } from 'interfaces/Post';
 import type { LatestPost } from 'interfaces/Post';
@@ -12,26 +9,12 @@ import type { TocEntry } from 'utils/toc';
 import { buildToc } from 'utils/toc';
 import ReadingRail from 'components/Post/ReadingRail';
 import PostToc from 'components/Post/PostToc';
+import ClapButton from 'components/Post/ClapButton';
+import CommentSection from 'components/Post/CommentSection';
 import { getLatestPosts, getPostById, getPublishedPosts } from "fetcher/post";
 import { friendlyStr, highlight, timeFromNow } from 'utils/common';
 import config from 'config';
 import Link from 'next/link';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'applause-button': any;
-    }
-  }
-}
-
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      'applause-button': any;
-    }
-  }
-}
 
 type PostProps = {
   post: Post;
@@ -41,16 +24,10 @@ type PostProps = {
 }
 
 const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
-  const [pathname, setPathname] = useState<string>('');
-  const router = useRouter();
-
-  useEffect(() => {
-    setPathname(location.pathname)
-  }, []);
-
   if (!post?.uid) return (
     <div className="text-center font-body text-muted dark:text-muted-soft py-12">Post not found</div>
   );
+  const canonical = `${config.host.replace(/\/$/, "")}/post/${friendlyStr(post.title)}.${post.uid}`;
   return (
     <>
       <Head>
@@ -60,13 +37,13 @@ const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
         <meta name="keywords" content={config.keywords +", "+ post.tags?.join(",")} />
         <meta name="author" content="Vy Quốc Vũ" />
         {/* Open Graph / Facebook  */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={config.host} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonical} />
+        <link rel="canonical" href={canonical} />
         <meta property="og:title" content={post.title}/>
         <meta property="og:description" content={post.thumbText}/>
         <meta property="og:image" content={post.thumbImage || config.avatar}/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-        <link rel="stylesheet" href="https://unpkg.com/applause-button/dist/applause-button.css" />
         <style>{`
           .ql-editor audio,
           .custom-audio-player {
@@ -83,7 +60,6 @@ const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
           }
         `}</style>
       </Head>
-      <Script src="https://unpkg.com/applause-button/dist/applause-button.js" />
       <Script
         src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
         onLoad={highlight}
@@ -120,23 +96,8 @@ const PostPage = ({ post, toc = [], minutes = 1, latest = [] }: PostProps) => {
             </aside>
           )}
         </div>
-        <div className="post-applause flex justify-end max-w-4xl w-full mx-auto px-8 py-2">
-          <applause-button url={pathname} multiclap="true" style={{ width: 48, height: 48 }} />
-        </div>
-        <hr className='mt-12 ml-4 w-full border-hairline dark:border-surface-dark-elevated'/>
-        <h2 className='font-display text-2xl font-normal m-4 text-ink dark:text-on-dark tracking-tight'>Comments</h2>
-
-        <div
-          id="cusdis_thread"
-          className="ml-3 mt-3 w-full"
-          data-page-id={post.uid}
-          data-page-url={pathname}
-          data-page-title={post.title}
-          data-host="https://cusdis.com"
-          data-app-id="e2a6f339-0f07-48c1-8a25-b6ef4820ffa8"
-        >
-        </div>
-        <Script async src="https://cusdis.com/js/cusdis.es.js" />
+        <ClapButton postUid={post.uid} />
+        <CommentSection postUid={post.uid} />
       </div>
     </>
   )
@@ -156,29 +117,26 @@ export async function getStaticPaths() {
 
 // Run on server side
 export const getStaticProps = async ({ params }: any) => {
-  try {
-    if (typeof params.slug != 'string') return { props: {} };
-    const id = params.slug.split(".").pop() || "";
-    const post = await getPostById(id);
-    const { html, toc, minutes } = buildToc((post as Post).publishContent || '');
-    const latest = await getLatestPosts(3, (post as Post).uid ?? '');
-    return {
-      props: {
-        post: { ...post, publishContent: html },
-        toc,
-        minutes,
-        latest,
-      },
-      // Post pages are read-mostly; cache at the edge for 10 minutes,
-      // serve stale up to 24 h. Edits made via /admin will land within
-      // the 10-min revalidation window.
-      revalidate: 600,
-    };
-  } catch (error) {
-    return {
-      props: {}
-    };
+  if (typeof params?.slug != 'string') return { notFound: true };
+  const id = params.slug.split(".").pop() || "";
+  const post = await getPostById(id) as Post;
+  if (!post?.uid || !post.isPublished) {
+    return { notFound: true, revalidate: 60 };
   }
+  const { html, toc, minutes } = buildToc(post.publishContent || '');
+  const latest = await getLatestPosts(3, post.uid);
+  return {
+    props: {
+      post: { ...post, publishContent: html },
+      toc,
+      minutes,
+      latest,
+    },
+    // Post pages are read-mostly; cache at the edge for 10 minutes,
+    // serve stale up to 24 h. A thrown D1 error keeps the previous page
+    // instead of caching an empty one. Edits land within this window.
+    revalidate: 600,
+  };
 }
 
 export default PostPage;

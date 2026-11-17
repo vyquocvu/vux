@@ -27,9 +27,9 @@ function Login() {
         credentials: "same-origin",
         body: JSON.stringify(inputs),
       });
-      const data = (await res.json()) as { error?: string };
+      const data = (await res.json()) as { error?: string; authUser?: { isAdmin?: boolean } };
       if (!res.ok) throw new Error(data.error ?? "Login failed");
-      router.push("/admin");
+      router.push(data.authUser?.isAdmin ? "/admin" : "/");
     } catch (err: any) {
       setError(err.message ?? "Login failed");
       setSubmitting(false);
@@ -46,11 +46,11 @@ function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-medium border border-neutral-200">
-      <h1 className="font-display text-3xl font-normal text-ink mb-6 text-center tracking-tight">Log In</h1>
+    <div className="max-w-md mx-auto mt-12 p-8 bg-canvas dark:bg-surface-dark rounded-xl border border-hairline dark:border-surface-dark-elevated">
+      <h1 className="font-display text-3xl font-normal text-ink dark:text-on-dark mb-6 text-center tracking-tight">Log In</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 mb-1">Email:</label>
+          <label htmlFor="email" className="block text-sm font-semibold text-ink dark:text-on-dark mb-1">Email:</label>
           <input
             type="email"
             id="email"
@@ -62,7 +62,7 @@ function Login() {
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 mb-1">Password:</label>
+          <label htmlFor="password" className="block text-sm font-semibold text-ink dark:text-on-dark mb-1">Password:</label>
           <input
             type="password"
             id="password"
@@ -83,13 +83,13 @@ function Login() {
           <button
             type="button"
             onClick={handleLogout}
-            className="text-sm font-medium text-neutral-500 hover:text-neutral-700"
+            className="text-sm font-medium text-muted dark:text-muted-soft hover:text-ink dark:hover:text-on-dark"
           >
             Sign out
           </button>
         </div>
       </form>
-      <p className="text-center text-sm text-neutral-500 mt-6">
+      <p className="text-center text-sm text-muted dark:text-muted-soft mt-6">
         No account? <Link href="/signup" className="text-primary hover:underline">Sign up</Link>
       </p>
     </div>
@@ -97,9 +97,10 @@ function Login() {
 }
 
 Login.getInitialProps = (ctx: any) => {
-  const token = get(ctx, "myCustomData.AuthUserInfo.token");
-  if (token && ctx.res) {
-    ctx.res.writeHead(302, { Location: "/admin" }).end();
+  const info = get(ctx, "myCustomData.AuthUserInfo");
+  if (info?.token && ctx.res) {
+    const dest = info.AuthUser?.isAdmin ? "/admin" : "/";
+    ctx.res.writeHead(302, { Location: dest }).end();
   }
   return {};
 };

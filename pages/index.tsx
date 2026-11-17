@@ -13,38 +13,29 @@ const Index = (props: Props) => {
 };
 
 export const getStaticProps = async () => {
-  try {
-    const posts = await getPublishedPosts();
-    const shapePosts = posts.map((post) => {
-      return {
-        uid: post.uid,
-        title: post.title,
-        updatedAt: post.updatedAt,
-        thumbText: post.thumbText,
-        createdAt: post.createdAt,
-        thumbImage: post.thumbImage,
-        isPublished: post.isPublished,
-        tags: post.tags || [],
-      }
-    });
+  const posts = await getPublishedPosts();
+  const shapePosts = posts.map((post) => {
+    return {
+      uid: post.uid,
+      title: post.title,
+      updatedAt: post.updatedAt,
+      thumbText: post.thumbText,
+      createdAt: post.createdAt,
+      thumbImage: post.thumbImage,
+      isPublished: post.isPublished,
+      tags: post.tags || [],
+    }
+  });
 
-    return {
-      props: {
-        posts: shapePosts
-      },
-      // Cache the homepage at the CDN edge for 2 min; serve stale for up
-      // to 24 h while revalidating. Re-renders fetch D1 fresh and refresh
-      // the edge entry.
-      revalidate: 120,
-    };
-  } catch (error) {
-    return {
-      props: {
-        posts: [],
-      }
-    };
-  }
-  
+  return {
+    props: {
+      posts: shapePosts
+    },
+    // Cache the homepage at the CDN edge for 2 min; serve stale for up
+    // to 24 h while revalidating. A thrown error keeps the previous page
+    // instead of caching an empty feed.
+    revalidate: 120,
+  };
 }
 
 export default Index;

@@ -27,6 +27,7 @@
     "@types/react-toast-notifications": "^2.4.0",
     "dayjs": "^1.8.32",
     "iron-session": "^8.0.4",
+    "iron-webcrypto": "^1.2.1",
     "next": "15.5.29",
     "nprogress": "^0.2.0",
     "react": "^19.2.0",

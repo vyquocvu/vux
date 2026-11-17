@@ -30,9 +30,9 @@ function Signup() {
         credentials: "same-origin",
         body: JSON.stringify(inputs),
       });
-      const data = (await res.json()) as { error?: string };
+      const data = (await res.json()) as { error?: string; authUser?: { isAdmin?: boolean } };
       if (!res.ok) throw new Error(data.error ?? "Sign-up failed");
-      router.push("/admin");
+      router.push(data.authUser?.isAdmin ? "/admin" : "/");
     } catch (err: any) {
       setError(err.message ?? "Sign-up failed");
       setSubmitting(false);
@@ -44,22 +44,23 @@ function Signup() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-medium border border-neutral-200">
-      <h1 className="font-display text-3xl font-normal text-ink mb-6 text-center tracking-tight">Sign Up</h1>
+    <div className="max-w-md mx-auto mt-12 p-8 bg-canvas dark:bg-surface-dark rounded-xl border border-hairline dark:border-surface-dark-elevated">
+      <h1 className="font-display text-3xl font-normal text-ink dark:text-on-dark mb-6 text-center tracking-tight">Sign Up</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="displayName" className="block text-sm font-semibold text-neutral-700 mb-1">Display name:</label>
+          <label htmlFor="displayName" className="block text-sm font-semibold text-ink dark:text-on-dark mb-1">Display name:</label>
           <input
             type="text"
             id="displayName"
             name="displayName"
             value={inputs.displayName}
             onChange={handleInputChange}
+            maxLength={40}
             className="w-full"
           />
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 mb-1">Email:</label>
+          <label htmlFor="email" className="block text-sm font-semibold text-ink dark:text-on-dark mb-1">Email:</label>
           <input
             type="email"
             id="email"
@@ -71,7 +72,7 @@ function Signup() {
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 mb-1">Password:</label>
+          <label htmlFor="password" className="block text-sm font-semibold text-ink dark:text-on-dark mb-1">Password:</label>
           <input
             type="password"
             id="password"
@@ -82,7 +83,7 @@ function Signup() {
             minLength={8}
             className="w-full"
           />
-          <p className="text-xs text-neutral-500 mt-1">At least 8 characters.</p>
+          <p className="text-xs text-muted dark:text-muted-soft mt-1">At least 8 characters.</p>
         </div>
         {error && (
           <p className="text-sm text-error font-medium" role="alert">{error}</p>
@@ -93,7 +94,7 @@ function Signup() {
           </button>
         </div>
       </form>
-      <p className="text-center text-sm text-neutral-500 mt-6">
+      <p className="text-center text-sm text-muted dark:text-muted-soft mt-6">
         Already have an account? <Link href="/login" className="text-primary hover:underline">Log in</Link>
       </p>
     </div>
@@ -101,9 +102,10 @@ function Signup() {
 }
 
 Signup.getInitialProps = (ctx: any) => {
-  const token = get(ctx, "myCustomData.AuthUserInfo.token");
-  if (token && ctx.res) {
-    ctx.res.writeHead(302, { Location: "/admin" }).end();
+  const info = get(ctx, "myCustomData.AuthUserInfo");
+  if (info?.token && ctx.res) {
+    const dest = info.AuthUser?.isAdmin ? "/admin" : "/";
+    ctx.res.writeHead(302, { Location: dest }).end();
   }
   return {};
 };

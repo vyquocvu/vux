@@ -20,8 +20,23 @@ export interface SessionData {
   displayName?: string | null;
 }
 
+type SessionEnv = {
+  DB: D1Database;
+  SESSION_PASSWORD: string;
+  NEXT_PUBLIC_SITE_URL: string;
+};
+
+interface SessionRow {
+  user_id: string;
+  email: string;
+  display_name: string | null;
+  is_admin: number;
+  expires_at: number;
+}
+
 const COOKIE_NAME = "vux_session";
 const TTL_SECONDS = 60 * 60 * 24 * 7;
+const MAX_SESSIONS_PER_USER = 5;
 
 const isProd = (env: { NEXT_PUBLIC_SITE_URL: string }): boolean =>
   env.NEXT_PUBLIC_SITE_URL.startsWith("https://");
@@ -76,59 +91,129 @@ const writeResponseCookie = (
 
 const passwordFor = (env: { SESSION_PASSWORD: string }): string => env.SESSION_PASSWORD;
 
+const sealSid = async (env: SessionEnv, sid: string): Promise<string> =>
+  ironSeal(crypto as any, JSON.stringify({ sid }), passwordFor(env), {
+    ...ironDefaults,
+    ttl: TTL_SECONDS * 1000,
+  });
+
+const unsealSid = async (env: SessionEnv, token: string): Promise<string | null> => {
+  const sealed = await ironUnseal(crypto as any, token, passwordFor(env), ironDefaults);
+  const parsed = typeof sealed === "string" ? JSON.parse(sealed) : sealed;
+  const sid = parsed && typeof parsed === "object" ? (parsed as { sid?: unknown }).sid : null;
+  return typeof sid === "string" && sid ? sid : null;
+};
+
+/**
+ * Cookie holds only a session id. Role and display name are read from D1 on
+ * each request, so demoting a user or deleting the row takes effect immediately.
+ * Cookies sealed with the old user payload (no `sid`) are dropped.
+ */
 export async function readSession(
   req: IncomingMessage | Request,
   res: ServerResponse | Response,
-  env: { SESSION_PASSWORD: string; NEXT_PUBLIC_SITE_URL: string },
+  env: SessionEnv,
 ): Promise<SessionData> {
   const token = readRequestCookie(req);
   if (!token) return {};
+  let sid: string | null = null;
   try {
-    const sealed = await ironUnseal(crypto as any, token, passwordFor(env), ironDefaults);
-    const parsed = typeof sealed === "string" ? JSON.parse(sealed) : (sealed as SessionData);
-    return parsed ?? {};
+    sid = await unsealSid(env, token);
   } catch {
-    // Bad password or tampered cookie — clear it so the browser drops it.
     writeResponseCookie(res, cookieFor(env, "", { clear: true }));
     return {};
   }
+  if (!sid) {
+    writeResponseCookie(res, cookieFor(env, "", { clear: true }));
+    return {};
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const row = await env.DB
+    .prepare(
+      `SELECT s.user_id, s.expires_at, u.email, u.display_name, u.is_admin
+       FROM sessions s
+       JOIN users u ON u.id = s.user_id
+       WHERE s.id = ?1
+       LIMIT 1`,
+    )
+    .bind(sid)
+    .first<SessionRow>();
+
+  if (!row || row.expires_at <= now) {
+    await env.DB.prepare("DELETE FROM sessions WHERE id = ?1").bind(sid).run();
+    writeResponseCookie(res, cookieFor(env, "", { clear: true }));
+    return {};
+  }
+
+  return {
+    userId: row.user_id,
+    email: row.email,
+    isAdmin: row.is_admin === 1,
+    displayName: row.display_name,
+  };
 }
 
 export async function writeSession(
   req: IncomingMessage | Request,
   res: ServerResponse | Response,
-  env: { SESSION_PASSWORD: string; NEXT_PUBLIC_SITE_URL: string },
-  data: SessionData,
+  env: SessionEnv,
+  userId: string,
 ): Promise<void> {
   void req;
-  const sealed = await ironSeal(crypto as any, JSON.stringify(data), passwordFor(env), {
-    ...ironDefaults,
-    ttl: TTL_SECONDS * 1000,
-  });
+  const sid = crypto.randomUUID();
+  const now = Math.floor(Date.now() / 1000);
+  await env.DB.prepare("DELETE FROM sessions WHERE expires_at <= ?1").bind(now).run();
+  const existing = await env.DB
+    .prepare("SELECT id FROM sessions WHERE user_id = ?1 ORDER BY created_at ASC")
+    .bind(userId)
+    .all<{ id: string }>();
+  const rows = existing.results ?? [];
+  const drop = rows.length - (MAX_SESSIONS_PER_USER - 1);
+  if (drop > 0) {
+    for (let i = 0; i < drop; i++) {
+      await env.DB.prepare("DELETE FROM sessions WHERE id = ?1").bind(rows[i].id).run();
+    }
+  }
+  await env.DB
+    .prepare(
+      `INSERT INTO sessions (id, user_id, expires_at, created_at)
+       VALUES (?1, ?2, ?3, ?4)`,
+    )
+    .bind(sid, userId, now + TTL_SECONDS, now)
+    .run();
+  const sealed = await sealSid(env, sid);
   writeResponseCookie(res, cookieFor(env, sealed, { maxAge: TTL_SECONDS }));
 }
 
 export async function clearSession(
   req: IncomingMessage | Request,
   res: ServerResponse | Response,
-  env: { NEXT_PUBLIC_SITE_URL: string; SESSION_PASSWORD: string },
+  env: SessionEnv,
 ): Promise<void> {
-  void req;
+  const token = readRequestCookie(req);
+  if (token) {
+    try {
+      const sid = await unsealSid(env, token);
+      if (sid) await env.DB.prepare("DELETE FROM sessions WHERE id = ?1").bind(sid).run();
+    } catch {
+      // Cookie was already unusable; still clear it below.
+    }
+  }
   writeResponseCookie(res, cookieFor(env, "", { clear: true }));
 }
 
 /**
- * Convenience: returns `{ userId, email, isAdmin, displayName }` parsed out of
- * the cookie, or empty `{}` when there is no session.
+ * Returns the live user behind the session cookie, or `{}` when there is none.
  */
 export async function getSession(
   req: IncomingMessage | Request,
   res: ServerResponse | Response,
-  env: { SESSION_PASSWORD: string; NEXT_PUBLIC_SITE_URL: string },
+  env: SessionEnv,
 ): Promise<SessionData> {
   return readSession(req, res, env);
 }
 
-/** Aliases: keep the old `login`/`logout` shape. */
+/** Aliases: keep the old `login`/`logout` shape. `login` stores a session row. */
 export const login = writeSession;
 export const logout = clearSession;

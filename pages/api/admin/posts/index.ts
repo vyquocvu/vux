@@ -1,22 +1,31 @@
 /**
- * Admin-only post creation.
+ * Admin post list + creation.
  *
- * Authenticated POST: creates a new post and returns the persisted record.
- * Requires a session whose `isAdmin` flag is true (only the `OWNER_EMAIL`
- * signup ever gets that flag — see `pages/api/auth/signup.ts`).
+ *   GET  → all posts (including drafts), bodies omitted
+ *   POST → create a post
  */
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getSession } from "utils/auth/session";
-import { addPost, getPostById } from "fetcher/post";
+import { addPost, getAllPostsForAdmin, getPostById } from "fetcher/post";
 import type { Post } from "interfaces/Post";
+
+const listShape = (posts: Post[]) =>
+  posts.map((post) => ({
+    uid: post.uid,
+    slug: post.slug,
+    title: post.title,
+    thumbText: post.thumbText,
+    thumbImage: post.thumbImage,
+    isPublished: post.isPublished,
+    author: post.author,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+    tags: post.tags ?? [],
+  }));
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Cache-Control", "private, no-store");
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method not allowed" });
-  }
 
   try {
     const { env } = await getCloudflareContext({ async: true });
@@ -25,12 +34,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body ?? {};
-    const post = await addPost(body as Post);
-    const stored = await getPostById(post.uid, true);
-    return res.status(201).json({ post: stored });
+    if (req.method === "GET") {
+      const posts = await getAllPostsForAdmin();
+      return res.status(200).json({ posts: listShape(posts) });
+    }
+
+    if (req.method === "POST") {
+      const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body ?? {};
+      const post = await addPost(body as Post);
+      const stored = await getPostById(post.uid, true);
+      return res.status(201).json({ post: stored });
+    }
+
+    res.setHeader("Allow", "GET, POST");
+    return res.status(405).json({ error: "Method not allowed" });
   } catch (error) {
-    console.error("admin create post error", error);
+    console.error("admin posts error", error);
     return res.status(500).json({ error: "Internal error" });
   }
 }
