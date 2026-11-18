@@ -27,6 +27,7 @@ const PostPage = (props: PostPageProps) => {
   const { AuthUserInfo } = props;
   const authUser = get(AuthUserInfo, "AuthUser");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { addToast } = useToasts();
   const [post, setPost] = useState<Post | Record<string, never>>({});
   useEffect(() => {
@@ -36,15 +37,20 @@ const PostPage = (props: PostPageProps) => {
   }, [authUser, router]);
 
   const fetchingPost = useCallback(async (id: string) => {
+    setError(null);
     try {
       const res = await fetch(`/api/admin/posts/${id}`, {
         credentials: "same-origin",
       });
-      if (!res.ok) throw new Error("Fetch failed");
+      if (!res.ok) throw new Error(`Không tải được bài viết (HTTP ${res.status}).`);
       const postDoc: Post = (await res.json()) as Post;
-      if (postDoc.uid) setPost({ ...postDoc });
+      if (!postDoc?.uid) throw new Error("Không tìm thấy bài viết.");
+      setPost({ ...postDoc });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Không tải được bài viết.");
+    } finally {
       setIsLoaded(true);
-    } catch (error) {};
+    }
   }, []);
 
   const onSubmit = async (postData: Post) => {
@@ -90,7 +96,22 @@ const PostPage = (props: PostPageProps) => {
       </div>
       <div className="m-auto py-6 px-4">
         {
-          !isLoaded ? <Loading /> : (
+          !isLoaded ? <Loading /> : error ? (
+            <div className="flex xl:w-9/12 mx-auto flex-col items-start gap-3">
+              <h2 className="text-lg font-medium">Không tải được nội dung</h2>
+              <p className="text-sm text-gray-700">{error}</p>
+              <button
+                className="bg-blue-500 shadow-xs px-3 py-1 text-white rounded"
+                onClick={() => {
+                  const raw = router.query.id;
+                  const id = raw ? String(raw).split(".").pop() || "" : "";
+                  fetchingPost(id);
+                }}
+              >
+                Thử lại
+              </button>
+            </div>
+          ) : (
             <>
               <h2 className="flex xl:w-9/12 mx-auto"> Edit Post</h2>
               <PostEditor post={post} onSubmit={onSubmit} />

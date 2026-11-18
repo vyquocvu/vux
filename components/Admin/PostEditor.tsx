@@ -1,16 +1,10 @@
 'use client';
 
-declare global {
-  interface Window {
-    ImageResize: any;
-    Quill: any;
-  }
-}
-
-import Script from "next/script";
 import dynamic from "next/dynamic";
 import { ReactTagsWrapperProps as ReactTagsProps, Tag } from 'react-tag-input';
 import { useEffect, useState, FormEvent, useRef } from "react";
+
+import "quill/dist/quill.snow.css";
 
 import upload from 'utils/upload';
 import Loading from "components/shared/Loading";
@@ -143,6 +137,45 @@ const formats = QUILL_FORMATS;
 
 const delimiters = [KEY_CODES.COMMA, KEY_CODES.ENTER];
 
+// Loaded lazily so Quill's DOM-touching module never evaluates during SSR.
+// Quill/highlight globals are wired inside ./quillVendor (-> ./hljsGlobal) and
+// this runs at most once per client session.
+let editorModulesRegistered = false;
+
+async function ensureEditorModules() {
+  const { Quill, hljs } = await import("./quillVendor");
+  const ImageResize = await import("quill-image-resize-module").then(
+    (m: any) => m?.default?.default ?? m?.default ?? m,
+  );
+
+  if (!editorModulesRegistered) {
+    hljs.configure({ languages: [...SUPPORTED_LANGUAGES] });
+    Quill.register("modules/imageResize", ImageResize);
+
+    // Custom audio embed blot (Quill has no built-in `audio` format).
+    const BlockEmbed = Quill.import("blots/block/embed");
+    class AudioBlot extends BlockEmbed {
+      static create(value: string) {
+        const node = super.create();
+        node.setAttribute("src", value);
+        node.setAttribute("controls", "controls");
+        node.setAttribute("controlsList", "nodownload");
+        node.className = "custom-audio-player";
+        return node;
+      }
+      static value(node: HTMLElement) {
+        return node.getAttribute("src");
+      }
+    }
+    AudioBlot.blotName = "audio";
+    AudioBlot.tagName = "audio";
+    Quill.register(AudioBlot);
+    editorModulesRegistered = true;
+  }
+
+  return Quill;
+}
+
 const PostEditor = (props: PostEditorProps) => {
   const nowSeconds = Math.floor(Date.now() / 1000);
   const [post, setPost] = useState<Partial<Post>>({
@@ -150,10 +183,8 @@ const PostEditor = (props: PostEditorProps) => {
     createdAt: nowSeconds,
     updatedAt: nowSeconds,
   });
-  const [isLoadQuill, setIsLoadQuill] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
-  const [isLoadHighlight, setIsLoadHighlight] = useState(false);
-  const [isLoadImageResize, setIsLoadImageResize] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [savingMessage, setSavingMessage] = useState('');
   const quillRef = useRef<any>(null);
@@ -225,64 +256,35 @@ const PostEditor = (props: PostEditorProps) => {
   };
 
   useEffect(() => {
-    if (isLoadQuill && isLoadHighlight && isLoadImageResize && post.uid) {
-      setTimeout(() => {
-        // Register ImageResize module before creating Quill instance
-        window.Quill.register('modules/imageResize', window.ImageResize.default);
-  
-        // Register custom audio Blot (check if not already registered)
-        try {
-          const existingBlot = window.Quill.import('formats/audio');
-          if (!existingBlot) {
-            throw new Error('Audio blot not registered');
-          }
-        } catch (e) {
-          const BlockEmbed = window.Quill.import('blots/block/embed');
-          class AudioBlot extends BlockEmbed {
-            static create(value: string) {
-              const node = super.create();
-              node.setAttribute('src', value);
-              node.setAttribute('controls', 'controls');
-              node.setAttribute('controlsList', 'nodownload');
-              node.className = 'custom-audio-player';
-              return node;
-            }
+    if (!post.uid || quillRef.current || typeof window === "undefined") return;
+    let cancelled = false;
 
-            static value(node: HTMLElement) {
-              return node.getAttribute('src');
-            }
-          }
-          AudioBlot.blotName = 'audio';
-          AudioBlot.tagName = 'audio';
-          window.Quill.register(AudioBlot);
-        }
+    ensureEditorModules()
+      .then((Quill) => {
+        if (cancelled || quillRef.current) return;
 
-        quillRef.current =  new window.Quill('#editor', {
-          theme: 'snow',
-          modules,
-          formats
-        });
+        // #editor is seeded with the draft HTML; Quill adopts that markup.
+        const quill = new Quill("#editor", { theme: "snow", modules, formats });
+        quillRef.current = quill;
+        setIsReady(true);
 
-        // Preserve scroll position on paste to prevent auto-scroll to top
-        const quill = quillRef.current;
+        // Preserve scroll position on paste to prevent auto-scroll to top.
         const editorContainer = quill.container;
-        let scrollTop = 0;
-        let scrollLeft = 0;
-        
-        // Listen for the clipboard paste event
-        editorContainer.addEventListener('paste', () => {
-          // Store current scroll position before paste
-          scrollTop = window.scrollY || document.documentElement.scrollTop;
-          scrollLeft = window.scrollX || document.documentElement.scrollLeft;
-          
-          // Restore scroll position after Quill processes the paste
-          setTimeout(() => {
-            window.scrollTo(scrollLeft, scrollTop);
-          }, 0);
-        });
-      }, 100);
-    }
-  }, [isLoadHighlight, isLoadQuill, isLoadImageResize, post.uid])
+        const preserveScroll = () => {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+          setTimeout(() => window.scrollTo(scrollLeft, scrollTop), 0);
+        };
+        editorContainer.addEventListener("paste", preserveScroll);
+      })
+      .catch((err) => {
+        console.error("Failed to initialize editor", err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [post.uid]);
 
 
   if (!post.uid || typeof window === 'undefined') return null;
@@ -290,21 +292,6 @@ const PostEditor = (props: PostEditorProps) => {
   return (
     <div className="flex xl:w-9/12 my-10 mx-auto flex-col">
       {isSaving && <LoadingOverlay message={savingMessage} />}
-      <Script
-        src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js'
-        onReady={() => {
-          (window as any).hljs.configure({ languages: SUPPORTED_LANGUAGES });
-          setIsLoadHighlight(true);
-        }}
-      />
-      <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
-        onReady={() => setIsLoadQuill(true)}
-      />
-      {isLoadQuill ? <Script
-        src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"
-        onReady={() => setIsLoadImageResize(true)}
-      /> : ""}
       <input
         value={post.title || ''}
         name="title" onChange={onUpdate}
@@ -312,8 +299,9 @@ const PostEditor = (props: PostEditorProps) => {
         className="w-full text-xl px-3 py-2 rounded-sm mb-3 border border-gray-400 font-medium"
       />
       <div className="mb-3">
-        {isLoadQuill && isLoadImageResize ? "" : <Loading />}
-        <div className={isLoadQuill && isLoadImageResize ? "" : "hidden"} id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
+        {!isReady && <Loading />}
+        {/* #editor stays mounted so Quill can always adopt the seeded draft. */}
+        <div id="editor" dangerouslySetInnerHTML={{ __html: post.draftContent || '' }}>
         </div>
       </div>
       Tags
